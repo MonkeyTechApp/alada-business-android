@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".core.menu.ListMenuFragment">
+    <LinearLayout
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:id="@+id/linFocus"
+        android:orientation="horizontal" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/search_menu"
+        android:inputType="text"
+        android:imeOptions="actionSearch"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/colorBlackBack"
+        style="@style/fontRegular"
+        android:id="@+id/edtSearch"
+        android:paddingVertical="@dimen/dimen_padding_small"
+        android:paddingHorizontal="@dimen/dimen_padding_tiny"
+        android:importantForAutofill="no"
+        tools:ignore="LabelFor" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/edtSearch"
+        android:id="@+id/listCategory"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtCategory"
+        android:layout_gravity="end"
+        app:layout_constraintTop_toBottomOf="@id/listCategory"
+        android:gravity="start"
+        android:backgroundTintMode="src_over"
+        android:background="@color/colorBlackBack"
+        android:layout_marginVertical="@dimen/dimen_padding_tiny"
+        android:textColor="@color/colorPrimary"
+        android:paddingHorizontal="@dimen/dimen_padding_small"
+        android:paddingVertical="@dimen/dimen_padding_small"
+        android:text="@string/add_a_new_category"
+        app:drawableTint="@color/colorPrimary"
+        app:drawableEndCompat="@drawable/ic_baseline_add_24" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtCategory"
+        android:id="@+id/list"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/button_first"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/next"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_baseline_add_24"
+        android:contentDescription="@string/app_name" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

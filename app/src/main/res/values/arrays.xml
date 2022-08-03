@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="color_arr" >
+        <item>#000000</item>
+        <item>#1abc9c</item>
+        <item>#f1c40f</item>
+        <item>#c0392b</item>
+    </string-array>
+    <string-array name="on_boarding_heading">
+        <item>Title One</item>
+        <item>Title Two</item>
+        <item>Title Three</item>
+    </string-array>
+    <string-array name="on_boarding_description">
+        <item>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris</item>
+        <item>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris</item>
+        <item>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris</item>
+    </string-array>
+    <string-array name="promo_links">
+        <item>https://i.ytimg.com/vi/VP0isOHVptw/maxresdefault.jpg</item>
+        <item>https://www.visionconfort.com//media/catalog/product/cache/1/image/1200x1200/9df78eab33525d08d6e5fb8d27136e95/4/3/43s1a9759_-_copie_2.jpg</item>
+        <item>https://www.camgceboard.com/wp-content/uploads/2020/01/DwUBu3_XQAEXfg2.png</item>
+    </string-array>
+    <string-array name="logo_links">
+        <item>https://www.logodesign.net/images/abstract-logo.png</item>
+        <item>https://blog.karachicorner.com/wp-content/uploads/2018/10/logo_design-1.jpg</item>
+        <item>https://fiverr-res.cloudinary.com/images/t_main1,q_auto,f_auto,q_auto,f_auto/gigs/136285996/original/17177761adb39bacf9e5ab53f20e2841d2f63ebd/create-amazing-flat-logo-designs.jpg</item>
+        <item>https://cdn.dribbble.com/users/2539160/screenshots/7029282/media/57d5987040607756f09bddeb3d30cb1e.png</item>
+    </string-array>
+    <string-array name="currency_names">
+        <item>Franc  Communautaire Financière D\'Afrique</item>
+        <item>Naira</item>
+        <item>Pound</item>
+        <item>Dollar</item>
+    </string-array>
+    <string-array name="currency_symbols">
+        <item>F CFA</item>
+        <item>N</item>
+        <item>£</item>
+        <item>$</item>
+    </string-array>
+    <string-array name="business_categories">
+        <item>Bar</item>
+        <item>Lounge</item>
+        <item>Night Club</item>
+        <item>Restaurant</item>
+        <item>Snack Bar</item>
+    </string-array>
+    <string-array name="action_array">
+        <item>View</item>
+        <item>Edit</item>
+        <item>Delete</item>
+    </string-array>
+</resources>

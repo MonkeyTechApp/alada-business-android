@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "587050134915",
+    "project_id": "alada-business",
+    "storage_bucket": "alada-business.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:587050134915:android:c15008355c760fa09a9ab6",
+        "android_client_info": {
+          "package_name": "com.poupock.feussom.aladabusiness"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "587050134915-309vhal2v6emogqfufhcsmvhh3ulimes.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.poupock.feussom.aladabusiness",
+            "certificate_hash": "470645221dc7075ab498e455afd6735f062c611e"
+          }
+        },
+        {
+          "client_id": "587050134915-lq59137opbadgt95bbu8dfedu19s7jd7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7l13V3IbeFTZHwEEo3dBkKxOF5Vqy9UM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "587050134915-lq59137opbadgt95bbu8dfedu19s7jd7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

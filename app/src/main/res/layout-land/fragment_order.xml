@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context=".ui.fragment.order.OrderFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dip"
+        android:layout_weight="3"
+        android:layout_marginStart="@dimen/dimen_padding_tiny"
+        android:layout_marginEnd="@dimen/dimen_padding_tiny"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/orderContent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="@string/select_a_table"
+                android:backgroundTint="@color/flat_red_secondary"
+                android:paddingVertical="@dimen/dimen_padding_tiny"
+                style="@style/fontSemiBold"
+                android:id="@+id/btnTable"
+                tools:ignore="Deprecated" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/btnTable"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/txtActions"
+                android:text="@string/direct_sale"
+                style="@style/fontSemiBold"
+                android:id="@+id/txtMode"/>
+
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/btnTable"
+                android:text="@string/actions"
+                app:layout_constraintEnd_toEndOf="parent"
+                style="@style/fontSemiBold"
+                android:textColor="@color/flat_blue"
+                android:id="@+id/txtActions"/>
+
+            <Button
+                style="@style/fontRegular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_order"
+                android:backgroundTint="#2d3436"
+                android:textAllCaps="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/txtMode"
+                android:id="@+id/btnAddOrder"
+                android:textColor="@color/white"
+                android:gravity="start"
+                android:paddingHorizontal="@dimen/dimen_padding"
+                android:paddingVertical="@dimen/dimen_padding_tiny" />
+
+            <Button
+                style="@style/buttonNormal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:text="@string/customer"
+                app:layout_constraintStart_toEndOf="@id/btnAddOrder"
+                android:layout_marginStart="@dimen/dimen_padding_small"
+                app:layout_constraintTop_toBottomOf="@id/txtMode"
+                android:backgroundTint="@color/flat_blue"
+                android:id="@+id/btnOrderCustomer"
+                android:textColor="@color/white"
+                android:paddingHorizontal="@dimen/dimen_padding_small"
+                android:paddingVertical="@dimen/dimen_padding_tiny" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            style="@style/fontSemiBold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/orderContent"
+            app:layout_constraintBottom_toTopOf="@id/courseList"
+            android:gravity="start|center_vertical"
+            android:text="@string/add_course"
+            android:background="@color/colorBlackBack"
+            android:textColor="@color/colorPrimary"
+            android:id="@+id/btnAddCourse"
+            android:paddingVertical="@dimen/dimen_padding_tiny"
+            android:drawableTint="@color/colorPrimary"
+            app:drawableEndCompat="@drawable/ic_baseline_add_24" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/courseList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/btnAddCourse"
+            android:layout_marginBottom="@dimen/dimen_padding_small"
+            android:layout_marginTop="@dimen/dimen_padding_tiny"
+            app:layout_constraintBottom_toTopOf="@id/viewLine"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white"
+            android:id="@+id/viewLine"
+            app:layout_constraintBottom_toTopOf="@id/txtOrderTotal"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/order_total"
+            style="@style/fontSemiBold"
+            android:layout_marginTop="@dimen/dimen_padding_small"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/linKeyBoard"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 F CFA"
+            android:layout_marginTop="@dimen/dimen_padding_small"
+            style="@style/fontSemiBold"
+            android:id="@+id/txtOrderTotal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/linKeyBoard"/>
+
+        <LinearLayout
+            android:id="@+id/linKeyBoard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:baselineAligned="false">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="5"
+                android:orientation="vertical"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/btnClear"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:text="@string/clear_symbol"
+                        style="?android:attr/buttonBarButtonStyle"/>
+
+                    <Button
+                        android:id="@+id/btnDecimal"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:text="@string/dot_symbol"
+                        style="?android:attr/buttonBarButtonStyle"/>
+
+                    <Button
+                        android:id="@+id/btnBackSpace"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:text="@string/back_space_symbol"
+                        style="?android:attr/buttonBarButtonStyle" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/btnSeven"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:text="@string/symbol_7"
+                        android:textStyle="bold"
+                        style="?android:attr/buttonBarButtonStyle"/>
+
+                    <Button
+                        android:id="@+id/btnEight"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:text="@string/symbol_8"
+                        android:textStyle="bold"
+                        style="?android:attr/buttonBarButtonStyle"/>
+
+                    <Button
+                        android:id="@+id/btnNine"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:text="@string/symbol_9"
+                        android:textStyle="bold"
+                        style="?android:attr/buttonBarButtonStyle" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/btnFour"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:text="@string/symbol_4"
+                        android:textStyle="bold"
+                        style="?android:attr/buttonBarButtonStyle"/>
+
+                    <Button
+                        android:id="@+id/btnFive"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:text="@string/symbol_5"
+                        android:textStyle="bold"
+                        style="?android:attr/buttonBarButtonStyle"/>
+
+                    <Button
+                        android:id="@+id/btnSix"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:text="@string/symbol_6"
+                        android:textStyle="bold"
+                        style="?android:attr/buttonBarButtonStyle" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/btnOne"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:text="@string/symbol_1"
+                        android:textStyle="bold"
+                        style="?android:attr/buttonBarButtonStyle"/>
+
+                    <Button
+                        android:id="@+id/btnTwo"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:text="@string/symbol_2"
+                        android:textStyle="bold"
+                        style="?android:attr/buttonBarButtonStyle"/>
+
+                    <Button
+                        android:id="@+id/btnThree"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:text="@string/symbol_3"
+                        android:textStyle="bold"
+                        style="?android:attr/buttonBarButtonStyle" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/btnDouble0"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:text="@string/symbol_00"
+                        android:textStyle="bold"
+                        style="?android:attr/buttonBarButtonStyle"/>
+
+                    <Button
+                        android:id="@+id/btnZero"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:text="@string/symbol_0"
+                        android:textStyle="bold"
+                        style="?android:attr/buttonBarButtonStyle"/>
+
+                    <Button
+                        android:id="@+id/btnCross"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:text="@string/symbol_cross"
+                        android:textStyle="bold"
+                        style="?android:attr/buttonBarButtonStyle" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:orientation="vertical"
+                android:layout_weight="3"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:id="@+id/btnTableName"
+                    android:text="Table Name"/>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:id="@+id/btnTables"
+                    android:text="Tables"/>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/green"
+                    android:id="@+id/btnCash"
+                    android:text="Cash"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="0dip"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:id="@+id/listMenuCategory"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dip"
+        android:layout_weight="3"
+        android:paddingStart="@dimen/dimen_padding_tiny"
+        android:layout_height="match_parent">
+
+        <TextView
+            style="@style/fontSemiBold"
+            android:gravity="center"
+            android:paddingVertical="@dimen/dimen_padding_small"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/category_menu"
+            android:textAllCaps="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/txtCategory"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            app:layout_constraintBottom_toTopOf="@id/linButtons"
+            app:layout_constraintTop_toBottomOf="@id/txtCategory"
+            android:id="@+id/listMenuItems"/>
+
+        <LinearLayout
+            android:id="@+id/linButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:orientation="horizontal">
+
+            <Button
+                style="@style/buttonNormal"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/flat_orange_ville"
+                android:textColor="@color/white"
+                android:text="@string/send"
+                android:layout_marginEnd="@dimen/dimen_padding_small"
+                android:id="@+id/btnSend"/>
+
+            <Button
+                style="@style/buttonNormal"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:backgroundTint="@color/green"
+                android:textColor="@color/white"
+                android:layout_marginEnd="@dimen/dimen_padding_small"
+                android:text="@string/pay"
+                android:id="@+id/btnPay"/>
+        </LinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</LinearLayout>

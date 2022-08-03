@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph3"
+    app:startDestination="@id/listMenuFragment">
+
+    <fragment
+        android:id="@+id/listMenuFragment"
+        android:name="com.poupock.feussom.aladabusiness.core.menu.ListMenuFragment"
+        android:label="@string/menu"
+        tools:layout="@layout/fragment_list_menu">
+
+        <action
+            android:id="@+id/action_listMenuFragment_to_CreateMenuFragment"
+            app:destination="@id/createMenuFragment" />
+        <action
+            android:id="@+id/action_listMenuFragment_to_CreateCategoryMenuFragment"
+            app:destination="@id/createCategoryFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/createMenuFragment"
+        android:name="com.poupock.feussom.aladabusiness.core.menu.CreateMenuFragment"
+        android:label="@string/create_a_menu"
+        tools:layout="@layout/fragment_create_menu">
+        <action
+            android:id="@+id/action_createMenuFragment_to_listMenuFragment"
+            app:destination="@id/listMenuFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/createCategoryFragment"
+        android:name="com.poupock.feussom.aladabusiness.core.menu.CreateMenuCategoryFragment"
+        android:label="@string/create_a_men_cat"
+        tools:layout="@layout/fragment_create_menu_category">
+        <action
+            android:id="@+id/action_createCategoryMenuFragment_to_listMenuFragment"
+            app:destination="@id/listMenuFragment" />
+    </fragment>
+</navigation>

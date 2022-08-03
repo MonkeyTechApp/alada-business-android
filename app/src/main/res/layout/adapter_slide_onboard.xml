@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/imgVector"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="?actionBarSize"
+        android:layout_above="@id/card"
+        android:contentDescription="TODO" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_gravity="bottom"
+        app:cardCornerRadius="64dp"
+        android:layout_marginBottom="-64dp"
+        android:layout_alignParentBottom="true"
+        app:cardBackgroundColor="@color/action_bar_color">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dimen_padding"
+            android:orientation="vertical">
+
+
+
+            <TextView
+                android:id="@+id/txtHeading"
+                style="@style/fontBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingTop="@dimen/dimen_padding"
+                android:gravity="center"
+                android:textSize="@dimen/text_heading"
+                android:textColor="@color/white"
+                android:text="@string/register"/>
+
+            <TextView
+                android:id="@+id/txtDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="@dimen/dimen_padding"
+                android:gravity="center"
+                android:maxLines="3"
+                android:textColor="@color/white"
+                android:text="@string/lorem"/>
+
+            <Button
+                android:id="@+id/btnStarted"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/getStarted"
+                android:textColor="@color/action_bar_color"
+                android:backgroundTint="@color/white"
+                android:layout_marginTop="@dimen/dimen_padding"
+                style="@style/buttonNormal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+            <TextView
+                android:id="@+id/txtNext"
+                style="@style/fontBold"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="@dimen/dimen_padding"
+                android:layout_marginBottom="64dp"
+                android:text="@string/next"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+</RelativeLayout>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/dimen_padding_micro"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="@string/app_name"
+        android:gravity="center"
+        android:textAllCaps="true"
+        android:background="@color/green"
+        android:paddingVertical="@dimen/dimen_padding"
+        android:paddingHorizontal="@dimen/dimen_padding"
+        android:id="@+id/txtName"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/txtName"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

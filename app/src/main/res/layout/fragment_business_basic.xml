@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".core.restaurant.BusinessBasicFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingVertical="@dimen/activity_vertical_margin"
+        android:paddingHorizontal="@dimen/activity_horizontal_margin">
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/basic_info"
+            android:textSize="@dimen/text_h1"
+            style="@style/fontBold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/nameTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            app:layout_constraintTop_toBottomOf="@id/intro"
+            app:boxCornerRadiusBottomEnd="@dimen/rounded_corner"
+            app:boxCornerRadiusBottomStart="@dimen/rounded_corner"
+            app:boxCornerRadiusTopEnd="@dimen/rounded_corner"
+            app:boxCornerRadiusTopStart="@dimen/rounded_corner"
+            android:hint="@string/business_name"
+            style="@style/TextInputLayoutOutlined">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:gravity="top|start"
+                style="@style/fontRegular"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/detailTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            app:layout_constraintTop_toBottomOf="@id/nameTextField"
+            app:boxCornerRadiusBottomEnd="@dimen/rounded_corner"
+            app:boxCornerRadiusBottomStart="@dimen/rounded_corner"
+            app:boxCornerRadiusTopEnd="@dimen/rounded_corner"
+            app:boxCornerRadiusTopStart="@dimen/rounded_corner"
+            android:hint="@string/business_description"
+            style="@style/TextInputLayoutOutlined">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:gravity="top|start"
+                style="@style/fontRegular"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <Button
+            android:id="@+id/btnCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:paddingVertical="@dimen/dimen_padding_mid"
+            app:layout_constraintTop_toBottomOf="@id/detailTextField"
+            android:hint="@string/business_category"
+            style="@style/buttonOutline"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardImage"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/card_height"
+            app:layout_constraintTop_toBottomOf="@id/btnCategory"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:elevation="0dp"
+            app:strokeColor="@color/purple_text"
+            app:strokeWidth="1dp"
+            app:cardCornerRadius="@dimen/card_radius_m"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textGrey"
+                android:paddingHorizontal="@dimen/activity_horizontal_margin"
+                android:gravity="center"
+                android:textSize="@dimen/text_h6"
+                android:layout_gravity="center"
+                android:id="@+id/txtImageAdd"
+                style="@style/fontRegular"
+                android:text="@string/image_upload_guide"/>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/imgProduct"
+                android:contentDescription="@string/product_name"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <Button
+            android:id="@+id/button_first"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/next"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:paddingVertical="@dimen/dimen_padding_mid"
+            android:layout_marginVertical="@dimen/activity_vertical_margin"
+            app:layout_constraintTop_toBottomOf="@id/cardImage"/>
+
+        <TextView
+            android:id="@+id/intro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/business_creation_intro"
+            app:layout_constraintTop_toBottomOf="@id/title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

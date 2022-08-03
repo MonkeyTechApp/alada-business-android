@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingVertical="@dimen/activity_vertical_margin"
+    android:paddingHorizontal="@dimen/activity_horizontal_margin"
+    tools:context=".core.menu.CreateMenuFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="@string/infos_de_base"
+            android:textSize="@dimen/text_h1"
+            style="@style/fontBold"
+            android:textColor="@color/purple_text"
+            android:id="@+id/txtHeading"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/txtHeading"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="@string/product_description_text"
+            android:textSize="@dimen/text_h6"
+            style="@style/fontRegular"
+            android:id="@+id/txtInfo"/>
+
+        <Button
+            android:id="@+id/btnCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/buttonOutline"
+            android:text="@string/category_menu"
+            android:layout_marginTop="@dimen/dimen_padding"
+            android:paddingVertical="@dimen/dimen_padding_small"
+            app:layout_constraintTop_toBottomOf="@id/priceTextField"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/categoryTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            app:layout_constraintTop_toBottomOf="@id/priceTextField"
+            app:boxCornerRadiusBottomEnd="@dimen/rounded_corner"
+            app:boxCornerRadiusBottomStart="@dimen/rounded_corner"
+            app:boxCornerRadiusTopEnd="@dimen/rounded_corner"
+            app:boxCornerRadiusTopStart="@dimen/rounded_corner"
+            android:hint="@string/product_category"
+            style="@style/TextInputLayoutOutlined">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:gravity="top|start"
+                style="@style/fontRegular"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/nameTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            app:layout_constraintTop_toBottomOf="@id/txtInfo"
+            app:boxCornerRadiusBottomEnd="@dimen/rounded_corner"
+            app:boxCornerRadiusBottomStart="@dimen/rounded_corner"
+            app:boxCornerRadiusTopEnd="@dimen/rounded_corner"
+            app:boxCornerRadiusTopStart="@dimen/rounded_corner"
+            android:hint="@string/product_name"
+            style="@style/TextInputLayoutOutlined">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:gravity="top|start"
+                style="@style/fontRegular"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/priceTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            app:layout_constraintTop_toBottomOf="@id/nameTextField"
+            app:boxCornerRadiusBottomEnd="@dimen/rounded_corner"
+            app:boxCornerRadiusBottomStart="@dimen/rounded_corner"
+            app:boxCornerRadiusTopEnd="@dimen/rounded_corner"
+            app:boxCornerRadiusTopStart="@dimen/rounded_corner"
+            android:hint="@string/product_price"
+            style="@style/TextInputLayoutOutlined">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:inputType="number"
+                android:gravity="top|start"
+                style="@style/fontRegular"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardImage"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/card_height"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/btnCategory"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:elevation="0dp"
+            app:strokeColor="@color/purple_text"
+            app:strokeWidth="1dp"
+            app:cardCornerRadius="@dimen/card_radius_m"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textGrey"
+                android:paddingHorizontal="@dimen/activity_horizontal_margin"
+                android:gravity="center"
+                android:textSize="@dimen/text_h6"
+                android:layout_gravity="center"
+                style="@style/fontRegular"
+                android:text="@string/image_upload_guide"/>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/imgProduct"
+                android:contentDescription="@string/product_name"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/status_bar_color"
+            android:text="@string/save"
+            app:layout_constraintTop_toBottomOf="@id/cardImage"
+            android:layout_marginTop="@dimen/fab_margin"
+            android:paddingVertical="@dimen/activity_vertical_margin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="purple_text">#5B346A</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="colorSecondary">#1abc9c</color>
+    <color name="colorSecondaryVariant">#16a085</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="status_bar_color">#9b58b6</color>
+    <color name="action_bar_color">#ad75c3</color>
+    <color name="colorPrimary">#9b59b6</color>
+    <color name="colorPrimaryDark">#8e44ad</color>
+<!--    <color name="colorPrimary">#ad75c3</color>-->
+<!--    <color name="colorPrimaryDark">#9b58b6</color>-->
+
+
+    <color name="green">#00b894</color>
+    <color name="green_variant">#27ae60</color>
+    <color name="turquoise">#1abc9c</color>
+    <color name="turquoise_variant">#16a085</color>
+    <color name="light_blue_600">#FF039BE5</color>
+    <color name="light_blue_900">#FF01579B</color>
+    <color name="light_blue_A200">#FF40C4FF</color>
+    <color name="light_blue_A400">#FF00B0FF</color>
+    <color name="black_overlay">#66000000</color>
+    <color name="grey">#cccccc</color>
+    <color name="yellow" />
+    <color name="yellow_secondary">#f1c40f</color>
+    <color name="transparent">#00000000</color>
+    <color name="colorEdit_text_back_green">#e8faee</color>
+    <color name="back_lay">#FDFDFD</color>
+    <color name="flat_blue_secondary">#2980b9</color>
+    <color name="flat_blue">#3498db</color>
+    <color name="flat_red_secondary">#ff7675</color>
+    <color name="textGrey">#807E7E</color>
+    <color name="icon_grey">#5a5a5a</color>
+    <color name="colorBlackBack">#2C2C2C</color>
+    <color name="lightGreen">#55efc4</color>
+    <color name="flat_orange_ville">#e17055</color>
+</resources>

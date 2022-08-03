@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".core.restaurant.BusinessCreationDetailFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="@dimen/activity_horizontal_margin"
+        android:paddingVertical="@dimen/activity_vertical_margin">
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/business_details"
+            android:textSize="@dimen/text_h1"
+            style="@style/fontBold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/phoneTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            app:layout_constraintTop_toBottomOf="@id/intro"
+            app:boxCornerRadiusBottomEnd="@dimen/rounded_corner"
+            app:boxCornerRadiusBottomStart="@dimen/rounded_corner"
+            app:boxCornerRadiusTopEnd="@dimen/rounded_corner"
+            app:boxCornerRadiusTopStart="@dimen/rounded_corner"
+            android:hint="@string/business_phone"
+            style="@style/TextInputLayoutOutlined">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:gravity="top|start"
+                android:inputType="phone"
+                style="@style/fontRegular"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/phone2TextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            app:layout_constraintTop_toBottomOf="@id/phoneTextField"
+            app:boxCornerRadiusBottomEnd="@dimen/rounded_corner"
+            app:boxCornerRadiusBottomStart="@dimen/rounded_corner"
+            app:boxCornerRadiusTopEnd="@dimen/rounded_corner"
+            app:boxCornerRadiusTopStart="@dimen/rounded_corner"
+            android:hint="@string/business_phone_2"
+            style="@style/TextInputLayoutOutlined">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:gravity="top|start"
+                android:inputType="phone"
+                style="@style/fontRegular"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/floorTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            app:layout_constraintTop_toBottomOf="@id/phone2TextField"
+            app:boxCornerRadiusBottomEnd="@dimen/rounded_corner"
+            app:boxCornerRadiusBottomStart="@dimen/rounded_corner"
+            app:boxCornerRadiusTopEnd="@dimen/rounded_corner"
+            app:boxCornerRadiusTopStart="@dimen/rounded_corner"
+            android:hint="@string/question_number_floor"
+            style="@style/TextInputLayoutOutlined">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:gravity="top|start"
+                style="@style/fontRegular"
+                android:inputType="number"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/salePointTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            app:layout_constraintTop_toBottomOf="@id/floorTextField"
+            app:boxCornerRadiusBottomEnd="@dimen/rounded_corner"
+            app:boxCornerRadiusBottomStart="@dimen/rounded_corner"
+            app:boxCornerRadiusTopEnd="@dimen/rounded_corner"
+            app:boxCornerRadiusTopStart="@dimen/rounded_corner"
+            android:hint="@string/question_sale_point"
+            style="@style/TextInputLayoutOutlined">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:gravity="top|start"
+                style="@style/fontRegular"
+                android:inputType="number"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/placeTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            app:layout_constraintTop_toBottomOf="@id/salePointTextField"
+            app:boxCornerRadiusBottomEnd="@dimen/rounded_corner"
+            app:boxCornerRadiusBottomStart="@dimen/rounded_corner"
+            app:boxCornerRadiusTopEnd="@dimen/rounded_corner"
+            app:boxCornerRadiusTopStart="@dimen/rounded_corner"
+            android:hint="@string/question_place"
+            style="@style/TextInputLayoutOutlined">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:gravity="top|start"
+                style="@style/fontRegular"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/btnGPS"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:paddingVertical="@dimen/dimen_padding_mid"
+            app:layout_constraintTop_toBottomOf="@id/placeTextField"
+            android:hint="@string/business_coordinates"
+            style="@style/buttonOutline"/>
+
+        <Button
+            android:id="@+id/button_first"
+            style="@style/buttonNormal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/done"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:paddingVertical="@dimen/dimen_padding_mid"
+            android:layout_marginVertical="@dimen/activity_vertical_margin"
+            app:layout_constraintTop_toBottomOf="@id/btnGPS"/>
+
+        <TextView
+            android:id="@+id/intro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/business_detail_intro"
+            app:layout_constraintTop_toBottomOf="@id/title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

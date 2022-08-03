@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:showIn="@layout/activity_setting"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/fab_margin">
+
+        <TextView
+            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginVertical="@dimen/dimen_padding"
+            android:text="@string/Overview"
+            android:id="@+id/txtOverView"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/txtOverView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginVertical="@dimen/fab_margin"
+            android:background="@color/white"
+            app:cardCornerRadius="@dimen/card_radius"
+            android:padding="@dimen/fab_margin"
+            android:id="@+id/cardOverView">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/fab_margin">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/txtTodaySales"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginBottom="@dimen/dimen_padding"
+                    android:text="@string/today_s_sales"
+                    android:id="@+id/txtToday"/>
+
+                <TextView
+                    style="@style/textPrice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginBottom="@dimen/dimen_padding"
+                    android:text="500 F CFA"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:id="@+id/txtTodaySales"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/grey"
+                    app:layout_constraintTop_toBottomOf="@id/txtTodaySales"
+                    android:layout_marginVertical="@dimen/dimen_padding_small"
+                    android:id="@+id/separatorToday"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/separatorToday"
+                    android:layout_marginVertical="@dimen/dimen_padding"
+                    android:text="@string/weekly_sales"
+                    android:id="@+id/txtWeekly"/>
+
+                <TextView
+                    style="@style/textPrice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/separatorToday"
+                    android:layout_marginVertical="@dimen/dimen_padding"
+                    android:text="5 000 F CFA"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:id="@+id/txtWeeklySales"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/grey"
+                    app:layout_constraintTop_toBottomOf="@id/txtWeeklySales"
+                    android:layout_marginVertical="@dimen/dimen_padding_small"
+                    android:id="@+id/separatorWeekly"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/separatorWeekly"
+                    android:layout_marginVertical="@dimen/dimen_padding"
+                    android:text="@string/monthly_sales"
+                    android:id="@+id/txtMonthly"/>
+
+                <TextView
+                    style="@style/textPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/separatorWeekly"
+                    android:layout_marginVertical="@dimen/dimen_padding"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="50 000 F CFA"
+                    android:id="@+id/txtMonthlySales" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <TextView
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardOverView"
+            android:layout_marginVertical="@dimen/dimen_padding"
+            android:text="@string/order_list"
+            android:id="@+id/txtOrder"/>
+
+
+        <TextView
+            android:textStyle="bold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardOverView"
+            android:layout_marginVertical="@dimen/dimen_padding"
+            android:text="@string/menu_list"
+            android:id="@+id/txtMenus"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

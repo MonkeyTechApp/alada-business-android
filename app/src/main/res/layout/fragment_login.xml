@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/login"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingVertical="@dimen/activity_vertical_margin"
+    android:paddingHorizontal="@dimen/activity_horizontal_margin"
+    tools:context=".core.auth.LoginFragment">
+
+    <ImageView
+        android:contentDescription="@string/login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/txtTitle"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:src="@drawable/ic__login"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/edtEmail"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/login"
+        android:textSize="@dimen/text_h2"
+        style="@style/fontSemiBold"
+        android:id="@+id/txtTitle"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/edtEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/edtPassword"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        app:boxCornerRadiusBottomEnd="@dimen/rounded_corner_mid"
+        app:boxCornerRadiusBottomStart="@dimen/rounded_corner_mid"
+        app:boxCornerRadiusTopEnd="@dimen/rounded_corner_mid"
+        app:boxCornerRadiusTopStart="@dimen/rounded_corner_mid"
+        android:hint="@string/email"
+        app:startIconDrawable="@drawable/ic_baseline_add_24"
+        style="@style/TextInputLayoutOutlined">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top|start"
+            style="@style/fontRegular"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/edtPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnLogin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        app:boxCornerRadiusBottomEnd="@dimen/rounded_corner_mid"
+        app:boxCornerRadiusBottomStart="@dimen/rounded_corner_mid"
+        app:boxCornerRadiusTopEnd="@dimen/rounded_corner_mid"
+        app:boxCornerRadiusTopStart="@dimen/rounded_corner_mid"
+        android:hint="@string/password"
+        app:startIconDrawable="@drawable/ic_baseline_add_24"
+        style="@style/TextInputLayoutOutlined">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top|start"
+            style="@style/fontRegular"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/txtRegister"
+        android:text="@string/login"
+        android:textAppearance="@style/fontRegularAppearance"
+        android:id="@+id/btnLogin"/>
+
+    <TextView
+        android:id="@+id/txtRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/fontSemiBold"
+        android:paddingHorizontal="@dimen/activity_horizontal_margin"
+        android:paddingVertical="@dimen/dimen_padding_tiny"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/new_to_alada_business_register"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
