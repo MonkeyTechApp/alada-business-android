@@ -38,19 +38,19 @@ public class User {
     @Ignore private static final String CONNECTED_USER = "CONNECTED_USER";
     @Ignore private static final String USER_TOKEN = "TOKEN";
 
-//    public static boolean storeConnectedUser(User user , Context context) {
-//        SharedPreferences.Editor editor = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE).edit();
-//        editor.putString(CONNECTED_USER,new Gson().toJson(user));
-//        editor.apply();
-//        return editor.commit();
-//    }
-//
-//    public static boolean storeToken(String token , Context context) {
-//        SharedPreferences.Editor editor = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE).edit();
-//        editor.putString(USER_TOKEN,token);
-//        editor.apply();
-//        return editor.commit();
-//    }
+    public static boolean storeConnectedUser(User user , Context context) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE).edit();
+        editor.putString(CONNECTED_USER,new Gson().toJson(user));
+        editor.apply();
+        return editor.commit();
+    }
+
+    public static boolean storeToken(String token , Context context) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE).edit();
+        editor.putString(USER_TOKEN,token);
+        editor.apply();
+        return editor.commit();
+    }
 
 
 //    public static User getRegisteredUser(Context context){

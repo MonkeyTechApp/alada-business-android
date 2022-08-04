@@ -46,6 +46,18 @@
         <item>Restaurant</item>
         <item>Snack Bar</item>
     </string-array>
+    <string-array name="business_zones">
+        <item>Adamawa</item>
+        <item>Centre</item>
+        <item>Est</item>
+        <item>Littoral</item>
+        <item>North</item>
+        <item>North West</item>
+        <item>Extreme North</item>
+        <item>West</item>
+        <item>South West</item>
+        <item>South</item>
+    </string-array>
     <string-array name="action_array">
         <item>View</item>
         <item>Edit</item>

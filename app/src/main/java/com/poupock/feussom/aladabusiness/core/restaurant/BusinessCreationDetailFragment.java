@@ -2,6 +2,7 @@ package com.poupock.feussom.aladabusiness.core.restaurant;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -20,20 +21,33 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.android.volley.VolleyError;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.CancellationToken;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.OnTokenCanceledListener;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.gson.Gson;
+import com.poupock.feussom.aladabusiness.DashboardActivity;
 import com.poupock.feussom.aladabusiness.HomeActivity;
 import com.poupock.feussom.aladabusiness.R;
+import com.poupock.feussom.aladabusiness.callback.VolleyRequestCallback;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.databinding.FragmentBusinessCreationDetailBinding;
 import com.poupock.feussom.aladabusiness.util.Business;
 import com.poupock.feussom.aladabusiness.util.Methods;
+import com.poupock.feussom.aladabusiness.util.User;
+import com.poupock.feussom.aladabusiness.web.PostTask;
+import com.poupock.feussom.aladabusiness.web.ServerUrl;
+import com.poupock.feussom.aladabusiness.web.response.Connection;
 
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 import static com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY;
@@ -118,6 +132,53 @@ public class BusinessCreationDetailFragment extends Fragment implements View.OnC
                             business.setCreated_at(sdf.format(new Date()));
                             viewModel.setBusinessMutableLiveData(business);
                             AppDataBase.getInstance(requireContext()).businessDao().insert(business);
+                            List<String> phones = new ArrayList<>();
+                            phones.add(binding.phoneTextField.getEditText().toString().trim());
+                            phones.add(Objects.requireNonNull(binding.phone2TextField.getEditText()).toString().trim());
+                            HashMap<String, String> params = new HashMap<>();
+                            params.put("name", business.getName());
+                            params.put("description", business.getDescription());
+                            params.put("longitude", business.getLongitude()+"");
+                            params.put("latitude", business.getLatitude()+"");
+                            params.put("business_type_id", "1");
+                            params.put("location", business.getLocation());
+                            params.put("phone_numbers", new Gson().toJson(phones));
+                            params.put("zone_id", "1");
+                            ProgressDialog dialog = new ProgressDialog(requireContext());
+
+                            new PostTask(requireContext(), ServerUrl.CONNECTION_URL, params,
+                                new VolleyRequestCallback() {
+                                    @Override
+                                    public void onStart() {
+                                        dialog.setMessage(getString(R.string.connecting_3_dots));
+                                        dialog.setCancelable(true);
+                                        dialog.show();
+                                    }
+
+                                    @Override
+                                    public void onSuccess(String response) {
+                                        Gson gson = new Gson();
+                                        Connection connection = gson.fromJson(response, Connection.class);
+                                        User.storeConnectedUser(connection.data, requireContext());
+                                        User.storeToken(connection.access_token, requireContext());
+
+                                        Toast.makeText(requireContext(), R.string.connection_successful, Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(requireContext(), DashboardActivity.class);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        startActivity(intent);
+                                    }
+
+                                    @Override
+                                    public void onError(VolleyError error) {
+                                        FirebaseCrashlytics.getInstance().recordException(
+                                            new RuntimeException(new String(error.networkResponse.data, StandardCharsets.UTF_8)));
+                                    }
+
+                                    @Override
+                                    public void onJobFinished() {
+                                        dialog.dismiss();
+                                    }
+                                }).execute();
                             startActivity(new Intent(requireContext(), HomeActivity.class));
                         } else {
                             Toast.makeText(requireContext(), R.string.business_sale_point_error_input, Toast.LENGTH_SHORT).show();

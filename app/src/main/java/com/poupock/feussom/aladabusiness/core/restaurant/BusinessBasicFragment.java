@@ -68,7 +68,7 @@ public class BusinessBasicFragment extends Fragment implements View.OnClickListe
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
-                business.setCategory_id(i);
+                business.setCategory_id(i+1);
                 business.setCategory_name(categories[i]);
 
                 binding.btnCategory.setText(categories[i]);

@@ -1,6 +1,7 @@
 package com.poupock.feussom.aladabusiness.core.auth;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,11 +16,14 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
+import com.poupock.feussom.aladabusiness.DashboardActivity;
 import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.VolleyRequestCallback;
+import com.poupock.feussom.aladabusiness.core.restaurant.BusinessCreationActivity;
 import com.poupock.feussom.aladabusiness.databinding.FragmentLoginBinding;
 import com.poupock.feussom.aladabusiness.databinding.FragmentRegisterBinding;
 import com.poupock.feussom.aladabusiness.util.Methods;
+import com.poupock.feussom.aladabusiness.util.User;
 import com.poupock.feussom.aladabusiness.web.PostTask;
 import com.poupock.feussom.aladabusiness.web.ServerUrl;
 import com.poupock.feussom.aladabusiness.web.response.Connection;
@@ -104,7 +108,14 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                                     public void onSuccess(String response) {
                                         Gson gson = new Gson();
                                         Connection connection = gson.fromJson(response, Connection.class);
+
+                                        User.storeConnectedUser(connection.data, requireContext());
+                                        User.storeToken(connection.access_token, requireContext());
+
                                         Toast.makeText(requireContext(), R.string.connection_successful, Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(requireContext(), BusinessCreationActivity.class);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        startActivity(intent);
                                     }
 
                                     @Override

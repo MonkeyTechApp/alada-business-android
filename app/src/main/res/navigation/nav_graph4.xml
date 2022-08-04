@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/FirstFragment"
         android:name="com.poupock.feussom.aladabusiness.core.restaurant.BusinessBasicFragment"
-        android:label="@string/first_fragment_label"
+        android:label="@string/basic_info"
         tools:layout="@layout/fragment_business_basic">
         <action
             android:id="@+id/action_FirstFragment_to_Second2Fragment"
@@ -17,7 +17,7 @@
     <fragment
         android:id="@+id/Second2Fragment"
         android:name="com.poupock.feussom.aladabusiness.core.restaurant.BusinessCreationDetailFragment"
-        android:label="@string/second_fragment_label"
+        android:label="@string/business_details"
         tools:layout="@layout/fragment_business_creation_detail">
         <action
             android:id="@+id/action_Second2Fragment_to_FirstFragment"
