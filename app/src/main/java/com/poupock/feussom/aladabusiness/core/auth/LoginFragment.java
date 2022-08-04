@@ -6,7 +6,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +20,14 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
 import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.VolleyRequestCallback;
+import com.poupock.feussom.aladabusiness.core.menu.CreateMenuFragment;
 import com.poupock.feussom.aladabusiness.databinding.FragmentLoginBinding;
 import com.poupock.feussom.aladabusiness.util.Methods;
 import com.poupock.feussom.aladabusiness.web.PostTask;
 import com.poupock.feussom.aladabusiness.web.ServerUrl;
 import com.poupock.feussom.aladabusiness.web.response.Connection;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -65,6 +69,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
 
         binding.btnLogin.setOnClickListener(this);
+
+        binding.txtRegister.setOnClickListener(this);
     }
 
     @Override
@@ -91,16 +97,18 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                             public void onSuccess(String response) {
                                 Gson gson = new Gson();
                                 Connection connection = gson.fromJson(response, Connection.class);
+                                Toast.makeText(requireContext(), R.string.connection_successful, Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
                             public void onError(VolleyError error) {
-                                FirebaseCrashlytics.getInstance().recordException(new RuntimeException());
+                                FirebaseCrashlytics.getInstance().recordException(
+                                    new RuntimeException(new String(error.networkResponse.data, StandardCharsets.UTF_8)));
                             }
 
                             @Override
                             public void onJobFinished() {
-
+                                dialog.dismiss();
                             }
                         }).execute();
                 }
@@ -108,6 +116,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             else {
                 Toast.makeText(requireContext(), R.string.invalid_email, Toast.LENGTH_SHORT).show();
             }
+        }
+        else if(view == binding.txtRegister) {
+            NavHostFragment.findNavController(LoginFragment.this)
+                .navigate(R.id.action_fragmentLogin_to_fragmentRegister);
         }
     }
 }

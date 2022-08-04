@@ -11,6 +11,7 @@ import androidx.room.PrimaryKey;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,8 @@ public class User {
     private String created_at;
     private String email;
     private String phone;
+    @Ignore private List<Business> businesses;
+    @Ignore private List<Business> owned_businesses;
     @Ignore List<Role> roles;
     @Ignore private static final String CONNECTED_USER = "CONNECTED_USER";
     @Ignore private static final String USER_TOKEN = "TOKEN";
@@ -96,6 +99,25 @@ public class User {
         this.roles = roles;
         this.email = email;
         this.phone = phone;
+    }
+
+    @Ignore
+    public User(int id, String role_id, String name, String identifier, String local_avatar, String server_avatar,
+                String pin, String password, List<Role> roles, String phone, String email, List<Business> businesses,
+                List<Business> owned_businesses) {
+        this.id = id;
+        this.role_id = role_id;
+        this.name = name;
+        this.identifier = identifier;
+        this.local_avatar = local_avatar;
+        this.server_avatar = server_avatar;
+        this.pin = pin;
+        this.password = password;
+        this.roles = roles;
+        this.email = email;
+        this.phone = phone;
+        this.owned_businesses = owned_businesses;
+        this.businesses = businesses;
     }
 
     public static String getToken(Context context){
@@ -213,5 +235,21 @@ public class User {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public List<Business> getBusinesses() {
+        return businesses;
+    }
+
+    public void setBusinesses(List<Business> businesses) {
+        this.businesses = businesses;
+    }
+
+    public List<Business> getOwned_businesses() {
+        return owned_businesses;
+    }
+
+    public void setOwned_businesses(List<Business> owned_businesses) {
+        this.owned_businesses = owned_businesses;
     }
 }
