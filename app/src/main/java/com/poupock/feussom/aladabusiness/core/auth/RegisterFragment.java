@@ -113,7 +113,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                                         User.storeToken(connection.access_token, requireContext());
 
                                         Toast.makeText(requireContext(), R.string.connection_successful, Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(requireContext(), BusinessCreationActivity.class);
+                                        Intent intent = new Intent(requireContext(), DashboardActivity.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startActivity(intent);
                                     }

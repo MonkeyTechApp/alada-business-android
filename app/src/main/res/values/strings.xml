@@ -216,9 +216,17 @@
     <string name="login">Login</string>
     <string name="new_to_alada_business_register">New to Alada - Business? Register</string>
     <string name="invalid_email">Invalid email adresse</string>
-    <string name="connecting_3_dots">Connecting...</string>
-    <string name="connection_successful">Connection successfull!!</string>
+    <string name="connecting_3_dots">Connecting…</string>
+    <string name="connection_successful">Connection successful!!</string>
     <string name="do_you_have_an_account_login">Do you have an account? Login</string>
     <string name="confirm_pass_not_match">Confirm password doesn\'t match the password.</string>
     <string name="invalide_name">Name length must be atleast 3 characters.</string>
+    <string name="create_a_business">create a business</string>
+    <string name="create_your_first_business_and_start_tracking_key_informations">Create your first business and start tracking key informations</string>
+    <string name="title_activity_business">BusinessActivity</string>
+    <string name="business_management">Manage your Business</string>
+    <string name="business_edition">Edit your Business</string>
+    <string name="manage_menu">Manage Menu</string>
+    <string name="manage_table">Manage Tables</string>
+    <string name="businss_created">Business created successfully!</string>
 </resources>

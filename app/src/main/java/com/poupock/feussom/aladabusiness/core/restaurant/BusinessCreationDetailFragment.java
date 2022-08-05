@@ -41,6 +41,7 @@ import com.poupock.feussom.aladabusiness.util.User;
 import com.poupock.feussom.aladabusiness.web.PostTask;
 import com.poupock.feussom.aladabusiness.web.ServerUrl;
 import com.poupock.feussom.aladabusiness.web.response.Connection;
+import com.poupock.feussom.aladabusiness.web.response.DatumResponse;
 
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -131,7 +132,6 @@ public class BusinessCreationDetailFragment extends Fragment implements View.OnC
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-DD hh:mm:ss");
                             business.setCreated_at(sdf.format(new Date()));
                             viewModel.setBusinessMutableLiveData(business);
-                            AppDataBase.getInstance(requireContext()).businessDao().insert(business);
                             List<String> phones = new ArrayList<>();
                             phones.add(binding.phoneTextField.getEditText().toString().trim());
                             phones.add(Objects.requireNonNull(binding.phone2TextField.getEditText()).toString().trim());
@@ -146,7 +146,7 @@ public class BusinessCreationDetailFragment extends Fragment implements View.OnC
                             params.put("zone_id", "1");
                             ProgressDialog dialog = new ProgressDialog(requireContext());
 
-                            new PostTask(requireContext(), ServerUrl.CONNECTION_URL, params,
+                            new PostTask(requireContext(), ServerUrl.BUSINESS_URL, params,
                                 new VolleyRequestCallback() {
                                     @Override
                                     public void onStart() {
@@ -158,11 +158,10 @@ public class BusinessCreationDetailFragment extends Fragment implements View.OnC
                                     @Override
                                     public void onSuccess(String response) {
                                         Gson gson = new Gson();
-                                        Connection connection = gson.fromJson(response, Connection.class);
-                                        User.storeConnectedUser(connection.data, requireContext());
-                                        User.storeToken(connection.access_token, requireContext());
 
-                                        Toast.makeText(requireContext(), R.string.connection_successful, Toast.LENGTH_SHORT).show();
+                                        AppDataBase.getInstance(requireContext()).businessDao().insert(business);
+
+                                        Toast.makeText(requireContext(), R.string.businss_created, Toast.LENGTH_SHORT).show();
                                         Intent intent = new Intent(requireContext(), DashboardActivity.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startActivity(intent);
@@ -179,7 +178,7 @@ public class BusinessCreationDetailFragment extends Fragment implements View.OnC
                                         dialog.dismiss();
                                     }
                                 }).execute();
-                            startActivity(new Intent(requireContext(), HomeActivity.class));
+//                            startActivity(new Intent(requireContext(), HomeActivity.class));
                         } else {
                             Toast.makeText(requireContext(), R.string.business_sale_point_error_input, Toast.LENGTH_SHORT).show();
                         }

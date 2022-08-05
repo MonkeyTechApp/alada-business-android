@@ -23,6 +23,7 @@ import com.poupock.feussom.aladabusiness.DashboardActivity;
 import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.VolleyRequestCallback;
 import com.poupock.feussom.aladabusiness.core.menu.CreateMenuFragment;
+import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.databinding.FragmentLoginBinding;
 import com.poupock.feussom.aladabusiness.util.Methods;
 import com.poupock.feussom.aladabusiness.util.User;
@@ -93,6 +94,19 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                                 Connection connection = gson.fromJson(response, Connection.class);
                                 User.storeConnectedUser(connection.data, requireContext());
                                 User.storeToken(connection.access_token, requireContext());
+
+                                if(connection.data.getOwned_businesses() != null){
+                                    for (int i=0; i<connection.data.getOwned_businesses().size(); i++){
+                                        AppDataBase.getInstance(requireContext()).businessDao().insert(connection.data.getOwned_businesses().
+                                            get(i));
+                                    }
+                                }
+                                else if(connection.data.getBusinesses() != null){
+                                    for (int i=0; i<connection.data.getBusinesses().size(); i++){
+                                        AppDataBase.getInstance(requireContext()).businessDao().insert(connection.data.getOwned_businesses().
+                                            get(i));
+                                    }
+                                }
 
                                 Toast.makeText(requireContext(), R.string.connection_successful, Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(requireContext(), DashboardActivity.class);
