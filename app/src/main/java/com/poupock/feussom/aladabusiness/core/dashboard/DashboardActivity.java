@@ -1,23 +1,20 @@
-package com.poupock.feussom.aladabusiness;
+package com.poupock.feussom.aladabusiness.core.dashboard;
 
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
-import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.poupock.feussom.aladabusiness.core.restaurant.BusinessBasicFragment;
+import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.databinding.ActivityDashboardBinding;
 
 public class DashboardActivity extends AppCompatActivity {
@@ -27,7 +24,6 @@ public class DashboardActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.Theme_AlAdaBusiness);
         super.onCreate(savedInstanceState);
 
         binding = ActivityDashboardBinding.inflate(getLayoutInflater());
@@ -45,15 +41,12 @@ public class DashboardActivity extends AppCompatActivity {
         NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.HomeFragment, R.id.GalleryFragment, R.id.SlideshowFragment)
+        mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.nav_home, R.id.nav_user, R.id.nav_menu)
                 .setOpenableLayout(drawer)
                 .build();
-
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_dashboard);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-
     }
 
     @Override

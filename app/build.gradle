@@ -6,13 +6,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 32
-    buildToolsVersion "30.0.3"
+    compileSdkVersion 33
 
     defaultConfig {
         applicationId "com.poupock.feussom.aladabusiness"
         minSdkVersion 22
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
 
@@ -26,8 +25,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     buildFeatures {
         viewBinding true
@@ -37,11 +36,11 @@ android {
 dependencies {
 
     def lifecycle_version = "2.4.0-alpha03"
-    def room_version = "2.3.0"
+    def room_version = "2.4.3"
 
-    implementation 'androidx.appcompat:appcompat:1.4.0'
-    implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:+'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:+'
     implementation 'androidx.navigation:navigation-fragment:+'
@@ -51,9 +50,9 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'com.android.volley:volley:1.2.0'
+    implementation 'com.android.volley:volley:1.2.1'
 
-    implementation 'com.hbb20:ccp:2.4.0' // Country code picker
+    implementation 'com.hbb20:ccp:2.6.1' // Country code picker
     /*--------- Firebase setup start------------*/
 
     implementation platform('com.google.firebase:firebase-bom:28.2.0')
@@ -73,7 +72,7 @@ dependencies {
 
     /*--------- Firebase setup end ------------*/
 
-    implementation 'com.etebarian:meow-bottom-navigation-java:1.2.0' // Custom Bottom Navigation Bar
+//    implementation 'com.etebarian:meow-bottom-navigation-java:1.2.0' // Custom Bottom Navigation Bar
     implementation 'com.squareup.picasso:picasso:2.71828' // Picasso Library for images
     implementation 'com.google.code.gson:gson:2.8.6' // Gson Load
 

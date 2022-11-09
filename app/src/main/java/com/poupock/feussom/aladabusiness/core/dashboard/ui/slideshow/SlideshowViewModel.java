@@ -1,4 +1,4 @@
-package com.poupock.feussom.aladabusiness.ui.slideshow;
+package com.poupock.feussom.aladabusiness.core.dashboard.ui.slideshow;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 public class SlideshowViewModel extends ViewModel {
 
-    private MutableLiveData<String> mText;
+    private final MutableLiveData<String> mText;
 
     public SlideshowViewModel() {
         mText = new MutableLiveData<>();

@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -30,7 +31,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.poupock.feussom.aladabusiness.R;
 
 import java.io.ByteArrayOutputStream;
@@ -182,8 +186,10 @@ public class Methods {
         if (ContextCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
             != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(activity.getApplicationContext(),
             Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            activity.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_STORAGE_PERMISSION_CODE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                activity.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_STORAGE_PERMISSION_CODE);
+            }
             return true;
         } else return false;
     }
@@ -193,8 +199,10 @@ public class Methods {
         if (ContextCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(activity.getApplicationContext(),
             Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            activity.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION_CODE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                activity.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION_CODE);
+            }
             return true;
         } else return false;
     }
@@ -316,7 +324,49 @@ public class Methods {
         Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,15}$", Pattern.CASE_INSENSITIVE);
 
     public static boolean validate(String emailStr) {
-        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
-        return matcher.find();
+        if (emailStr.contains("@")) {
+            Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
+            return matcher.find();
+        }else return verifyPhone(emailStr);
     }
+
+
+
+    public static boolean verifyPhone(String trim) {
+        return trim.matches("^[+]?[0-9]{10,13}$");
+    }
+
+    public static boolean verifyPassword(String trim) {
+        if (trim.length() == 4){
+            try{
+                int num = Integer.parseInt(trim);
+                if (num >= 0)  return true;
+            }catch (NumberFormatException ex){
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public static void generateFCMToken(String tag, Context context) {
+
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(tag, "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+                        // Get new FCM registration token
+                        String token = task.getResult();
+                        // Log and toast
+                        String msg = context.getString(R.string.msg_token_fmt)+" " +token;
+                        Log.d(tag, msg);
+                        User.storeFCMToken(token, context);
+//                            Toast.makeText(AuthActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
 }

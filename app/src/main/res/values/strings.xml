@@ -214,11 +214,19 @@
     <string name="password">Password</string>
     <string name="confirm_password">Confirm password</string>
     <string name="login">Login</string>
-    <string name="new_to_alada_business_register">New to Alada - Business? Register</string>
-    <string name="invalid_email">Invalid email adresse</string>
+    <string name="new_to_alada_business">New to Alada - Business?</string>
+    <string name="invalid_email">Invalid email address</string>
+    <string name="invalid_identifier">Invalid identifier</string>
     <string name="connecting_3_dots">Connecting...</string>
     <string name="connection_successful">Connection successfull!!</string>
     <string name="do_you_have_an_account_login">Do you have an account? Login</string>
+    <string name="do_you_have_an_account">Do you have an account?</string>
     <string name="confirm_pass_not_match">Confirm password doesn\'t match the password.</string>
     <string name="invalide_name">Name length must be atleast 3 characters.</string>
+    <string name="email_or_phone">Email or phone</string>
+    <string name="password_must_digit_4_char">Password must be a 4 digits number.</string>
+    <string name="phone">Phone</string>
+    <string name="invalid_phone">Invalid phone number.</string>
+    <string name="user">User management</string>
+    <string name="order_management">Order management</string>
 </resources>

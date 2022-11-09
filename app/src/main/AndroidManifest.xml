@@ -10,7 +10,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/ThemeSplash"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        tools:targetApi="m">
         <activity
             android:name=".core.auth.AuthActivity"
             android:exported="true">
@@ -41,15 +42,10 @@
             android:label="@string/title_activity_menu_item"
             android:theme="@style/ThemeSplash.NoActionBar" />
         <activity
-            android:name=".DashboardActivity"
-            android:exported="false"
-            android:label="@string/title_activity_dashboard"
-            android:theme="@style/ThemeSplash.NoActionBar" />
-        <activity
             android:name=".HomeActivity"
             android:exported="false"
             android:label="@string/home"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="landscape" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".SettingActivity" />
         <activity
@@ -58,6 +54,7 @@
 
         </activity>
     </application>
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />

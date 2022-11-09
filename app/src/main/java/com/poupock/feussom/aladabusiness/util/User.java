@@ -36,6 +36,7 @@ public class User {
     @Ignore private List<Business> owned_businesses;
     @Ignore List<Role> roles;
     @Ignore private static final String CONNECTED_USER = "CONNECTED_USER";
+    private static final String USER_FCM = "Firebase-cloud-message-token";
     @Ignore private static final String USER_TOKEN = "TOKEN";
 
     public static boolean storeConnectedUser(User user , Context context) {
@@ -251,5 +252,13 @@ public class User {
 
     public void setOwned_businesses(List<Business> owned_businesses) {
         this.owned_businesses = owned_businesses;
+    }
+
+
+    public static boolean storeFCMToken(String token , Context context) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE).edit();
+        editor.putString(USER_FCM,token);
+        editor.apply();
+        return editor.commit();
     }
 }

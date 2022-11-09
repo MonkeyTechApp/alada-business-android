@@ -16,6 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:text="@string/register"
         android:textSize="@dimen/text_h2"
+        android:paddingVertical="@dimen/fab_margin"
         style="@style/fontSemiBold"
         android:id="@+id/txtTitle"/>
 
@@ -32,7 +33,7 @@
         app:boxCornerRadiusTopEnd="@dimen/rounded_corner_mid"
         app:boxCornerRadiusTopStart="@dimen/rounded_corner_mid"
         android:hint="@string/name"
-        app:startIconDrawable="@drawable/ic_baseline_add_24"
+        app:startIconDrawable="@drawable/ic_baseline_person_24"
         style="@style/TextInputLayoutOutlined">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -49,6 +50,30 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/edtPhone"
+        android:layout_marginBottom="@dimen/dimen_padding_mid"
+        app:boxCornerRadiusBottomEnd="@dimen/rounded_corner_mid"
+        app:boxCornerRadiusBottomStart="@dimen/rounded_corner_mid"
+        app:boxCornerRadiusTopEnd="@dimen/rounded_corner_mid"
+        app:boxCornerRadiusTopStart="@dimen/rounded_corner_mid"
+        android:hint="@string/phone"
+        app:startIconDrawable="@drawable/ic_baseline_local_phone_24"
+        style="@style/TextInputLayoutOutlined">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top|start"
+            style="@style/fontRegular"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/edtPhone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/edtPassword"
         android:layout_marginBottom="@dimen/dimen_padding_mid"
         app:boxCornerRadiusBottomEnd="@dimen/rounded_corner_mid"
@@ -56,7 +81,7 @@
         app:boxCornerRadiusTopEnd="@dimen/rounded_corner_mid"
         app:boxCornerRadiusTopStart="@dimen/rounded_corner_mid"
         android:hint="@string/email"
-        app:startIconDrawable="@drawable/ic_baseline_add_24"
+        app:startIconDrawable="@drawable/ic_baseline_alternate_email_24"
         style="@style/TextInputLayoutOutlined">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -80,7 +105,7 @@
         app:boxCornerRadiusTopEnd="@dimen/rounded_corner_mid"
         app:boxCornerRadiusTopStart="@dimen/rounded_corner_mid"
         android:hint="@string/password"
-        app:startIconDrawable="@drawable/ic_baseline_add_24"
+        app:startIconDrawable="@drawable/ic_outline_lock_24"
         style="@style/TextInputLayoutOutlined">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -105,7 +130,7 @@
         app:boxCornerRadiusTopEnd="@dimen/rounded_corner_mid"
         app:boxCornerRadiusTopStart="@dimen/rounded_corner_mid"
         android:hint="@string/confirm_password"
-        app:startIconDrawable="@drawable/ic_baseline_add_24"
+        app:startIconDrawable="@drawable/ic_outline_lock_24"
         style="@style/TextInputLayoutOutlined">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -120,23 +145,44 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/txtLogin"
+        app:layout_constraintBottom_toTopOf="@id/linBottom"
         android:text="@string/register"
         android:textColor="@color/colorPrimaryDark"
         android:backgroundTint="@color/white"
         android:textAppearance="@style/fontRegularAppearance"
         android:id="@+id/btnRegister"/>
 
-    <TextView
-        android:id="@+id/txtLogin"
+    <LinearLayout
+        android:id="@+id/linBottom"
+        android:orientation="horizontal"
+        android:gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/fontSemiBold"
-        android:paddingHorizontal="@dimen/activity_horizontal_margin"
-        android:paddingVertical="@dimen/dimen_padding_tiny"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:text="@string/do_you_have_an_account_login"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent">
+        <TextView
+            android:id="@+id/txtRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/fontSemiBold"
+            android:paddingHorizontal="@dimen/activity_horizontal_margin"
+            android:paddingVertical="@dimen/dimen_padding_tiny"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@string/do_you_have_an_account"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login"
+            android:textAllCaps="false"
+            android:fontFamily="@font/poppins_semibold"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

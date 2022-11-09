@@ -22,7 +22,6 @@ import com.google.android.material.navigation.NavigationView;
 import com.poupock.feussom.aladabusiness.core.menu.MenuItemActivity;
 import com.poupock.feussom.aladabusiness.core.restaurant.BusinessBasicFragment;
 import com.poupock.feussom.aladabusiness.databinding.ActivityHomeBinding;
-import com.poupock.feussom.aladabusiness.ui.home.HomeFragment;
 
 public class HomeActivity extends AppCompatActivity {
 

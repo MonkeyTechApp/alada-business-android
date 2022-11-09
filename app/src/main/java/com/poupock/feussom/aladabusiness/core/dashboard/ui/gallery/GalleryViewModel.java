@@ -1,4 +1,4 @@
-package com.poupock.feussom.aladabusiness.ui.gallery;
+package com.poupock.feussom.aladabusiness.core.dashboard.ui.gallery;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 public class GalleryViewModel extends ViewModel {
 
-    private MutableLiveData<String> mText;
+    private final MutableLiveData<String> mText;
 
     public GalleryViewModel() {
         mText = new MutableLiveData<>();
