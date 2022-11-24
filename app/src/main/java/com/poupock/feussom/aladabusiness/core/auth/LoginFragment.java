@@ -91,14 +91,19 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                                     public void onSuccess(String response) {
                                         Gson gson = new Gson();
                                         Connection connection = gson.fromJson(response, Connection.class);
-                                        User.storeConnectedUser(connection.data, requireContext());
-                                        User.storeToken(connection.access_token, requireContext());
+                                        if (connection.success){
+                                            User.storeConnectedUser(connection.data, requireContext());
+                                            User.storeToken(connection.access_token, requireContext());
 
-                                        Toast.makeText(requireContext(), R.string.connection_successful, Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(requireContext(), DashboardActivity.class);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                        startActivity(intent);
-                                        requireActivity().finish();
+                                            Toast.makeText(requireContext(), R.string.connection_successful, Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(requireContext(), DashboardActivity.class);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            startActivity(intent);
+                                            requireActivity().finish();
+                                        }
+                                        else{
+                                            Toast.makeText(requireContext(),R.string.credentials_do_not_match_records, Toast.LENGTH_LONG).show();
+                                        }
                                     }
 
                                     @Override

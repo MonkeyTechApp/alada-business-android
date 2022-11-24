@@ -238,4 +238,5 @@
     <string name="manage_menu">Manage Menu</string>
     <string name="manage_table">Manage Tables</string>
     <string name="businss_created">Business created successfully!</string>
+    <string name="credentials_do_not_match_records">Your credentials do not match our records.</string>
 </resources>

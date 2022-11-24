@@ -24,6 +24,11 @@
             android:label="@string/title_activity_business"
             android:theme="@style/ThemeSplash.NoActionBar" />
         <activity
+            android:name=".core.dashboard.DashboardActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/ThemeSplash.NoActionBar" />
+        <activity
             android:name=".core.auth.AuthActivity"
             android:exported="true" >
             <intent-filter>

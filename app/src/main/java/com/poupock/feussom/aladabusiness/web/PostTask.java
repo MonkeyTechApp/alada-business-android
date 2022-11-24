@@ -78,6 +78,7 @@ public class PostTask extends AsyncTask<Void, Void, Void> {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("Content-Type","application/json");
+                headers.put("Accept-Type","application/json");
                 headers.put("Authorization","Bearer "+ User.getToken(context));
                 return headers;
             }

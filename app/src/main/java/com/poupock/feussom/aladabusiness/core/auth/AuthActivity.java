@@ -9,7 +9,7 @@ import androidx.navigation.ui.NavigationUI;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.poupock.feussom.aladabusiness.DashboardActivity;
+import com.poupock.feussom.aladabusiness.core.dashboard.DashboardActivity;
 import com.poupock.feussom.aladabusiness.HomeActivity;
 import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.core.restaurant.BusinessCreationActivity;
