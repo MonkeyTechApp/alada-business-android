@@ -10,15 +10,9 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.poupock.feussom.aladabusiness.core.dashboard.DashboardActivity;
-import com.poupock.feussom.aladabusiness.HomeActivity;
 import com.poupock.feussom.aladabusiness.R;
-import com.poupock.feussom.aladabusiness.core.restaurant.BusinessCreationActivity;
 import com.poupock.feussom.aladabusiness.databinding.ActivityAuthBinding;
-import com.poupock.feussom.aladabusiness.databinding.ActivityMenuItemBinding;
-import com.poupock.feussom.aladabusiness.util.Business;
 import com.poupock.feussom.aladabusiness.util.User;
-
-import java.util.List;
 
 public class AuthActivity extends AppCompatActivity {
 
@@ -41,11 +35,8 @@ public class AuthActivity extends AppCompatActivity {
             binding = ActivityAuthBinding.inflate(getLayoutInflater());
             setContentView(binding.getRoot());
 
-//        setSupportActionBar(binding.toolbar);
-
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_auth);
             appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-//        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         }
 
     }
