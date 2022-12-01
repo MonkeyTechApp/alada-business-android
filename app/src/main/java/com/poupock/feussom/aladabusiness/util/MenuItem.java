@@ -4,6 +4,8 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -161,5 +163,10 @@ public class MenuItem {
 
     public void setCreated_at(String created_at) {
         this.created_at = created_at;
+    }
+
+    public static MenuItem getFromObject(Object data) {
+        Gson gson = new Gson();
+        return gson.fromJson(gson.toJson(data), MenuItem.class);
     }
 }

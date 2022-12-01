@@ -1,6 +1,7 @@
 package com.poupock.feussom.aladabusiness.core.menu;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -17,15 +18,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.gson.Gson;
 import com.poupock.feussom.aladabusiness.R;
+import com.poupock.feussom.aladabusiness.callback.VolleyRequestCallback;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.databinding.FragmentCreateMenuCategoryBinding;
 import com.poupock.feussom.aladabusiness.databinding.FragmentListCategoryMenuBinding;
+import com.poupock.feussom.aladabusiness.util.Business;
 import com.poupock.feussom.aladabusiness.util.MenuItemCategory;
 import com.poupock.feussom.aladabusiness.util.Methods;
+import com.poupock.feussom.aladabusiness.web.PostTask;
+import com.poupock.feussom.aladabusiness.web.ServerUrl;
+import com.poupock.feussom.aladabusiness.web.response.DatumResponse;
 
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Objects;
 
 import static com.poupock.feussom.aladabusiness.util.Methods.createTextWatcher;
@@ -115,6 +126,7 @@ public class CreateMenuCategoryFragment extends Fragment implements View.OnClick
     @Override
     public void onClick(View view) {
         if(binding.btnSave == view){
+            binding.btnSave.setEnabled(false);
             String name = Objects.requireNonNull(binding.nameTextField.getEditText()).getText().toString().trim();
             if(!name.isEmpty()){
                 if(AppDataBase.getInstance(requireContext()).menuItemCategoryDao().getSpecificMenuItemCategory(name) == null){
@@ -123,23 +135,65 @@ public class CreateMenuCategoryFragment extends Fragment implements View.OnClick
                     menuItemCategory.setName(binding.nameTextField.getEditText().getText().toString());
                     menuItemCategory.setCreated_at(Methods.getCurrentTimeStamp());
 
-                    if(viewModel.getSelectedCategoryLiveData().getValue()!=null) {
-                        if(AppDataBase.getInstance(requireContext()).menuItemCategoryDao().update(menuItemCategory)<=0) {
-                            Toast.makeText(requireContext(), getString(R.string.menu_category_not_updated),Toast.LENGTH_SHORT).show();
-                            NavHostFragment.findNavController(CreateMenuCategoryFragment.this)
-                                .navigate(R.id.action_createCategoryMenuFragment_to_listMenuFragment);
-                        }
-                        else Toast.makeText(requireContext(), getString(R.string.menu_category_updated),Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        if(AppDataBase.getInstance(requireContext()).menuItemCategoryDao().insert(menuItemCategory)>0){
-                            Toast.makeText(requireContext(), getString(R.string.menu_category_inserted),Toast.LENGTH_SHORT).show();
-                            NavHostFragment.findNavController(CreateMenuCategoryFragment.this)
-                                .navigate(R.id.action_createCategoryMenuFragment_to_listMenuFragment);
-                        }else{
-                            Toast.makeText(requireContext(), getString(R.string.menu_category_not_inserted),Toast.LENGTH_SHORT).show();
-                        }
-                    }
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("name", menuItemCategory.getName());
+                    params.put("business_id", viewModel.getBusinessLiveData().getValue().getId()+"");
+                    ProgressDialog dialog = new ProgressDialog(requireContext());
+
+                    new PostTask(requireContext(), ServerUrl.MENU_CATEGORY, params,
+                            new VolleyRequestCallback() {
+                                @Override
+                                public void onStart() {
+                                    dialog.setMessage(getString(R.string.processing_3_dots));
+                                    dialog.setCancelable(false);
+                                    dialog.show();
+                                }
+
+                                @Override
+                                public void onSuccess(String response) {
+                                    dialog.dismiss();
+                                    DatumResponse datumResponse = new Gson().fromJson(response, DatumResponse.class);
+                                    if (datumResponse.success){
+                                        MenuItemCategory category = MenuItemCategory.getFromObject(datumResponse.data);
+                                        if(viewModel.getSelectedCategoryLiveData().getValue()!=null) {
+                                            if(AppDataBase.getInstance(requireContext()).menuItemCategoryDao().update(category)<=0) {
+                                                Toast.makeText(requireContext(), getString(R.string.menu_category_not_updated),Toast.LENGTH_SHORT).show();
+                                                NavHostFragment.findNavController(CreateMenuCategoryFragment.this)
+                                                        .navigate(R.id.action_createCategoryMenuFragment_to_listMenuFragment);
+                                            }
+                                            else Toast.makeText(requireContext(), getString(R.string.menu_category_updated),Toast.LENGTH_SHORT).show();
+                                        }
+                                        else {
+                                            if(AppDataBase.getInstance(requireContext()).menuItemCategoryDao().insert(category)>0){
+                                                Toast.makeText(requireContext(), getString(R.string.menu_category_inserted),Toast.LENGTH_SHORT).show();
+                                                NavHostFragment.findNavController(CreateMenuCategoryFragment.this)
+                                                        .navigate(R.id.action_createCategoryMenuFragment_to_listMenuFragment);
+                                            }else{
+                                                Toast.makeText(requireContext(), getString(R.string.menu_category_not_inserted),Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    }
+                                    else {
+                                        Toast.makeText(requireContext(), R.string.menu_not_created, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onError(VolleyError error) {
+                                    dialog.dismiss();
+                                    FirebaseCrashlytics.getInstance().recordException(
+                                            new RuntimeException(new String(error.networkResponse.data, StandardCharsets.UTF_8)));
+                                    Toast.makeText(requireContext(), getString(R.string.server_error),Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void onJobFinished() {
+                                    binding.btnSave.setEnabled(true);
+                                    dialog.dismiss();
+                                }
+                            }).execute();
+
+
                 }else {
                     binding.nameTextField.setError(getString(R.string.category_name_already_exist));
                     binding.nameTextField.setErrorEnabled(true);

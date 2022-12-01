@@ -16,9 +16,13 @@ import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.ListItemClickCallback;
 import com.poupock.feussom.aladabusiness.core.business.BusinessActivity;
 import com.poupock.feussom.aladabusiness.core.restaurant.BusinessCreationActivity;
+import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.databinding.FragmentHomeBinding;
 import com.poupock.feussom.aladabusiness.ui.adapter.BusinessAdapter;
+import com.poupock.feussom.aladabusiness.util.Business;
 import com.poupock.feussom.aladabusiness.util.User;
+
+import java.util.List;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
@@ -34,18 +38,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
         final TextView textView = binding.txtLegend;
         homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-//        final TextView textView = binding.textHome;
-//        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-//            }
-//        });
 
-        if(User.currentUser(requireContext()).getOwned_businesses() != null){
+
+        AppDataBase appDataBase = AppDataBase.getInstance(requireContext());
+        List<Business> businesses = appDataBase.businessDao().getAllBusinesses();
+
+        if(businesses != null){
             binding.txtLegend.setVisibility(View.GONE);
             binding.list.setLayoutManager(new LinearLayoutManager(requireContext()));
-            binding.list.setAdapter(new BusinessAdapter(requireContext(), User.currentUser(requireContext()).getBusinesses()));
+            binding.list.setAdapter(new BusinessAdapter(requireContext(), businesses));
         }
         else {
 

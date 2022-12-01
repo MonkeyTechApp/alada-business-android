@@ -1,5 +1,6 @@
 package com.poupock.feussom.aladabusiness.core.menu;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,14 +16,24 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.android.volley.VolleyError;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.gson.Gson;
 import com.poupock.feussom.aladabusiness.R;
+import com.poupock.feussom.aladabusiness.callback.VolleyRequestCallback;
 import com.poupock.feussom.aladabusiness.core.restaurant.BusinessCreationViewModel;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.databinding.FragmentCreateMenuBinding;
 import com.poupock.feussom.aladabusiness.util.MenuItem;
+import com.poupock.feussom.aladabusiness.util.MenuItemCategory;
 import com.poupock.feussom.aladabusiness.util.Methods;
 import com.poupock.feussom.aladabusiness.util.User;
+import com.poupock.feussom.aladabusiness.web.PostTask;
+import com.poupock.feussom.aladabusiness.web.ServerUrl;
+import com.poupock.feussom.aladabusiness.web.response.DatumResponse;
 
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class CreateMenuFragment extends Fragment implements View.OnClickListener {
@@ -71,21 +82,65 @@ public class CreateMenuFragment extends Fragment implements View.OnClickListener
         binding.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                binding.btnSave.setEnabled(false);
                 String name = Objects.requireNonNull(binding.nameTextField.getEditText()).getText().toString().trim();
                 String price = Objects.requireNonNull(binding.priceTextField.getEditText()).getText().toString().trim();
                 if(!name.isEmpty()){
                     if(!price.isEmpty()){
 
-                        Objects.requireNonNull(viewModel.getMenuItemLiveData().getValue()).setTitle(name);
-                        viewModel.getMenuItemLiveData().getValue().setPrice(Double.parseDouble(price));
-                        viewModel.getMenuItemLiveData().getValue().setCreated_at(Methods.getCurrentTimeStamp());
+                        HashMap<String, String> params = new HashMap<>();
+                        params.put("name", name);
+                        params.put("menu_category_id", viewModel.getMenuItemCategoryLiveData().getValue().getId()+"");
+                        params.put("price", price);
 
-                        AppDataBase.getInstance(requireContext()).menuItemDao().insert(
-                            viewModel.getMenuItemLiveData().getValue()
-                        );
+                        ProgressDialog dialog = new ProgressDialog(requireContext());
 
-                        NavHostFragment.findNavController(CreateMenuFragment.this)
-                            .navigate(R.id.action_createMenuFragment_to_listMenuFragment);
+                        new PostTask(requireContext(), ServerUrl.MENU_ITEM, params,
+                                new VolleyRequestCallback() {
+                                    @Override
+                                    public void onStart() {
+                                        dialog.setMessage(getString(R.string.processing_3_dots));
+                                        dialog.setCancelable(false);
+                                        dialog.show();
+                                    }
+
+                                    @Override
+                                    public void onSuccess(String response) {
+                                        dialog.dismiss();
+                                        DatumResponse datumResponse = new Gson().fromJson(response, DatumResponse.class);
+                                        if (datumResponse.success){
+                                            MenuItem menuItem = MenuItem.getFromObject(datumResponse.data);
+                                            Objects.requireNonNull(viewModel.getMenuItemLiveData().getValue()).setTitle(name);
+                                            viewModel.getMenuItemLiveData().getValue().setPrice(Double.parseDouble(price));
+                                            viewModel.getMenuItemLiveData().getValue().setCreated_at(Methods.getCurrentTimeStamp());
+
+                                            AppDataBase.getInstance(requireContext()).menuItemDao().insert(
+                                                    menuItem
+                                            );
+
+                                            NavHostFragment.findNavController(CreateMenuFragment.this)
+                                                    .navigate(R.id.action_createMenuFragment_to_listMenuFragment);
+                                        }
+                                        else {
+                                            Toast.makeText(requireContext(), R.string.menu_not_created, Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onError(VolleyError error) {
+                                        dialog.dismiss();
+                                        FirebaseCrashlytics.getInstance().recordException(
+                                                new RuntimeException(new String(error.networkResponse.data, StandardCharsets.UTF_8)));
+                                        Toast.makeText(requireContext(), getString(R.string.server_error),Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    @Override
+                                    public void onJobFinished() {
+                                        binding.btnSave.setEnabled(true);
+                                        dialog.dismiss();
+                                    }
+                                }).execute();
+
                     }
                     else {
                         Toast.makeText(requireContext(),R.string.menu_item_price_input_error, Toast.LENGTH_SHORT).show();

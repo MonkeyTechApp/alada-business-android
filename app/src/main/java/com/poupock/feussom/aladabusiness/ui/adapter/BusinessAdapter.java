@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
 import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.DialogCallback;
 import com.poupock.feussom.aladabusiness.callback.ListItemClickCallback;
@@ -58,6 +59,7 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.Busine
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, BusinessActivity.class);
+                intent.putExtra(BusinessActivity.ACTIVE_BUSINESS, new Gson().toJson(business));
                 context.startActivity(intent);
             }
         });

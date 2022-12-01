@@ -10,6 +10,7 @@ public class Constant {
     public static final int STATUS_CLOSED = 5;
     public static final int STATUS_SUCCESS= 4;
     public static final int STATUS_PAYMENT_PENDING= 3;
+    public static final String ACTIVE_BUSINESS_KEY = "ACTIVE_BUSINESS";
     public static String _Preference_name = "com.poupock.alada-business";
 }
 

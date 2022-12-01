@@ -33,6 +33,7 @@ public class DashboardActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.Theme_AlAdaBusiness);
         super.onCreate(savedInstanceState);
 
         binding = ActivityDashboardBinding.inflate(getLayoutInflater());

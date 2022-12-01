@@ -4,6 +4,8 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.google.gson.Gson;
+
 @Entity(tableName = "menu_item_categories")
 public class MenuItemCategory {
 
@@ -77,5 +79,10 @@ public class MenuItemCategory {
 
     public void setCreated_at(String created_at) {
         this.created_at = created_at;
+    }
+
+    public static MenuItemCategory getFromObject(Object data) {
+        Gson gson = new Gson();
+        return gson.fromJson(gson.toJson(data), MenuItemCategory.class);
     }
 }

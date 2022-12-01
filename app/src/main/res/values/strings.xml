@@ -102,7 +102,9 @@
     <string name="business_description">Business description (Optional)</string>
     <string name="business_category">Business category</string>
     <string name="basic_info">Basic info</string>
+    <string name="business_creation_basic_info">Business Creation - Basic info</string>
     <string name="business_details">Business Details</string>
+    <string name="business_creation_business_details">Business Creation - Business Details</string>
     <string name="business_detail_intro">Almost ok. Tell us more about your business and help us understand your needs.</string>
     <string name="question_number_floor">How many floors do you have?</string>
     <string name="question_sale_point">How many sale point do you have?</string>
@@ -219,6 +221,7 @@
     <string name="invalid_email">Invalid email address</string>
     <string name="invalid_identifier">Invalid identifier</string>
     <string name="connecting_3_dots">Connecting…</string>
+    <string name="processing_3_dots">Processing…</string>
     <string name="connection_successful">Connection successful!!</string>
     <string name="do_you_have_an_account_login">Do you have an account? Login</string>
     <string name="do_you_have_an_account">Do you have an account?</string>
@@ -239,4 +242,6 @@
     <string name="manage_table">Manage Tables</string>
     <string name="businss_created">Business created successfully!</string>
     <string name="credentials_do_not_match_records">Your credentials do not match our records.</string>
+    <string name="server_error">Server error</string>
+    <string name="menu_not_created">Menu not created.</string>
 </resources>

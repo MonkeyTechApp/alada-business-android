@@ -3,24 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph4"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/businessBasicFragment">
 
     <fragment
-        android:id="@+id/FirstFragment"
+        android:id="@+id/businessBasicFragment"
         android:name="com.poupock.feussom.aladabusiness.core.restaurant.BusinessBasicFragment"
-        android:label="@string/basic_info"
+        android:label="@string/business_creation_basic_info"
         tools:layout="@layout/fragment_business_basic">
         <action
-            android:id="@+id/action_FirstFragment_to_Second2Fragment"
-            app:destination="@id/Second2Fragment" />
+            android:id="@+id/action_businessBasicFragment_to_businessDetailFragment"
+            app:destination="@id/businessDetailFragment" />
     </fragment>
     <fragment
-        android:id="@+id/Second2Fragment"
+        android:id="@+id/businessDetailFragment"
         android:name="com.poupock.feussom.aladabusiness.core.restaurant.BusinessCreationDetailFragment"
-        android:label="@string/business_details"
+        android:label="@string/business_creation_business_details"
         tools:layout="@layout/fragment_business_creation_detail">
         <action
-            android:id="@+id/action_Second2Fragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_businessDetailFragment_to_businessBasicFragment"
+            app:destination="@id/businessBasicFragment" />
     </fragment>
 </navigation>

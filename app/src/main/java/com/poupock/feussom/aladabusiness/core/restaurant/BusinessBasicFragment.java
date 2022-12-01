@@ -70,7 +70,6 @@ public class BusinessBasicFragment extends Fragment implements View.OnClickListe
 
                 business.setCategory_id(i+1);
                 business.setCategory_name(categories[i]);
-
                 binding.btnCategory.setText(categories[i]);
 
             }
@@ -140,7 +139,7 @@ public class BusinessBasicFragment extends Fragment implements View.OnClickListe
                         business.setName(binding.nameTextField.getEditText().getText().toString().toLowerCase().trim());
                         viewModel.setBusinessMutableLiveData(business);
                         NavHostFragment.findNavController(BusinessBasicFragment.this)
-                            .navigate(R.id.action_FirstFragment_to_Second2Fragment);
+                            .navigate(R.id.action_businessBasicFragment_to_businessDetailFragment);
                     }
                 }else {
                     Toast.makeText(requireContext(), R.string.business_category_input_error, Toast.LENGTH_SHORT).show();

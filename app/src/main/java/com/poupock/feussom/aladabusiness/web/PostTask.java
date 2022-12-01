@@ -89,7 +89,7 @@ public class PostTask extends AsyncTask<Void, Void, Void> {
             }
         };
 
-        connectObjectRequest.setRetryPolicy(new DefaultRetryPolicy(5000,2,2));
+        connectObjectRequest.setRetryPolicy(new DefaultRetryPolicy(5000,1,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         SingleRequest.getInstance(context).addToRequestQueue(connectObjectRequest);
 
         return null;

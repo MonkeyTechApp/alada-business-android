@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.poupock.feussom.aladabusiness.util.Business;
 import com.poupock.feussom.aladabusiness.util.GuestTable;
 import com.poupock.feussom.aladabusiness.util.MenuItem;
 
@@ -11,6 +12,16 @@ public class GuestTableViewModel extends ViewModel {
 
     private final MutableLiveData<GuestTable> guessTableMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isEditMutableLiveData = new MutableLiveData<Boolean>();
+    private final MutableLiveData<Business> businessMutableLiveData = new MutableLiveData<>();
+
+    public LiveData<Business> getBusinessLiveData(){
+        return businessMutableLiveData;
+    }
+
+    public void setBusinessMutableLiveData(Business business){
+        this.businessMutableLiveData.setValue(business);
+    }
+
 
     public LiveData<GuestTable> getGuestTableLiveData(){
         return guessTableMutableLiveData;

@@ -5,6 +5,8 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.google.gson.Gson;
+
 @Entity(tableName = "businesses")
 public class Business {
     @PrimaryKey(autoGenerate = true)
@@ -213,5 +215,10 @@ public class Business {
 
     public void setCreated_at(String created_at) {
         this.created_at = created_at;
+    }
+
+    public static Business getFromObject(Object data) {
+        Gson gson = new Gson();
+        return gson.fromJson(gson.toJson(data), Business.class);
     }
 }

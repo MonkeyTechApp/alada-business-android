@@ -61,6 +61,7 @@ public class BusinessCreationDetailFragment extends Fragment implements View.OnC
     private BusinessCreationViewModel viewModel;
     AlertDialog dialog;
     ActivityResultLauncher<String[]> locationPermissionRequest;
+    private String tag = BusinessCreationDetailFragment.class.getSimpleName();
 
     @Override
     public View onCreateView(
@@ -133,24 +134,25 @@ public class BusinessCreationDetailFragment extends Fragment implements View.OnC
                             business.setCreated_at(sdf.format(new Date()));
                             viewModel.setBusinessMutableLiveData(business);
                             List<String> phones = new ArrayList<>();
-                            phones.add(binding.phoneTextField.getEditText().toString().trim());
-                            phones.add(Objects.requireNonNull(binding.phone2TextField.getEditText()).toString().trim());
+                            phones.add(binding.phoneTextField.getEditText().getText().toString().trim());
+                            phones.add(Objects.requireNonNull(binding.phone2TextField.getEditText().getText()).toString().trim());
                             HashMap<String, String> params = new HashMap<>();
                             params.put("name", business.getName());
                             params.put("description", business.getDescription());
                             params.put("longitude", business.getLongitude()+"");
                             params.put("latitude", business.getLatitude()+"");
-                            params.put("business_type_id", "1");
+                            params.put("business_type_id", business.getCategory_id()+"");
                             params.put("location", business.getLocation());
                             params.put("phone_numbers", new Gson().toJson(phones));
                             params.put("zone_id", "1");
+                            Log.i(tag, "The params are : "+params.toString());
                             ProgressDialog dialog = new ProgressDialog(requireContext());
 
                             new PostTask(requireContext(), ServerUrl.BUSINESS_URL, params,
                                 new VolleyRequestCallback() {
                                     @Override
                                     public void onStart() {
-                                        dialog.setMessage(getString(R.string.connecting_3_dots));
+                                        dialog.setMessage(getString(R.string.processing_3_dots));
                                         dialog.setCancelable(true);
                                         dialog.show();
                                     }
@@ -158,8 +160,8 @@ public class BusinessCreationDetailFragment extends Fragment implements View.OnC
                                     @Override
                                     public void onSuccess(String response) {
                                         Gson gson = new Gson();
-
-                                        AppDataBase.getInstance(requireContext()).businessDao().insert(business);
+                                        DatumResponse datumResponse = gson.fromJson(response, DatumResponse.class);
+                                        AppDataBase.getInstance(requireContext()).businessDao().insert(Business.getFromObject(datumResponse.data));
 
                                         Toast.makeText(requireContext(), R.string.businss_created, Toast.LENGTH_SHORT).show();
                                         Intent intent = new Intent(requireContext(), DashboardActivity.class);
@@ -178,7 +180,6 @@ public class BusinessCreationDetailFragment extends Fragment implements View.OnC
                                         dialog.dismiss();
                                     }
                                 }).execute();
-//                            startActivity(new Intent(requireContext(), HomeActivity.class));
                         } else {
                             Toast.makeText(requireContext(), R.string.business_sale_point_error_input, Toast.LENGTH_SHORT).show();
                         }
