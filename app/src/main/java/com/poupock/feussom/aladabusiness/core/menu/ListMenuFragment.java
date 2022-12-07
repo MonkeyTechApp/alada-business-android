@@ -84,7 +84,9 @@ public class ListMenuFragment extends Fragment implements View.OnClickListener {
             new ListItemClickCallback() {
                 @Override
                 public void onItemClickListener(Object o, boolean isLong) {
-
+                    MenuItem menuItem =
+                            gson.fromJson(gson.toJson(o),MenuItem.class);
+                    menuItem.setMenuItemCategory(AppDataBase.getInstance(requireContext()).menuItemCategoryDao().getSpecificMenuItemCategory(menuItem.getMenu_item_category_id()));
                     if(!isLong){
                         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
                         builder.setTitle(R.string.menu_actions)
@@ -92,7 +94,14 @@ public class ListMenuFragment extends Fragment implements View.OnClickListener {
                             .setItems(R.array.action_array, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int which) {
+                                    if(which == 1){
+                                        viewModel.setSelectedMenuItemMutableLiveData(menuItem);
+                                        NavHostFragment.findNavController(ListMenuFragment.this)
+                                                .navigate(R.id.action_listMenuFragment_to_CreateMenuFragment);
+                                    }
+                                    else if(which == 2){
 
+                                    }
                                 }
                             }).create().show();
                     }

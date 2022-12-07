@@ -29,7 +29,9 @@ import com.poupock.feussom.aladabusiness.databinding.FragmentListCategoryMenuBin
 import com.poupock.feussom.aladabusiness.util.Business;
 import com.poupock.feussom.aladabusiness.util.MenuItemCategory;
 import com.poupock.feussom.aladabusiness.util.Methods;
+import com.poupock.feussom.aladabusiness.util.User;
 import com.poupock.feussom.aladabusiness.web.PostTask;
+import com.poupock.feussom.aladabusiness.web.PutTask;
 import com.poupock.feussom.aladabusiness.web.ServerUrl;
 import com.poupock.feussom.aladabusiness.web.response.DatumResponse;
 
@@ -139,31 +141,68 @@ public class CreateMenuCategoryFragment extends Fragment implements View.OnClick
                     params.put("name", menuItemCategory.getName());
                     params.put("business_id", viewModel.getBusinessLiveData().getValue().getId()+"");
                     ProgressDialog dialog = new ProgressDialog(requireContext());
+                    if(viewModel.getSelectedCategoryLiveData().getValue()!=null) {
+                        new PutTask(requireContext(), ServerUrl.MENU_CATEGORY+"/"+viewModel.getSelectedCategoryLiveData().getValue().getId(), params,
+                                new VolleyRequestCallback() {
+                                    @Override
+                                    public void onStart() {
+                                        dialog.setMessage(getString(R.string.processing_3_dots));
+                                        dialog.setCancelable(false);
+                                        dialog.show();
+                                    }
 
-                    new PostTask(requireContext(), ServerUrl.MENU_CATEGORY, params,
-                            new VolleyRequestCallback() {
-                                @Override
-                                public void onStart() {
-                                    dialog.setMessage(getString(R.string.processing_3_dots));
-                                    dialog.setCancelable(false);
-                                    dialog.show();
-                                }
-
-                                @Override
-                                public void onSuccess(String response) {
-                                    dialog.dismiss();
-                                    DatumResponse datumResponse = new Gson().fromJson(response, DatumResponse.class);
-                                    if (datumResponse.success){
-                                        MenuItemCategory category = MenuItemCategory.getFromObject(datumResponse.data);
-                                        if(viewModel.getSelectedCategoryLiveData().getValue()!=null) {
-                                            if(AppDataBase.getInstance(requireContext()).menuItemCategoryDao().update(category)<=0) {
+                                    @Override
+                                    public void onSuccess(String response) {
+                                        dialog.dismiss();
+                                        DatumResponse datumResponse = new Gson().fromJson(response, DatumResponse.class);
+                                        if (datumResponse.success){
+                                            MenuItemCategory category = MenuItemCategory.getFromObject(datumResponse.data);
+                                            menuItemCategory.setId(category.getId());
+                                            menuItemCategory.setUser_id(User.currentUser(requireContext()).getId());
+                                            if(AppDataBase.getInstance(requireContext()).menuItemCategoryDao().update(menuItemCategory)<=0) {
                                                 Toast.makeText(requireContext(), getString(R.string.menu_category_not_updated),Toast.LENGTH_SHORT).show();
+                                            }else {
+                                                Toast.makeText(requireContext(), getString(R.string.menu_category_updated),Toast.LENGTH_SHORT).show();
                                                 NavHostFragment.findNavController(CreateMenuCategoryFragment.this)
                                                         .navigate(R.id.action_createCategoryMenuFragment_to_listMenuFragment);
                                             }
-                                            else Toast.makeText(requireContext(), getString(R.string.menu_category_updated),Toast.LENGTH_SHORT).show();
                                         }
-                                        else {
+                                        else Toast.makeText(requireContext(), getString(R.string.menu_category_not_updated),Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    @Override
+                                    public void onError(VolleyError error) {
+                                        dialog.dismiss();
+                                        FirebaseCrashlytics.getInstance().recordException(
+                                                new RuntimeException(new String(error.networkResponse.data, StandardCharsets.UTF_8)));
+                                        Toast.makeText(requireContext(), getString(R.string.server_error),Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    @Override
+                                    public void onJobFinished() {
+                                        dialog.dismiss();
+                                        binding.btnSave.setEnabled(true);
+                                    }
+                                }).execute();
+                    }
+                    else {
+                        new PostTask(requireContext(), ServerUrl.MENU_CATEGORY, params,
+                                new VolleyRequestCallback() {
+                                    @Override
+                                    public void onStart() {
+                                        dialog.setMessage(getString(R.string.processing_3_dots));
+                                        dialog.setCancelable(false);
+                                        dialog.show();
+                                    }
+
+                                    @Override
+                                    public void onSuccess(String response) {
+                                        dialog.dismiss();
+                                        DatumResponse datumResponse = new Gson().fromJson(response, DatumResponse.class);
+                                        if (datumResponse.success){
+                                            MenuItemCategory category = MenuItemCategory.getFromObject(datumResponse.data);
+                                            category.setUser_id(User.currentUser(requireContext()).getId());
+
                                             if(AppDataBase.getInstance(requireContext()).menuItemCategoryDao().insert(category)>0){
                                                 Toast.makeText(requireContext(), getString(R.string.menu_category_inserted),Toast.LENGTH_SHORT).show();
                                                 NavHostFragment.findNavController(CreateMenuCategoryFragment.this)
@@ -171,37 +210,40 @@ public class CreateMenuCategoryFragment extends Fragment implements View.OnClick
                                             }else{
                                                 Toast.makeText(requireContext(), getString(R.string.menu_category_not_inserted),Toast.LENGTH_SHORT).show();
                                             }
+
+                                        }
+                                        else {
+                                            Toast.makeText(requireContext(), R.string.menu_not_created, Toast.LENGTH_SHORT).show();
                                         }
                                     }
-                                    else {
-                                        Toast.makeText(requireContext(), R.string.menu_not_created, Toast.LENGTH_SHORT).show();
+
+                                    @Override
+                                    public void onError(VolleyError error) {
+                                        dialog.dismiss();
+                                        FirebaseCrashlytics.getInstance().recordException(
+                                                new RuntimeException(new String(error.networkResponse.data, StandardCharsets.UTF_8)));
+                                        Toast.makeText(requireContext(), getString(R.string.server_error),Toast.LENGTH_SHORT).show();
                                     }
-                                }
 
-                                @Override
-                                public void onError(VolleyError error) {
-                                    dialog.dismiss();
-                                    FirebaseCrashlytics.getInstance().recordException(
-                                            new RuntimeException(new String(error.networkResponse.data, StandardCharsets.UTF_8)));
-                                    Toast.makeText(requireContext(), getString(R.string.server_error),Toast.LENGTH_SHORT).show();
-                                }
-
-                                @Override
-                                public void onJobFinished() {
-                                    binding.btnSave.setEnabled(true);
-                                    dialog.dismiss();
-                                }
-                            }).execute();
+                                    @Override
+                                    public void onJobFinished() {
+                                        binding.btnSave.setEnabled(true);
+                                        dialog.dismiss();
+                                    }
+                                }).execute();
+                    }
 
 
                 }else {
                     binding.nameTextField.setError(getString(R.string.category_name_already_exist));
                     binding.nameTextField.setErrorEnabled(true);
+                    binding.btnSave.setEnabled(true);
                 }
             }
             else {
                 binding.nameTextField.setError(getString(R.string.category_name_input_error));
                 binding.nameTextField.setErrorEnabled(true);
+                binding.btnSave.setEnabled(true);
             }
         }
     }

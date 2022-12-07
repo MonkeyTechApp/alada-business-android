@@ -11,6 +11,7 @@ import com.poupock.feussom.aladabusiness.util.MenuItemCategory;
 public class MenuCreationViewModel extends ViewModel {
 
     private final MutableLiveData<MenuItem> menuItemMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<MenuItem> selectedMenuItemMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<MenuItemCategory> menuItemCategoryMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<MenuItemCategory> selectedCategoryMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<Business> businessMutableLiveData = new MutableLiveData<>();
@@ -36,6 +37,11 @@ public class MenuCreationViewModel extends ViewModel {
         return menuItemMutableLiveData;
     }
 
+    public LiveData<MenuItem> getSelectedMenuItemLiveData(){
+//        if(selectedMenuItemMutableLiveData.getValue() == null) selectedMenuItemMutableLiveData.setValue(new MenuItem());
+        return selectedMenuItemMutableLiveData;
+    }
+
     public void setMenuItemCategoryMutableLiveData(MenuItemCategory menuItemCategory){
         this.menuItemCategoryMutableLiveData.setValue(menuItemCategory);
     }
@@ -46,5 +52,9 @@ public class MenuCreationViewModel extends ViewModel {
 
     public void setMenuItemMutableLiveData(MenuItem menuItem){
         this.menuItemMutableLiveData.setValue(menuItem);
+    }
+
+    public void setSelectedMenuItemMutableLiveData(MenuItem menuItem){
+        this.selectedMenuItemMutableLiveData.setValue(menuItem);
     }
 }
