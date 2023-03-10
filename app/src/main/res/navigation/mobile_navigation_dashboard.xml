@@ -9,7 +9,11 @@
         android:id="@+id/nav_home"
         android:name="com.poupock.feussom.aladabusiness.core.dashboard.ui.home.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_nav_home_to_nav_orders"
+            app:destination="@id/nav_orders" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_user"
@@ -21,7 +25,36 @@
         android:id="@+id/nav_menu"
         android:name="com.poupock.feussom.aladabusiness.core.menu.ListMenuFragment"
         android:label="@string/menu_management"
-        tools:layout="@layout/fragment_list_menu" />
+        tools:layout="@layout/fragment_list_menu" >
+        <action
+            android:id="@+id/action_nav_menu_to_createCategoryFragment"
+            app:destination="@id/createCategoryFragment" />
+        <action
+            android:id="@+id/action_nav_menu_to_createMenuFragment"
+            app:destination="@id/createMenuFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/createMenuFragment"
+        android:name="com.poupock.feussom.aladabusiness.core.menu.CreateMenuFragment"
+        android:label="@string/create_a_menu"
+        tools:layout="@layout/fragment_create_menu">
+        <action
+            android:id="@+id/action_createMenuFragment_to_nav_menu"
+            app:destination="@id/nav_menu" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/createCategoryFragment"
+        android:name="com.poupock.feussom.aladabusiness.core.menu.CreateMenuCategoryFragment"
+        android:label="@string/create_a_men_cat"
+        tools:layout="@layout/fragment_create_menu_category">
+        <action
+            android:id="@+id/action_createCategoryFragment_to_nav_menu"
+            app:destination="@id/nav_menu" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_table"

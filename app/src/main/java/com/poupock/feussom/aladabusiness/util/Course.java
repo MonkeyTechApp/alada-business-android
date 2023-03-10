@@ -5,6 +5,9 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity(tableName = "courses")
@@ -155,5 +158,20 @@ public class Course {
 
     public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
+    }
+
+    public static List<Course> buildListFromObjects(List<Object> data) {
+        List<Course> values = new ArrayList<>();
+        if (data != null){
+            for (int i=0 ; i<data.size(); i++){
+                values.add(getObjectFromObject(data.get(i)));
+            }
+        }
+        return values;
+    }
+
+    public static Course getObjectFromObject(Object data) {
+        Gson gson = new Gson();
+        return gson.fromJson(gson.toJson(data), Course.class);
     }
 }

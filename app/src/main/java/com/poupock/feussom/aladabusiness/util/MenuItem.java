@@ -169,4 +169,14 @@ public class MenuItem {
         Gson gson = new Gson();
         return gson.fromJson(gson.toJson(data), MenuItem.class);
     }
+
+    public static List<MenuItem> buildListFromObjects(List<Object> data) {
+        List<MenuItem> values = new ArrayList<>();
+        if (data != null){
+            for (int i=0 ; i<data.size(); i++){
+                values.add(getFromObject(data.get(i)));
+            }
+        }
+        return values;
+    }
 }

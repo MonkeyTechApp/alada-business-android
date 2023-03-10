@@ -24,6 +24,8 @@ public class UsersActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        setTheme(R.style.Theme_AlAdaBusiness);
         super.onCreate(savedInstanceState);
 
         binding = ActivityUsersBinding.inflate(getLayoutInflater());
@@ -35,13 +37,6 @@ public class UsersActivity extends AppCompatActivity {
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
     }
 
     @Override

@@ -32,7 +32,7 @@ public class PutTask extends AsyncTask<Void, Void, Void> {
     private String tag = PutTask.class.getSimpleName();
     VolleyRequestCallback callback;
 
-    public PutTask(Context context, String url, HashMap<String, String> params, VolleyRequestCallback callback){
+    public  PutTask(Context context, String url, HashMap<String, String> params, VolleyRequestCallback callback){
         this.context = context;
         this.url = url;
         this.params = params;

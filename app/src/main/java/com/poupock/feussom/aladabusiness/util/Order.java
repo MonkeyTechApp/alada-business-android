@@ -5,6 +5,9 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity(tableName = "orders")
@@ -162,5 +165,20 @@ public class Order {
             }
         }
         return total;
+    }
+
+    public static List<Order> buildListFromObjects(List<Object> data) {
+        List<Order> values = new ArrayList<>();
+        if (data != null){
+            for (int i=0 ; i<data.size(); i++){
+                values.add(getObjectFromObject(data.get(i)));
+            }
+        }
+        return values;
+    }
+
+    public static Order getObjectFromObject(Object data) {
+        Gson gson = new Gson();
+        return gson.fromJson(gson.toJson(data), Order.class);
     }
 }

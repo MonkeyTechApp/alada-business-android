@@ -126,7 +126,7 @@ public class User {
         return preferences.getString(USER_TOKEN,null);
     }
 
-    public static User currentUser(Context context) {
+    public static User  currentUser(Context context) {
         User user = null;
         SharedPreferences preferences = context.getSharedPreferences(Constant._Preference_name,Context.MODE_PRIVATE);
         String userStoredString = preferences.getString(CONNECTED_USER,null);
@@ -260,5 +260,20 @@ public class User {
         editor.putString(USER_FCM,token);
         editor.apply();
         return editor.commit();
+    }
+
+    public static List<User> buildListFromObjects(List<Object> data) {
+        List<User> values = new ArrayList<>();
+        if (data != null){
+            for (int i=0 ; i<data.size(); i++){
+                values.add(getObjectFromObject(data.get(i)));
+            }
+        }
+        return values;
+    }
+
+    public static User getObjectFromObject(Object data) {
+        Gson gson = new Gson();
+        return gson.fromJson(gson.toJson(data), User.class);
     }
 }

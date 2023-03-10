@@ -6,6 +6,9 @@ import androidx.room.PrimaryKey;
 
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity(tableName = "guest_tables")
 public class GuestTable {
     @PrimaryKey(autoGenerate = true)
@@ -117,4 +120,15 @@ public class GuestTable {
         Gson gson = new Gson();
         return gson.fromJson(gson.toJson(data), GuestTable.class);
     }
+
+    public static List<GuestTable> buildListFromObjects(List<Object> data) {
+        List<GuestTable> values = new ArrayList<>();
+        if (data != null){
+            for (int i=0 ; i<data.size(); i++){
+                values.add(getFromObject(data.get(i)));
+            }
+        }
+        return values;
+    }
+
 }

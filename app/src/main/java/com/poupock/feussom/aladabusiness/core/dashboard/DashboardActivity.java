@@ -61,7 +61,7 @@ public class DashboardActivity extends AppCompatActivity {
         User currentUser = User.currentUser(this);
 
         if (currentUser.getBusinesses().size() > 0){
-            txtRole.setText(currentUser.getRoles().get(0).getName());
+//            txtRole.setText(currentUser.getRoles().get(0).getName());
             txtRole.setVisibility(View.VISIBLE);
         }
         else {

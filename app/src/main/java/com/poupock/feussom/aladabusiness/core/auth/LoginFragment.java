@@ -94,6 +94,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                                         if (connection.success){
                                             User.storeConnectedUser(connection.data, requireContext());
                                             User.storeToken(connection.access_token, requireContext());
+                                            if (connection.data.getBusinesses() != null){
+                                                AppDataBase dataBase = AppDataBase.getInstance(requireContext());
+                                                for (int i = 0 ; i < connection.data.getBusinesses().size(); i++){
+                                                    dataBase.businessDao().insert(connection.data.getBusinesses().get(i));
+                                                }
+                                            }
 
                                             Toast.makeText(requireContext(), R.string.connection_successful, Toast.LENGTH_SHORT).show();
                                             Intent intent = new Intent(requireContext(), DashboardActivity.class);

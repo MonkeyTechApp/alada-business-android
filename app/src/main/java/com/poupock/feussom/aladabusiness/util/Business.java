@@ -7,6 +7,11 @@ import androidx.room.PrimaryKey;
 
 import com.google.gson.Gson;
 
+import org.intellij.lang.annotations.Identifier;
+
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity(tableName = "businesses")
 public class Business {
     @PrimaryKey(autoGenerate = true)
@@ -30,6 +35,10 @@ public class Business {
     private String created_at;
     @ColumnInfo(defaultValue = "1")
     private int salePointCount;
+    @Ignore List<MenuItemCategory> menu_categories;
+    @Ignore List<GuestTable> tables;
+    @Ignore List<Order> orders;
+    @Ignore List<User> users;
 
     public Business(int id, String name, int category_id, String category_name, String owner_name, String owner_phone, String location,
                     double longitude, double latitude, String imageUrl, String imageLocalUrl, int zone_id,
@@ -221,4 +230,47 @@ public class Business {
         Gson gson = new Gson();
         return gson.fromJson(gson.toJson(data), Business.class);
     }
+
+    public List<MenuItemCategory> getMenuItemCategories() {
+        return menu_categories   ;
+    }
+
+    public void setMenuItemCategories(List<MenuItemCategory> menu_categories) {
+        this.menu_categories = menu_categories;
+    }
+
+    public List<GuestTable> getTables() {
+        return tables;
+    }
+
+    public void setTables(List<GuestTable> tables) {
+        this.tables = tables;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
+
+    public static List<Business> buildListFromObjects(List<Object> data) {
+        List<Business> values = new ArrayList<>();
+        if (data != null){
+            for (int i=0 ; i<data.size(); i++){
+                values.add(getFromObject(data.get(i)));
+            }
+        }
+        return values;
+    }
+
 }

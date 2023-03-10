@@ -77,7 +77,10 @@ public class CreateMenuFragment extends Fragment implements View.OnClickListener
 
         viewModel.getMenuItemCategoryLiveData().observe(requireActivity(), item -> {
             Log.i(TAG, "The menu item category variable has been updated!");
-            binding.btnCategory.setText(Objects.requireNonNull(viewModel.getMenuItemCategoryLiveData().getValue()).getName());
+            if (isResumed()){
+                binding.btnCategory.setText(Objects.requireNonNull(viewModel.getMenuItemCategoryLiveData().getValue()).getName());
+            }
+
         });
 
         if(viewModel.getSelectedMenuItemLiveData().getValue() != null) {

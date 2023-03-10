@@ -14,6 +14,7 @@
 
         <TextView
             android:id="@+id/intro"
+            style="@style/fontRegular"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/user_creation_intro"
@@ -70,7 +71,6 @@
                 android:layout_height="wrap_content"
                 android:maxLines="2"
                 android:gravity="top|start"
-                android:textColor="@color/black"
                 style="@style/fontRegular"
                 />
         </com.google.android.material.textfield.TextInputLayout>
@@ -93,7 +93,6 @@
                 android:layout_height="wrap_content"
                 android:maxLines="2"
                 android:gravity="top|start"
-                android:textColor="@color/black"
                 style="@style/fontRegular"
                 />
         </com.google.android.material.textfield.TextInputLayout>
@@ -116,7 +115,6 @@
                 android:layout_height="wrap_content"
                 android:maxLines="2"
                 android:gravity="top|start"
-                android:textColor="@color/black"
                 style="@style/fontRegular"
                 />
         </com.google.android.material.textfield.TextInputLayout>

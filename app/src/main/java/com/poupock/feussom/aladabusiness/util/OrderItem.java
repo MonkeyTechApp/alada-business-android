@@ -4,6 +4,11 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity(tableName = "order_items")
 public class OrderItem {
     @PrimaryKey(autoGenerate = true)
@@ -110,5 +115,20 @@ public class OrderItem {
 
     public void setMenuItem(MenuItem menuItem) {
         this.menuItem = menuItem;
+    }
+
+    public static List<OrderItem> buildListFromObjects(List<Object> data) {
+        List<OrderItem> values = new ArrayList<>();
+        if (data != null){
+            for (int i=0 ; i<data.size(); i++){
+                values.add(getObjectFromObject(data.get(i)));
+            }
+        }
+        return values;
+    }
+
+    public static OrderItem getObjectFromObject(Object data) {
+        Gson gson = new Gson();
+        return gson.fromJson(gson.toJson(data), OrderItem.class);
     }
 }

@@ -63,4 +63,10 @@
         <item>Edit</item>
         <item>Delete</item>
     </string-array>
+    <string-array name="role_array">
+        <item>Owner</item>
+        <item>Manager</item>
+        <item>Waiter</item>
+        <item>Counter</item>
+    </string-array>
 </resources>

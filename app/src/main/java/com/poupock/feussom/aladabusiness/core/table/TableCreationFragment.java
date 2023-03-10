@@ -28,11 +28,13 @@ import com.poupock.feussom.aladabusiness.util.GuestTable;
 import com.poupock.feussom.aladabusiness.util.MenuItem;
 import com.poupock.feussom.aladabusiness.util.Methods;
 import com.poupock.feussom.aladabusiness.web.PostTask;
+import com.poupock.feussom.aladabusiness.web.PutTask;
 import com.poupock.feussom.aladabusiness.web.ServerUrl;
 import com.poupock.feussom.aladabusiness.web.response.DatumResponse;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Objects;
 
 import static com.poupock.feussom.aladabusiness.util.Methods.createTextWatcher;
@@ -73,20 +75,20 @@ public class TableCreationFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 binding.btnCreate.setEnabled(false);
-                String name = Objects.requireNonNull(binding.nameTextField.getEditText()).getText().toString().trim();
+                String name = Objects.requireNonNull(binding.nameTextField.getEditText()).getText().toString().trim().toLowerCase();
                 try {
                     int capacity = Integer.parseInt(Objects.requireNonNull(binding.capacityTextField.getEditText()).getText().toString().trim());
                     if(capacity > 0){
                         if(name.length() > 0){
-                            if(AppDataBase.getInstance(requireContext()).guestTableDao().getSpecificGuestTable(name) == null){
-                                HashMap<String, String> params = new HashMap<>();
-                                params.put("name", name);
-                                params.put("capacity", capacity+"");
-                                params.put("business_id", viewModel.getBusinessLiveData().getValue().getId()+"");
+                            HashMap<String, String> params = new HashMap<>();
+                            params.put("name", name);
+                            params.put("capacity", capacity+"");
+                            params.put("business_id", viewModel.getBusinessLiveData().getValue().getId()+"");
 
-                                ProgressDialog dialog = new ProgressDialog(requireContext());
-
-                                new PostTask(requireContext(), ServerUrl.GUEST_TABLE, params,
+                            ProgressDialog dialog = new ProgressDialog(requireContext());
+                            if (viewModel.getGuestTableLiveData().getValue() != null){
+                                new PutTask(requireContext(), ServerUrl.GUEST_TABLE+"/"+
+                                        viewModel.getGuestTableLiveData().getValue().getId(), params,
                                         new VolleyRequestCallback() {
                                             @Override
                                             public void onStart() {
@@ -102,7 +104,6 @@ public class TableCreationFragment extends Fragment {
                                                 if (datumResponse.success){
                                                     GuestTable guestTable = GuestTable.getFromObject(datumResponse.data);
                                                     if(viewModel.getIsEditLiveData().getValue()){
-
 //                                                        GuestTable guestTable = viewModel.getGuestTableLiveData().getValue();
                                                         if (guestTable != null) {
                                                             guestTable.setTitle(name);
@@ -144,24 +145,79 @@ public class TableCreationFragment extends Fragment {
                                                 dialog.dismiss();
                                             }
                                         }).execute();
-
                             }
                             else {
-                                binding.nameTextField.setErrorEnabled(true);
-                                binding.nameTextField.setError(getString(R.string.table_name_already_exist));
+                                if(AppDataBase.getInstance(requireContext()).guestTableDao().getSpecificGuestTable(name) == null){
+                                    new PostTask(requireContext(), ServerUrl.GUEST_TABLE, params,
+                                            new VolleyRequestCallback() {
+                                                @Override
+                                                public void onStart() {
+                                                    dialog.setMessage(getString(R.string.processing_3_dots));
+                                                    dialog.setCancelable(false);
+                                                    dialog.show();
+                                                }
+
+                                                @Override
+                                                public void onSuccess(String response) {
+                                                    dialog.dismiss();
+                                                    DatumResponse datumResponse = new Gson().fromJson(response, DatumResponse.class);
+                                                    if (datumResponse.success){
+                                                        GuestTable guestTable = GuestTable.getFromObject(datumResponse.data);
+                                                        if(viewModel.getIsEditLiveData().getValue()){
+                                                            if (guestTable != null) {
+                                                                guestTable.setTitle(name);
+                                                                guestTable.setCapacity(capacity);
+
+                                                                AppDataBase.getInstance(requireContext()).guestTableDao().update(guestTable);
+                                                                Toast.makeText(requireContext(), R.string.table_updated, Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }else {
+                                                            guestTable.setTitle(name);
+                                                            guestTable.setCapacity(capacity);
+                                                            guestTable.setCreated_at(Methods.getCurrentTimeStamp());
+
+                                                            AppDataBase.getInstance(requireContext()).guestTableDao().insert(guestTable);
+                                                            Toast.makeText(requireContext(), R.string.table_created, Toast.LENGTH_SHORT).show();
+                                                        }
+                                                        NavHostFragment.findNavController(TableCreationFragment.this)
+                                                                .navigate(R.id.action_TableCreationFragment_to_TableListFragment);
+                                                    }
+                                                    else {
+                                                        Toast.makeText(requireContext(), R.string.menu_not_created, Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onError(VolleyError error) {
+                                                    dialog.dismiss();
+                                                    FirebaseCrashlytics.getInstance().recordException(
+                                                            new RuntimeException(new String(error.networkResponse.data, StandardCharsets.UTF_8)));
+                                                    Toast.makeText(requireContext(), getString(R.string.server_error),Toast.LENGTH_SHORT).show();
+                                                }
+
+                                                @Override
+                                                public void onJobFinished() {
+                                                    binding.btnCreate.setEnabled(true);
+                                                    dialog.dismiss();
+                                                }
+                                            }).execute();
+                                }
+                                else {
+                                    binding.nameTextField.setErrorEnabled(true);
+                                    binding.nameTextField.setError(getString(R.string.table_name_already_exist));
+                                    binding.btnCreate.setEnabled(true);
+                                }
                             }
                         }
                     }
                     else {
                         binding.capacityTextField.setErrorEnabled(true);
                         binding.capacityTextField.setError(getString(R.string.table_capacity_input_error));
-
                     }
                 }catch (NumberFormatException ex){
                     Toast.makeText(requireContext(),R.string.table_capacity_input_error, Toast.LENGTH_SHORT).show();
                     binding.capacityTextField.setErrorEnabled(true);
                     binding.capacityTextField.setError(getString(R.string.table_capacity_input_error));
-
                 }
 
             }

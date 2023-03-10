@@ -11,6 +11,7 @@ import com.poupock.feussom.aladabusiness.util.MenuItem;
 public class GuestTableViewModel extends ViewModel {
 
     private final MutableLiveData<GuestTable> guessTableMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<GuestTable> selectedGuestTableMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isEditMutableLiveData = new MutableLiveData<Boolean>();
     private final MutableLiveData<Business> businessMutableLiveData = new MutableLiveData<>();
 
@@ -26,6 +27,10 @@ public class GuestTableViewModel extends ViewModel {
     public LiveData<GuestTable> getGuestTableLiveData(){
         return guessTableMutableLiveData;
     }
+    public LiveData<GuestTable> getSelectedGuestTableLiveData(){
+        return selectedGuestTableMutableLiveData;
+    }
+
     public LiveData<Boolean> getIsEditLiveData(){
         if(isEditMutableLiveData.getValue() == null)isEditMutableLiveData.setValue(false);
         return isEditMutableLiveData;
@@ -33,6 +38,10 @@ public class GuestTableViewModel extends ViewModel {
 
     public void setGuestTableMutableLiveData(GuestTable guestTable){
         this.guessTableMutableLiveData.setValue(guestTable);
+    }
+
+    public void setSelectedGuestTableMutableLiveData(GuestTable guestTable){
+        this.selectedGuestTableMutableLiveData.setValue(guestTable);
     }
 
     public void setIsEditMutableLiveData(boolean isEdit){

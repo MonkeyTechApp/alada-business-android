@@ -4,6 +4,11 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity(tableName = "internal_points")
 public class InternalPoint {
     @PrimaryKey(autoGenerate = true)
@@ -76,5 +81,20 @@ public class InternalPoint {
 
     public void setCreated_at(String created_at) {
         this.created_at = created_at;
+    }
+
+    public static List<InternalPoint> buildListFromObjects(List<Object> data) {
+        List<InternalPoint> values = new ArrayList<>();
+        if (data != null){
+            for (int i=0 ; i<data.size(); i++){
+                values.add(getObjectFromObject(data.get(i)));
+            }
+        }
+        return values;
+    }
+
+    public static InternalPoint getObjectFromObject(Object data) {
+        Gson gson = new Gson();
+        return gson.fromJson(gson.toJson(data), InternalPoint.class);
     }
 }

@@ -4,6 +4,9 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity(tableName = "roles")
@@ -69,5 +72,20 @@ public class Role {
 
     public void setCreated_at(String created_at) {
         this.created_at = created_at;
+    }
+
+    public static List<Role> buildListFromObjects(List<Object> data) {
+        List<Role> values = new ArrayList<>();
+        if (data != null){
+            for (int i=0 ; i<data.size(); i++){
+                values.add(getObjectFromObject(data.get(i)));
+            }
+        }
+        return values;
+    }
+
+    public static Role getObjectFromObject(Object data) {
+        Gson gson = new Gson();
+        return gson.fromJson(gson.toJson(data), Role.class);
     }
 }

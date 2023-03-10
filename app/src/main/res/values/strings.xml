@@ -244,4 +244,9 @@
     <string name="credentials_do_not_match_records">Your credentials do not match our records.</string>
     <string name="server_error">Server error</string>
     <string name="menu_not_created">Menu not created.</string>
+    <string name="create_a_personnel">Create a personnel</string>
+    <string name="list_of_personnel">List of personnel</string>
+    <string name="provide_info">Provide information</string>
+    <string name="user_inserted">User inserted!</string>
+    <string name="user_not_inserted">User not inserted!</string>
 </resources>

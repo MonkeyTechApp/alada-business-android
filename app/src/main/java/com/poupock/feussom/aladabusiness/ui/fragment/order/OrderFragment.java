@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.DialogCallback;
@@ -331,35 +332,40 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         }
         else if(binding.btnAddCourse == view){
             Log.i(TAG,"Button add course clicked");
-            Order order = Objects.requireNonNull(orderViewModel.getOrderMutableLiveData().getValue());
-            GuestTable guestTable = Objects.requireNonNull(orderViewModel.getGuestTableMutableLiveData().getValue());
-            Course course = new Course();
-            course.setTitle("TITLE");
-            course.setOrder_id(order.getId());
-            course.setGuest_table_id(guestTable.getId());
-            course.setCreated_at(Methods.getCurrentTimeStamp());
-            course.setStatus(Constant.STATUS_OPEN);
+            if (orderViewModel.getOrderMutableLiveData().getValue()!=null){
+                Order order = Objects.requireNonNull(orderViewModel.getOrderMutableLiveData().getValue());
+                GuestTable guestTable = Objects.requireNonNull(orderViewModel.getGuestTableMutableLiveData().getValue());
+                Course course = new Course();
+                course.setTitle("TITLE");
+                course.setOrder_id(order.getId());
+                course.setGuest_table_id(guestTable.getId());
+                course.setCreated_at(Methods.getCurrentTimeStamp());
+                course.setStatus(Constant.STATUS_OPEN);
 
-            if(order.getCourseList() != null) {
-                Log.i(TAG,"Course list not null");
-                for (int i=0; i< order.getCourseList().size(); i++){
-                    order.getCourseList().get(i).setStatus(Constant.STATUS_CLOSED);
+                if(order.getCourseList() != null) {
+                    Log.i(TAG,"Course list not null");
+                    for (int i=0; i< order.getCourseList().size(); i++){
+                        order.getCourseList().get(i).setStatus(Constant.STATUS_CLOSED);
+                    }
+                    order.getCourseList().add(course);
                 }
-                order.getCourseList().add(course);
+                else {
+                    Log.i(TAG,"Course list null");
+                    List<Course> courses = new ArrayList<>();
+                    courses.add(course);
+                    order.setCourseList(courses);
+                    if(order.getCourseList() != null) Log.i(TAG,"Course list init");
+                }
+
+
+                AppDataBase.getInstance(requireContext()).courseDao().insert(course);
+                orderViewModel.setOrderMutableLiveData(order);
+
+                actualiseOrderView(order);
+            }else {
+                Snackbar.make(requireView(), R.string.select_a_table, Snackbar.LENGTH_LONG).show();
             }
-            else {
-                Log.i(TAG,"Course list null");
-                List<Course> courses = new ArrayList<>();
-                courses.add(course);
-                order.setCourseList(courses);
-                if(order.getCourseList() != null) Log.i(TAG,"Course list init");
-            }
 
-
-            AppDataBase.getInstance(requireContext()).courseDao().insert(course);
-            orderViewModel.setOrderMutableLiveData(order);
-
-            actualiseOrderView(order);
         }
         else if(binding.btnPay==view){
             Order order =  orderViewModel.getOrderMutableLiveData().getValue();
