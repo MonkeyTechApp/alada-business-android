@@ -10,10 +10,10 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.poupock.feussom.aladabusiness.callback.VolleyRequestCallback;
 import com.poupock.feussom.aladabusiness.net.SingleRequest;
 import com.poupock.feussom.aladabusiness.util.User;
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.json.JSONObject;
 
@@ -22,28 +22,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-
-public class PostTask extends AsyncTask<Void, Void, Void> {
+public class PostJSONTask extends AsyncTask<Void, Void, Void> {
 
     String url;
     HashMap<String, String> params;
     JSONObject paramJsonObject;
     Context context;
-    private String tag = PostTask.class.getSimpleName();
+    private String tag = PostJSONTask.class.getSimpleName();
     VolleyRequestCallback callback;
 
-    public PostTask(Context context, String url, HashMap<String, String> params, VolleyRequestCallback callback){
+    public PostJSONTask(Context context, String url, HashMap<String, String> params, VolleyRequestCallback callback){
         this.context = context;
         this.url = url;
         this.params = params;
         paramJsonObject = new JSONObject(params);
-        this.callback = callback;
-    }
-
-    public PostTask(Context context, String url,JSONObject params, VolleyRequestCallback callback){
-        this.context = context;
-        this.url = url;
-        paramJsonObject = params;
         this.callback = callback;
     }
 

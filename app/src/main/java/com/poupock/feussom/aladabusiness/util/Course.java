@@ -7,6 +7,10 @@ import androidx.room.PrimaryKey;
 
 import com.google.gson.Gson;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,6 +74,28 @@ public class Course {
             }
         }
         return index;
+    }
+
+    public static JSONArray buildJsonArray(List<Course> courseList) {
+        JSONArray array = new JSONArray();
+        for (int i = 0; i < courseList.size() ; i++){
+            array.put(courseList.get(i).getJSONObject());
+        }
+
+        return array;
+    }
+
+    public JSONObject getJSONObject() {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("title", this.getTitle());
+            object.put("created_at", this.getCreated_at());
+            object.put("order_id", this.getOrder_id());
+            object.put("items", OrderItem.buildJsonArray(this.getOrderItems()));
+        }catch (JSONException ex){
+
+        }
+        return object;
     }
 
     public int getId() {

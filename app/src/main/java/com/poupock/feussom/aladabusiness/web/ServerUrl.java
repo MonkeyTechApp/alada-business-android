@@ -6,6 +6,7 @@ public class ServerUrl {
     public static final String MENU_CATEGORY = BASE_URL + "api/menu-category";
     public static final String MENU_ITEM = BASE_URL + "api/menu";
     public static final String CREATE_USER = BASE_URL + "api/create-user";
+    public static final String ORDER = BASE_URL + "api/order";
     public static String CONNECTION_URL = BASE_URL+"api/login";
     public static String REGISTRATION_URL = BASE_URL+"api/register";
     public static final String GUEST_TABLE = BASE_URL+"api/table";

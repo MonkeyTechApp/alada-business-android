@@ -22,11 +22,13 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.android.volley.VolleyError;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.DialogCallback;
 import com.poupock.feussom.aladabusiness.callback.ListItemClickCallback;
+import com.poupock.feussom.aladabusiness.callback.VolleyRequestCallback;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.databinding.FragmentOrderBinding;
 import com.poupock.feussom.aladabusiness.ui.adapter.CourseAdapter;
@@ -41,9 +43,12 @@ import com.poupock.feussom.aladabusiness.util.MenuItemCategory;
 import com.poupock.feussom.aladabusiness.util.Methods;
 import com.poupock.feussom.aladabusiness.util.Order;
 import com.poupock.feussom.aladabusiness.util.OrderItem;
+import com.poupock.feussom.aladabusiness.util.User;
 import com.poupock.feussom.aladabusiness.util.relation.CourseWithItemListRelation;
 import com.poupock.feussom.aladabusiness.util.relation.OrderCourseListRelation;
 import com.poupock.feussom.aladabusiness.util.relation.OrderCourseRelation;
+import com.poupock.feussom.aladabusiness.web.PostTask;
+import com.poupock.feussom.aladabusiness.web.ServerUrl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -311,7 +316,6 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
             binding.courseList.smoothScrollToPosition(updatedOrder.getCourseList().size());
         }
         else Log.i(TAG, "The course list is null");
-
     }
 
     @Override
@@ -325,9 +329,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         if(binding.btnTable == view){
             Log.i(TAG, "Btn table showed");
             DialogFragment listDialogFragment = ListDialogFragment.newInstance(
-                GuestTable.class.getSimpleName(),
-                "",null
-            );
+                GuestTable.class.getSimpleName(), "",null);
             listDialogFragment.show(getParentFragmentManager(),ListDialogFragment.class.getSimpleName());
         }
         else if(binding.btnAddCourse == view){
@@ -365,7 +367,6 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
             }else {
                 Snackbar.make(requireView(), R.string.select_a_table, Snackbar.LENGTH_LONG).show();
             }
-
         }
         else if(binding.btnPay==view){
             Order order =  orderViewModel.getOrderMutableLiveData().getValue();
@@ -379,7 +380,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                     switch (which){
                         case DialogInterface.BUTTON_POSITIVE:
                             GuestTable guestTable = Objects.requireNonNull(orderViewModel.getGuestTableMutableLiveData().getValue());
-                            Order order = new Order( 0, Methods.generateCode(), 0, 0,  guestTable.getId(), Constant.STATUS_OPEN,
+                            Order order = new Order( 0, Methods.generateCode(), User.currentUser(requireContext()).getId(), 1,  guestTable.getId(), Constant.STATUS_OPEN,
                                 Methods.getCurrentTimeStamp()
                             );
 
@@ -414,6 +415,31 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
             AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
             builder.setMessage(getString(R.string.confirm_new_order_for_table)).setPositiveButton(getString(R.string.yes), dialogClickListener)
                 .setNegativeButton(getString(R.string.no), dialogClickListener).show();
+        }else if (binding.btnSend == view){
+//            new PostTask()
+
+            new PostTask(requireContext(), ServerUrl.ORDER, orderViewModel.getOrderMutableLiveData().getValue().buildParams(),
+                    new VolleyRequestCallback() {
+                        @Override
+                        public void onStart() {
+
+                        }
+
+                        @Override
+                        public void onSuccess(String response) {
+
+                        }
+
+                        @Override
+                        public void onError(VolleyError error) {
+
+                        }
+
+                        @Override
+                        public void onJobFinished() {
+
+                        }
+                    }).execute();
         }
     }
 }

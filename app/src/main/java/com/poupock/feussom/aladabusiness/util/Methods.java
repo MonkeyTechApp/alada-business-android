@@ -278,7 +278,7 @@ public class Methods {
     }
 
     public static String generateCode() {
-        return new Date().getTime()+"";
+        return "ORD-"+new Date().getTime()+"";
     }
 
     @NonNull

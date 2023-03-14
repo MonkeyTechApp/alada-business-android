@@ -1,5 +1,7 @@
 package com.poupock.feussom.aladabusiness.util;
 
+import android.util.Log;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -7,7 +9,11 @@ import androidx.room.PrimaryKey;
 
 import com.google.gson.Gson;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Entity(tableName = "orders")
@@ -180,5 +186,20 @@ public class Order {
     public static Order getObjectFromObject(Object data) {
         Gson gson = new Gson();
         return gson.fromJson(gson.toJson(data), Order.class);
+    }
+
+
+    public JSONObject buildParams() {
+        JSONObject params = new JSONObject();
+        try {
+            params.put("status", this.getStatus()+"");
+            params.put("code", this.getCode());
+            params.put("ordered_at", this.getCreated_at());
+            params.put("guest_table_id", this.guest_table_id+"");
+            params.put("course", Course.buildJsonArray(this.getCourseList()));
+        }catch (JSONException ex){
+
+        }
+        return params;
     }
 }

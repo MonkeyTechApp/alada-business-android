@@ -109,7 +109,6 @@ public class ListDialogFragment extends DialogFragment {
                         if(!isLongClick){
                             Gson gson = new Gson();
                             viewModel.setGuestTableMutableLiveData(gson.fromJson(gson.toJson(o),GuestTable.class));
-
                         }
                         dismiss();
                     }
