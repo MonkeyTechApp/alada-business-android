@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    tools:context=".ui.fragment.order.OrderFragment">
+    tools:context=".ui.fragment.order.CreateOrderFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dip"
@@ -113,7 +113,7 @@
             android:layout_height="1dp"
             android:background="@color/white"
             android:id="@+id/viewLine"
-            app:layout_constraintBottom_toTopOf="@id/txtOrderTotal"/>
+            app:layout_constraintBottom_toTopOf="@id/txtOrderText"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -122,13 +122,15 @@
             style="@style/fontSemiBold"
             android:layout_marginTop="@dimen/dimen_padding_small"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/linKeyBoard"/>
+            android:id="@+id/txtOrderText"
+            app:layout_constraintBottom_toTopOf="@id/txtOrderTotal"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0 F CFA"
             android:layout_marginTop="@dimen/dimen_padding_small"
+            android:textSize="@dimen/text_h5"
             style="@style/fontSemiBold"
             android:id="@+id/txtOrderTotal"
             app:layout_constraintEnd_toEndOf="parent"
@@ -356,17 +358,17 @@
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="0dip"
-        android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:id="@+id/listMenuCategory"/>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dip"
         android:layout_weight="3"
         android:paddingStart="@dimen/dimen_padding_tiny"
         android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/listMenuCategory"/>
 
         <TextView
             style="@style/fontSemiBold"
@@ -376,7 +378,7 @@
             android:layout_height="wrap_content"
             android:text="@string/category_menu"
             android:textAllCaps="true"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/listMenuCategory"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:id="@+id/txtCategory"/>
@@ -395,12 +397,11 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <Button
                 style="@style/buttonNormal"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/flat_orange_ville"
                 android:textColor="@color/white"
@@ -410,8 +411,7 @@
 
             <Button
                 style="@style/buttonNormal"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

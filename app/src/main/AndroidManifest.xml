@@ -43,6 +43,11 @@
             android:label="@string/table"
             android:theme="@style/ThemeSplash.NoActionBar" />
         <activity
+            android:name=".core.order.OrderActivity"
+            android:exported="false"
+            android:label="@string/create_an_order"
+            android:theme="@style/ThemeSplash.NoActionBar" />
+        <activity
             android:name=".core.user.UsersActivity"
             android:exported="false"
             android:label="@string/title_activity_users"

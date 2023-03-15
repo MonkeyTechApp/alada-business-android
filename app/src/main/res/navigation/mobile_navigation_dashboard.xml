@@ -64,7 +64,7 @@
 
     <fragment
         android:id="@+id/nav_orders"
-        android:name="com.poupock.feussom.aladabusiness.ui.fragment.order.OrderFragment"
+        android:name="com.poupock.feussom.aladabusiness.ui.fragment.order.CreateOrderFragment"
         android:label="@string/order_management"
-        tools:layout="@layout/fragment_order" />
+        tools:layout="@layout/fragment_create_order" />
 </navigation>

@@ -20,6 +20,7 @@ public class GuestTable {
     @Ignore private InternalPoint internalPoint;
     @Ignore private User creator;
     private String created_at;
+    @Ignore private List<Order> orders;
 
     public GuestTable(int id, String title, int internal_point_id, int user_id, int capacity, String created_at) {
         this.id = id;
@@ -131,4 +132,11 @@ public class GuestTable {
         return values;
     }
 
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
 }

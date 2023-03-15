@@ -9,8 +9,8 @@ import com.poupock.feussom.aladabusiness.util.Order;
 
 public class OrderViewModel extends ViewModel {
 
-    private MutableLiveData<GuestTable> guestTableMutableLiveData;
-    private MutableLiveData<Order> orderMutableLiveData;
+    private MutableLiveData<GuestTable> guestTableMutableLiveData = new MutableLiveData<>();
+    private MutableLiveData<Order> orderMutableLiveData = new MutableLiveData<>();
 
     public OrderViewModel() {
         guestTableMutableLiveData = new MutableLiveData<>();
@@ -27,5 +27,8 @@ public class OrderViewModel extends ViewModel {
 
     public LiveData<Order> getOrderMutableLiveData(){return orderMutableLiveData;}
 
-    public LiveData<GuestTable> getGuestTableMutableLiveData(){ return guestTableMutableLiveData; }
+    public LiveData<GuestTable> getGuestTableMutableLiveData(){
+        if (guestTableMutableLiveData == null) guestTableMutableLiveData = new MutableLiveData<>();
+        return guestTableMutableLiveData;
+    }
 }

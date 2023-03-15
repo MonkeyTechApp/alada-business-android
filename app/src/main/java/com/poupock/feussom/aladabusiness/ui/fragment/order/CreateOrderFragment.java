@@ -3,13 +3,11 @@ package com.poupock.feussom.aladabusiness.ui.fragment.order;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,7 +28,7 @@ import com.poupock.feussom.aladabusiness.callback.DialogCallback;
 import com.poupock.feussom.aladabusiness.callback.ListItemClickCallback;
 import com.poupock.feussom.aladabusiness.callback.VolleyRequestCallback;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
-import com.poupock.feussom.aladabusiness.databinding.FragmentOrderBinding;
+import com.poupock.feussom.aladabusiness.databinding.FragmentCreateOrderBinding;
 import com.poupock.feussom.aladabusiness.ui.adapter.CourseAdapter;
 import com.poupock.feussom.aladabusiness.ui.adapter.MenuItemAdapter;
 import com.poupock.feussom.aladabusiness.ui.adapter.MenuItemCategoryVerticalAdapter;
@@ -46,7 +44,6 @@ import com.poupock.feussom.aladabusiness.util.OrderItem;
 import com.poupock.feussom.aladabusiness.util.User;
 import com.poupock.feussom.aladabusiness.util.relation.CourseWithItemListRelation;
 import com.poupock.feussom.aladabusiness.util.relation.OrderCourseListRelation;
-import com.poupock.feussom.aladabusiness.util.relation.OrderCourseRelation;
 import com.poupock.feussom.aladabusiness.web.PostTask;
 import com.poupock.feussom.aladabusiness.web.ServerUrl;
 
@@ -55,12 +52,12 @@ import java.util.List;
 import java.util.Objects;
 
 @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
-public class OrderFragment extends Fragment implements View.OnClickListener {
+public class CreateOrderFragment extends Fragment implements View.OnClickListener {
 
     private OrderViewModel orderViewModel;
-    private FragmentOrderBinding binding;
+    private FragmentCreateOrderBinding binding;
     Gson gson = new Gson();
-    private String TAG = OrderFragment.class.getSimpleName();
+    private String TAG = CreateOrderFragment.class.getSimpleName();
     private CourseAdapter courseListAdapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -68,7 +65,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         orderViewModel =
                 new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
 
-        binding = FragmentOrderBinding.inflate(inflater, container, false);
+        binding = FragmentCreateOrderBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         orderViewModel.getGuestTableMutableLiveData().observe(getViewLifecycleOwner(), new Observer<GuestTable>() {
@@ -380,29 +377,34 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                     switch (which){
                         case DialogInterface.BUTTON_POSITIVE:
                             GuestTable guestTable = Objects.requireNonNull(orderViewModel.getGuestTableMutableLiveData().getValue());
-                            Order order = new Order( 0, Methods.generateCode(), User.currentUser(requireContext()).getId(), 1,  guestTable.getId(), Constant.STATUS_OPEN,
-                                Methods.getCurrentTimeStamp()
-                            );
+                            if (guestTable != null){
+                                Order order = new Order( 0, Methods.generateCode(), User.currentUser(requireContext()).getId(), 1,  guestTable.getId(), Constant.STATUS_OPEN,
+                                        Methods.getCurrentTimeStamp()
+                                );
 
-                            Log.i(TAG,"The order size is "+AppDataBase.getInstance(requireContext()).orderDao().getAllOrders().size());
-                            order = AppDataBase.getInstance(requireContext()).orderDao().getSpecificOrder(
-                                AppDataBase.getInstance(requireContext()).orderDao().insert(order));
+                                Log.i(TAG,"The order size is "+AppDataBase.getInstance(requireContext()).orderDao().getAllOrders().size());
+                                order = AppDataBase.getInstance(requireContext()).orderDao().getSpecificOrder(
+                                        AppDataBase.getInstance(requireContext()).orderDao().insert(order));
 
-                            Log.i(TAG, "The order id is "+order.getId());
-                            order.setCourseList(AppDataBase.getInstance(requireContext()).courseDao().getOrderCourses(order.getId()));
+                                Log.i(TAG, "The order id is "+order.getId());
+                                order.setCourseList(AppDataBase.getInstance(requireContext()).courseDao().getOrderCourses(order.getId()));
 
 
-                            orderViewModel.setOrderMutableLiveData(order);
-                            if(order.getCourseList() != null) {
-                                Log.i(TAG, "Setting the course list");
+                                orderViewModel.setOrderMutableLiveData(order);
+                                if(order.getCourseList() != null) {
+                                    Log.i(TAG, "Setting the course list");
 
-                                courseListAdapter.setCourses(order.getCourseList());
-                                binding.txtOrderTotal.setText(order.getTotal() + " " + getString(R.string.currency_cfa));
-                                courseListAdapter.notifyDataSetChanged();
-                                binding.courseList.smoothScrollToPosition(order.getCourseList().size());
+                                    courseListAdapter.setCourses(order.getCourseList());
+                                    binding.txtOrderTotal.setText(order.getTotal() + " " + getString(R.string.currency_cfa));
+                                    courseListAdapter.notifyDataSetChanged();
+                                    binding.courseList.smoothScrollToPosition(order.getCourseList().size());
+                                }
+                                actualiseOrderView(order);
+                                dialog.dismiss();
                             }
-                            actualiseOrderView(order);
-                            dialog.dismiss();
+                            else {
+                                Snackbar.make(requireView(), R.string.please_select_a_table, Snackbar.LENGTH_LONG).show();
+                            }
                             break;
 
                         case DialogInterface.BUTTON_NEGATIVE:

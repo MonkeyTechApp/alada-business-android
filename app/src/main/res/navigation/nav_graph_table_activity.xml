@@ -10,7 +10,6 @@
         android:name="com.poupock.feussom.aladabusiness.core.table.TableListFragment"
         android:label="@string/floor_plan"
         tools:layout="@layout/fragment_table_list">
-
         <action
             android:id="@+id/action_TableListFragment_to_TableCreationFragment"
             app:destination="@id/TableCreationFragment" />
@@ -20,7 +19,6 @@
         android:name="com.poupock.feussom.aladabusiness.core.table.TableCreationFragment"
         android:label="@string/create_a_table"
         tools:layout="@layout/fragment_create_table">
-
         <action
             android:id="@+id/action_TableCreationFragment_to_TableListFragment"
             app:destination="@id/TableListFragment" />

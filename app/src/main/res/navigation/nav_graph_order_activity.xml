@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph6"
+    app:startDestination="@id/CreateOrderFragment">
+
+    <fragment
+        android:id="@+id/CreateOrderFragment"
+        android:name="com.poupock.feussom.aladabusiness.ui.fragment.order.CreateOrderFragment"
+        android:label="@string/create_an_order"
+        tools:layout="@layout/fragment_create_order">
+        <action
+            android:id="@+id/action_TableListFragment_to_TableCreationFragment"
+            app:destination="@id/TableCreationFragment" />
+    </fragment>
+</navigation>
