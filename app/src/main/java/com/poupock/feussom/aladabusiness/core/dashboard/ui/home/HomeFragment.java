@@ -2,6 +2,7 @@ package com.poupock.feussom.aladabusiness.core.dashboard.ui.home;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private FragmentHomeBinding binding;
     AppDataBase appDataBase ;
+    private String tag = HomeFragment.class.getSimpleName();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -60,10 +62,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 new ListItemClickCallback() {
                     @Override
                     public void onItemClickListener(Object o, boolean isLong) {
+                        Log.i(tag, "The item clicked");
                         Intent intent = new Intent(requireContext(), OrderActivity.class);
                         intent.putExtra(Constant.ACTIVE_BUSINESS_KEY, new Gson().toJson(appDataBase.businessDao().getAllBusinesses().get(0)));
                         Gson gson = new Gson();
                         GuestTable guestTable = GuestTable.getFromObject(o);
+                        Log.i(tag, "The guest table is : "+guestTable.getId());
                         if (guestTable.getOrders()!=null){
                             if (guestTable.getOrders().size() > 1){
                                 // Show list of orders for selection.
@@ -71,15 +75,21 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                                         new ListItemClickCallback() {
                                             @Override
                                             public void onItemClickListener(Object o, boolean isLong) {
-
+                                                Order order = Order.getObjectFromObject(o);
+                                                intent.putExtra(Constant.ACTIVE_TABLE_KEY, gson.toJson(
+                                                        AppDataBase.getInstance(requireContext()).guestTableDao().
+                                                                getSpecificGuestTable(order.getGuest_table_id())));
+                                                startActivity(intent);
                                             }
                                         });
+                                listDialogFragment.show(getChildFragmentManager(), ListDialogFragment.class.getSimpleName());
                             }
                             else {
+                                Log.i(tag,"The table is active ");
                                 intent.putExtra(Constant.ACTIVE_TABLE_KEY, gson.toJson(guestTable));
+                                startActivity(intent);
                             }
                         }
-                        startActivity(intent);
                     }
                 }));
 

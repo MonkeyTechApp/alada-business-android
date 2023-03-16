@@ -1,6 +1,7 @@
 package com.poupock.feussom.aladabusiness.ui.fragment.order;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -27,6 +29,7 @@ import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.DialogCallback;
 import com.poupock.feussom.aladabusiness.callback.ListItemClickCallback;
 import com.poupock.feussom.aladabusiness.callback.VolleyRequestCallback;
+import com.poupock.feussom.aladabusiness.core.menu.CreateMenuFragment;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.databinding.FragmentCreateOrderBinding;
 import com.poupock.feussom.aladabusiness.ui.adapter.CourseAdapter;
@@ -46,6 +49,7 @@ import com.poupock.feussom.aladabusiness.util.relation.CourseWithItemListRelatio
 import com.poupock.feussom.aladabusiness.util.relation.OrderCourseListRelation;
 import com.poupock.feussom.aladabusiness.web.PostTask;
 import com.poupock.feussom.aladabusiness.web.ServerUrl;
+import com.poupock.feussom.aladabusiness.web.response.DatumResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -376,7 +380,7 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which){
                         case DialogInterface.BUTTON_POSITIVE:
-                            GuestTable guestTable = Objects.requireNonNull(orderViewModel.getGuestTableMutableLiveData().getValue());
+                            GuestTable guestTable = (orderViewModel.getGuestTableMutableLiveData().getValue());
                             if (guestTable != null){
                                 Order order = new Order( 0, Methods.generateCode(), User.currentUser(requireContext()).getId(), 1,  guestTable.getId(), Constant.STATUS_OPEN,
                                         Methods.getCurrentTimeStamp()
@@ -417,19 +421,31 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
             AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
             builder.setMessage(getString(R.string.confirm_new_order_for_table)).setPositiveButton(getString(R.string.yes), dialogClickListener)
                 .setNegativeButton(getString(R.string.no), dialogClickListener).show();
-        }else if (binding.btnSend == view){
+        }
+        else if (binding.btnSend == view){
 //            new PostTask()
-
+            ProgressDialog dialog = new ProgressDialog(requireContext());
+            dialog.setMessage(getString(R.string.sending_order_3_dots));
             new PostTask(requireContext(), ServerUrl.ORDER, orderViewModel.getOrderMutableLiveData().getValue().buildParams(),
                     new VolleyRequestCallback() {
                         @Override
                         public void onStart() {
-
+                            dialog.setCancelable(false);
+                            dialog.show();
                         }
 
                         @Override
                         public void onSuccess(String response) {
+                            DatumResponse datumResponse = new Gson().fromJson(response, DatumResponse.class);
+                            if (datumResponse.success){
+                                Order datum = Order.getObjectFromObject(datumResponse.data);
+                                datum.setServerId(datum.getId());
 
+                                AppDataBase.getInstance(requireContext()).orderDao().update(datum);
+                            }
+                            else {
+                                Toast.makeText(requireContext(), R.string.order_sent, Toast.LENGTH_SHORT).show();
+                            }
                         }
 
                         @Override

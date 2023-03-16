@@ -14,8 +14,10 @@ import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.DialogCallback;
 import com.poupock.feussom.aladabusiness.callback.ListItemClickCallback;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
+import com.poupock.feussom.aladabusiness.util.Course;
 import com.poupock.feussom.aladabusiness.util.Methods;
 import com.poupock.feussom.aladabusiness.util.Order;
+import com.poupock.feussom.aladabusiness.util.OrderItem;
 
 import java.util.List;
 
@@ -60,6 +62,22 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
 
         holder.txtCode.setText(order.getCode());
         holder.txtTime.setText(Methods.formatTime(order.getCreated_at()));
+        AppDataBase.getInstance(context).courseDao().getOrderCourses(order.getId()).size();
+        List<Course> courses = AppDataBase.getInstance(context).orderDao().getOrderWithCourseList(order.getId()).courses;
+        if (courses != null){
+            if (!courses.isEmpty()){
+                order.setCourseList(courses);
+                for (int j=0; j<courses.size(); j++){
+                    List<OrderItem> orderItems = AppDataBase.getInstance(context).orderItemDao().getAllCourseItems(courses.get(j).getId());
+                    if (orderItems != null){
+                        if (!orderItems.isEmpty()){
+                            courses.get(j).setOrderItems(orderItems);
+                        }
+                    }
+                }
+            }
+        }
+
         if(showAll){
             holder.txtTable.setText(AppDataBase.getInstance(context).guestTableDao().getSpecificGuestTable(order.getGuest_table_id()).getTitle());
             holder.txtStatus.setText(Methods.processStatus(order.getStatus()));

@@ -100,6 +100,7 @@ public class ListDialogFragment extends DialogFragment {
         if(mParam1.equalsIgnoreCase(GuestTable.class.getSimpleName()))
         {
             binding.list.setLayoutManager(new GridLayoutManager(requireContext(),2));
+            binding.text.setText(R.string.guest_table);
             binding.list.setAdapter(new GuestTableAdapter(
                 requireContext(),
                 AppDataBase.getInstance(requireContext()).guestTableDao().getAllGuestTables(),
@@ -117,11 +118,12 @@ public class ListDialogFragment extends DialogFragment {
         }
         else if (mParam1.equalsIgnoreCase(Order.class.getSimpleName())){
             binding.list.setLayoutManager(new LinearLayoutManager(requireContext()));
+            binding.text.setText(R.string.orders);
             try {
                 binding.list.setAdapter(new OrderAdapter(requireContext(),
                     AppDataBase.getInstance(requireContext()).orderDao().getTableOrders(
                         Integer.parseInt(mParam2), Constant.STATUS_OPEN)
-                    , false, new ListItemClickCallback() {
+                    , true, new ListItemClickCallback() {
                     @Override
                     public void onItemClickListener(Object o, boolean isLong) {
                         mCallback.onItemClickListener(o, isLong);

@@ -65,8 +65,9 @@ public class GuestTableOrdersAdapter extends RecyclerView.Adapter<GuestTableOrde
 
         List<Order> orders = AppDataBase.getInstance(context).orderDao().getTableOrders(guestTable.getId(), Constant.STATUS_OPEN);
         holder.txtSize.setText(orders.size()+" "+context.getString(R.string.orders));
-        holder.txtName.setText(guestTable.getTitle()+" (    "+guestTable.getCapacity()+" "+((guestTable.getCapacity()>1) ? context.getString(R.string.seats) : context.getString(R.string.seat))+")");
+        holder.txtName.setText(guestTable.getTitle()+" ("+guestTable.getCapacity()+" "+((guestTable.getCapacity()>1) ? context.getString(R.string.seats) : context.getString(R.string.seat))+")");
 
+        guestTable.setOrders(orders);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,7 +78,6 @@ public class GuestTableOrdersAdapter extends RecyclerView.Adapter<GuestTableOrde
                         .setItems(R.array.action_array, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int which) {
-                                guestTable.setOrders(orders);
                                 dialogCallback.onActionClicked(guestTable, which);
                             }
                         }).create().show();

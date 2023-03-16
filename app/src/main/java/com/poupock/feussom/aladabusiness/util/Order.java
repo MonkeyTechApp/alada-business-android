@@ -24,6 +24,7 @@ public class Order {
     private int user_id;
     private int internal_point_id;
     private int status;
+    private int payment_method_id;
     @ColumnInfo(defaultValue = "0")
     private int guest_table_id;
     @Ignore private GuestTable guestTable;
@@ -31,14 +32,18 @@ public class Order {
     @Ignore private User creator;
     private String created_at;
     @Ignore private List<Course> courseList;
+    private int server_id;
 
 
-    public Order(int id, String code, int user_id, int internal_point_id, int guest_table_id, int status,
+    public Order(int id, String code, int user_id, int internal_point_id, int guest_table_id, int status, int payment_method_id,
+                 int server_id,
                  String created_at) {
         this.id = id;
+        this.payment_method_id = payment_method_id;
         this.created_at = created_at;
         this.code = code;
         this.user_id = user_id;
+        this.server_id = server_id;
         this.status = status;
         this.internal_point_id = internal_point_id;
         this.guest_table_id = guest_table_id;
@@ -46,12 +51,14 @@ public class Order {
 
     @Ignore
     public Order(int id, String code, int user_id, int internal_point_id, int guest_table_id, GuestTable guestTable,
-                 int status,
+                 int status, int payment_method_id, int server_id,
                  InternalPoint internalPoint, User creator, List<Course> courseList, String created_at) {
         this.id = id;
         this.created_at = created_at;
+        this.payment_method_id = payment_method_id;
         this.code = code;
         this.user_id = user_id;
+        this.server_id = server_id;
         this.internal_point_id = internal_point_id;
         this.guest_table_id = guest_table_id;
         this.guestTable = guestTable;
@@ -201,5 +208,29 @@ public class Order {
 
         }
         return params;
+    }
+
+    public void setServerId(int server_id) {
+        this.server_id = server_id;
+    }
+
+    public int getServerId() {
+        return server_id;
+    }
+
+    public int getPayment_method_id() {
+        return payment_method_id;
+    }
+
+    public void setPayment_method_id(int payment_method_id) {
+        this.payment_method_id = payment_method_id;
+    }
+
+    public int getServer_id() {
+        return server_id;
+    }
+
+    public void setServer_id(int server_id) {
+        this.server_id = server_id;
     }
 }

@@ -35,13 +35,15 @@ import com.poupock.feussom.aladabusiness.util.User;
 
 
 @Database(
+    version = 7,
     entities = {User.class, Role.class, InternalPoint.class, MenuItemCategory.class, MenuItem.class, GuestTable.class,
     Course.class, OrderItem.class, Order.class, Business.class},
-    version = 6
-//    @AutoMigration(
-//        from = 6,
-//        to = 7
-//    )
+    autoMigrations = {
+        @AutoMigration(
+            from = 6,
+            to = 7
+        )
+    }
 )
 
 public abstract class AppDataBase extends RoomDatabase {

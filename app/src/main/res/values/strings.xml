@@ -249,4 +249,6 @@
     <string name="provide_info">Provide information</string>
     <string name="user_inserted">User inserted!</string>
     <string name="user_not_inserted">User not inserted!</string>
+    <string name="sending_order_3_dots">Sending order…</string>
+    <string name="order_sent">Order sent.</string>
 </resources>
