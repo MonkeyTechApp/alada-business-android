@@ -68,28 +68,29 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                         Gson gson = new Gson();
                         GuestTable guestTable = GuestTable.getFromObject(o);
                         Log.i(tag, "The guest table is : "+guestTable.getId());
-                        if (guestTable.getOrders()!=null){
-                            if (guestTable.getOrders().size() > 1){
-                                // Show list of orders for selection.
-                                DialogFragment listDialogFragment = ListDialogFragment.newInstance(Order.class.getSimpleName(), guestTable.getId()+"",
-                                        new ListItemClickCallback() {
-                                            @Override
-                                            public void onItemClickListener(Object o, boolean isLong) {
-                                                Order order = Order.getObjectFromObject(o);
-                                                intent.putExtra(Constant.ACTIVE_TABLE_KEY, gson.toJson(
-                                                        AppDataBase.getInstance(requireContext()).guestTableDao().
-                                                                getSpecificGuestTable(order.getGuest_table_id())));
-                                                startActivity(intent);
-                                            }
-                                        });
-                                listDialogFragment.show(getChildFragmentManager(), ListDialogFragment.class.getSimpleName());
-                            }
-                            else {
-                                Log.i(tag,"The table is active ");
-                                intent.putExtra(Constant.ACTIVE_TABLE_KEY, gson.toJson(guestTable));
-                                startActivity(intent);
-                            }
-                        }
+//                        if (guestTable.getOrders()!=null){
+//                            if (guestTable.getOrders().size() > 1){
+//                                // Show list of orders for selection.
+//                                DialogFragment listDialogFragment = ListDialogFragment.newInstance(Order.class.getSimpleName(), guestTable.getId()+"",
+//                                        new ListItemClickCallback() {
+//                                            @Override
+//                                            public void onItemClickListener(Object o, boolean isLong) {
+//                                                Order order = Order.getObjectFromObject(o);
+//                                                intent.putExtra(Constant.ACTIVE_TABLE_KEY, gson.toJson(
+//                                                        AppDataBase.getInstance(requireContext()).guestTableDao().
+//                                                                getSpecificGuestTable(order.getGuest_table_id())));
+//                                                startActivity(intent);
+//                                            }
+//                                        });
+//                                listDialogFragment.show(getChildFragmentManager(), ListDialogFragment.class.getSimpleName());
+//                            }
+//                            else {
+//                                Log.i(tag,"The table is active ");
+//
+//                            }
+//                        }
+                        intent.putExtra(Constant.ACTIVE_TABLE_KEY, gson.toJson(guestTable));
+                        startActivity(intent);
                     }
                 }));
 

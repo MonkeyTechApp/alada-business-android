@@ -71,6 +71,8 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
         binding = FragmentCreateOrderBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        buildCourseAdapter(courseListAdapter);
+
         orderViewModel.getGuestTableMutableLiveData().observe(getViewLifecycleOwner(), new Observer<GuestTable>() {
             @Override
             public void onChanged(@Nullable GuestTable guestTable) {
@@ -80,8 +82,14 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                 if(orders==null){
                     orders = new ArrayList<>();
                 }
-                if(orders.size() < 1 ){
-
+                if(orders.isEmpty() ){
+                    binding.txtOrderTotal.setText("0"+getString(R.string.currency_cfa));
+                    if (courseListAdapter != null)
+                        courseListAdapter.setCourses(new ArrayList<>());
+                    else {
+                        buildCourseAdapter(courseListAdapter);
+                    }
+                    courseListAdapter.notifyDataSetChanged();
                 }
                 else {
                     if(orders.size() == 1){
@@ -120,12 +128,7 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
         binding.listMenuCategory.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.courseList.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.listMenuItems.setLayoutManager(new GridLayoutManager(requireContext(),2));
-        courseListAdapter = new CourseAdapter(requireContext(), new ArrayList<>(), new DialogCallback() {
-            @Override
-            public void onActionClicked(Object o, int action) {
 
-            }
-        });
         binding.courseList.setAdapter(courseListAdapter);
 
         binding.listMenuCategory.setAdapter(new MenuItemCategoryVerticalAdapter(requireContext(),
@@ -397,7 +400,6 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                                 orderViewModel.setOrderMutableLiveData(order);
                                 if(order.getCourseList() != null) {
                                     Log.i(TAG, "Setting the course list");
-
                                     courseListAdapter.setCourses(order.getCourseList());
                                     binding.txtOrderTotal.setText(order.getTotal() + " " + getString(R.string.currency_cfa));
                                     courseListAdapter.notifyDataSetChanged();
@@ -460,5 +462,14 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                         }
                     }).execute();
         }
+    }
+
+    void buildCourseAdapter(CourseAdapter courseAdapter){
+        courseListAdapter = new CourseAdapter(requireContext(), new ArrayList<>(), new DialogCallback() {
+            @Override
+            public void onActionClicked(Object o, int action) {
+
+            }
+        });
     }
 }
