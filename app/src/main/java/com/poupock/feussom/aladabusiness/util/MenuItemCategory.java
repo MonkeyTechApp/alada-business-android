@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity(tableName = "menu_item_categories")
@@ -18,6 +19,7 @@ public class MenuItemCategory {
     private String name;
     private int user_id;
     @Ignore private User creator;
+    @Ignore private List<MenuItem> menus;
 
     public MenuItemCategory(int id, String name, int user_id, String created_at) {
         this.id = id;
@@ -97,5 +99,13 @@ public class MenuItemCategory {
             }
         }
         return values;
+    }
+
+    public List<MenuItem> getMenus() {
+        return menus;
+    }
+
+    public void setMenus(List<MenuItem> menus) {
+        this.menus = menus;
     }
 }

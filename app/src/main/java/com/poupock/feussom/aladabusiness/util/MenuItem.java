@@ -6,52 +6,47 @@ import androidx.room.PrimaryKey;
 
 import com.google.gson.Gson;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Entity(tableName = "menu_items")
 public class MenuItem {
     @PrimaryKey(autoGenerate = true)
     private int id;
-    private String title;
+    private String name;
     private String description;
     private String pic_local_path;
     private String pic_server_path;
-    private int menu_item_category_id;
+    private int menu_category_id;
     private int user_id;
     private double price;
     private String created_at;
     @Ignore User creator;
     @Ignore private MenuItemCategory menuItemCategory;
 
-    public MenuItem(int id, String title, String description, String pic_local_path, String pic_server_path,
-                    int menu_item_category_id, int user_id, double price, String created_at) {
+    public MenuItem(int id, String name, String description, String pic_local_path, String pic_server_path,
+                    int menu_category_id, int user_id, double price, String created_at) {
         this.id = id;
-        this.title = title;
+        this.name = name;
         this.description = description;
         this.pic_local_path = pic_local_path;
         this.pic_server_path = pic_server_path;
-        this.menu_item_category_id = menu_item_category_id;
+        this.menu_category_id = menu_category_id;
         this.user_id = user_id;
         this.created_at = created_at;
         this.price = price;
     }
 
     @Ignore
-    public MenuItem(int id, String title, String description, String pic_local_path, String pic_server_path,
-                    int menu_item_category_id, int user_id, double price, User creator, MenuItemCategory menuItemCategory,
+    public MenuItem(int id, String name, String description, String pic_local_path, String pic_server_path,
+                    int menu_category_id, int user_id, double price, User creator, MenuItemCategory menuItemCategory,
                     String created_at) {
         this.id = id;
-        this.title = title;
+        this.name = name;
         this.description = description;
         this.pic_local_path = pic_local_path;
         this.pic_server_path = pic_server_path;
-        this.menu_item_category_id = menu_item_category_id;
+        this.menu_category_id = menu_category_id;
         this.user_id = user_id;
         this.price = price;
         this.created_at = created_at;
@@ -89,12 +84,12 @@ public class MenuItem {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
@@ -121,12 +116,12 @@ public class MenuItem {
         this.pic_server_path = pic_server_path;
     }
 
-    public int getMenu_item_category_id() {
-        return menu_item_category_id;
+    public int getMenu_category_id() {
+        return menu_category_id;
     }
 
-    public void setMenu_item_category_id(int menu_item_category_id) {
-        this.menu_item_category_id = menu_item_category_id;
+    public void setMenu_category_id(int menu_category_id) {
+        this.menu_category_id = menu_category_id;
     }
 
     public MenuItemCategory getMenuItemCategory() {

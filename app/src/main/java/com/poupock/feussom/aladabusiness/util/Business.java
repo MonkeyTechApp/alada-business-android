@@ -36,6 +36,7 @@ public class Business {
     @ColumnInfo(defaultValue = "1")
     private int salePointCount;
     @Ignore List<MenuItemCategory> menu_categories;
+    @Ignore List<MenuItem> menus;
     @Ignore List<GuestTable> tables;
     @Ignore List<Order> orders;
     @Ignore List<User> users;
@@ -237,6 +238,22 @@ public class Business {
 
     public void setMenuItemCategories(List<MenuItemCategory> menu_categories) {
         this.menu_categories = menu_categories;
+    }
+
+    public List<MenuItemCategory> getMenu_categories() {
+        return menu_categories;
+    }
+
+    public void setMenu_categories(List<MenuItemCategory> menu_categories) {
+        this.menu_categories = menu_categories;
+    }
+
+    public List<MenuItem> getMenus() {
+        return menus;
+    }
+
+    public void setMenus(List<MenuItem> menus) {
+        this.menus = menus;
     }
 
     public List<GuestTable> getTables() {

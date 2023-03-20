@@ -21,11 +21,9 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
 import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.VolleyRequestCallback;
-import com.poupock.feussom.aladabusiness.core.restaurant.BusinessCreationViewModel;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.databinding.FragmentCreateMenuBinding;
 import com.poupock.feussom.aladabusiness.util.MenuItem;
-import com.poupock.feussom.aladabusiness.util.MenuItemCategory;
 import com.poupock.feussom.aladabusiness.util.Methods;
 import com.poupock.feussom.aladabusiness.util.User;
 import com.poupock.feussom.aladabusiness.web.PostTask;
@@ -84,7 +82,7 @@ public class CreateMenuFragment extends Fragment implements View.OnClickListener
         });
 
         if(viewModel.getSelectedMenuItemLiveData().getValue() != null) {
-            binding.nameTextField.getEditText().setText(viewModel.getSelectedMenuItemLiveData().getValue().getTitle());
+            binding.nameTextField.getEditText().setText(viewModel.getSelectedMenuItemLiveData().getValue().getName());
             binding.priceTextField.getEditText().setText(viewModel.getSelectedMenuItemLiveData().getValue().getPrice()+"");
 //            viewModel.setMenuItemCategoryMutableLiveData(viewModel.getSelectedMenuItemLiveData().getValue().getMenuItemCategory());
         }
@@ -127,7 +125,7 @@ public class CreateMenuFragment extends Fragment implements View.OnClickListener
                                                         viewModel.getMenuItemCategoryLiveData().getValue().getId(), User.currentUser(requireContext()).getId(),
                                                         serverMenuItem.getPrice(),serverMenuItem.getCreated_at());
 
-                                                Objects.requireNonNull(viewModel.getMenuItemLiveData().getValue()).setTitle(name);
+                                                Objects.requireNonNull(viewModel.getMenuItemLiveData().getValue()).setName(name);
                                                 viewModel.getMenuItemLiveData().getValue().setPrice(Double.parseDouble(price));
                                                 viewModel.getMenuItemLiveData().getValue().setCreated_at(Methods.getCurrentTimeStamp());
 
@@ -180,7 +178,7 @@ public class CreateMenuFragment extends Fragment implements View.OnClickListener
                                                         viewModel.getMenuItemCategoryLiveData().getValue().getId(), User.currentUser(requireContext()).getId(),
                                                         serverMenuItem.getPrice(),serverMenuItem.getCreated_at());
 
-                                                Objects.requireNonNull(viewModel.getMenuItemLiveData().getValue()).setTitle(name);
+                                                Objects.requireNonNull(viewModel.getMenuItemLiveData().getValue()).setName(name);
                                                 viewModel.getMenuItemLiveData().getValue().setPrice(Double.parseDouble(price));
                                                 viewModel.getMenuItemLiveData().getValue().setCreated_at(Methods.getCurrentTimeStamp());
 

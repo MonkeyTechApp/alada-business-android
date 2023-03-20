@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.gson.Gson;
-import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.ListItemClickCallback;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.databinding.FragmentListBinding;
@@ -98,7 +97,7 @@ public class ListFragment extends DialogFragment {
                         Gson gson = new Gson();
                         MenuItemCategory category = gson.fromJson(gson.toJson(o), MenuItemCategory.class);
                         viewModel.setMenuItemCategoryMutableLiveData(category);
-                        Objects.requireNonNull(viewModel.getMenuItemLiveData().getValue()).setMenu_item_category_id(category.getId());
+                        Objects.requireNonNull(viewModel.getMenuItemLiveData().getValue()).setMenu_category_id(category.getId());
                         dismiss();
                     }
                 }

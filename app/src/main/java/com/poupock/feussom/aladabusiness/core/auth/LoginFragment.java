@@ -23,6 +23,7 @@ import com.poupock.feussom.aladabusiness.core.dashboard.DashboardActivity;
 import com.poupock.feussom.aladabusiness.core.menu.CreateMenuFragment;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.databinding.FragmentLoginBinding;
+import com.poupock.feussom.aladabusiness.util.Business;
 import com.poupock.feussom.aladabusiness.util.Methods;
 import com.poupock.feussom.aladabusiness.util.User;
 import com.poupock.feussom.aladabusiness.web.PostTask;
@@ -97,7 +98,33 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                                             if (connection.data.getBusinesses() != null){
                                                 AppDataBase dataBase = AppDataBase.getInstance(requireContext());
                                                 for (int i = 0 ; i < connection.data.getBusinesses().size(); i++){
+                                                    Business business = connection.data.getBusinesses().get(i);
                                                     dataBase.businessDao().insert(connection.data.getBusinesses().get(i));
+                                                    if (connection.data.getBusinesses().get(i).getTables().size()>0){
+                                                        for(int j=0; j<business.getUsers().size(); j++){
+                                                            User user = business.getUsers().get(j);
+                                                            user.setRole_id(business.getUsers().get(j).getPivot().getBusiness_role_id()+"");
+                                                            dataBase.userDao().insert(user);
+                                                        }for(int j=0; j<business.getTables().size(); j++){
+                                                            dataBase.guestTableDao().insert(business.getTables().get(j));
+                                                        }
+                                                        for(int j=0; j<business.getMenuItemCategories().size(); j++){
+                                                            dataBase.menuItemCategoryDao().insert(business.getMenuItemCategories().get(j));
+                                                            for(int k=0;k<business.getMenuItemCategories().get(j).getMenus().size(); k++){
+                                                                dataBase.menuItemDao().insert(business.getMenu_categories().get(j).getMenus().get(k));
+                                                            }
+                                                        }
+
+                                                        for(int j=0;j<business.getOrders().size(); j++){
+                                                            dataBase.orderDao().insert(business.getOrders().get(j));
+                                                            for (int k=0; k<business.getOrders().get(j).getCourseList().size(); k++){
+                                                                dataBase.courseDao().insert(business.getOrders().get(j).getCourseList().get(k));
+                                                                for (int l=0; l<business.getOrders().get(j).getCourseList().get(k).getOrderItems().size(); l++){
+                                                                    dataBase.orderItemDao().insert(business.getOrders().get(j).getCourseList().get(k).getOrderItems().get(l));
+                                                                }
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
 

@@ -49,6 +49,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -277,8 +278,8 @@ public class Methods {
         };
     }
 
-    public static String generateCode() {
-        return "ORD-"+new Date().getTime()+"";
+    public static String generateCode(Context context) {
+        return "ORD_"+User.currentUser(context).id+"_"+ UUID.randomUUID().toString() +"";
     }
 
     @NonNull
@@ -286,7 +287,7 @@ public class Methods {
         List<MenuItem> menuItemList = new ArrayList<>();
         if(menuItems != null && text != null){
             for (int i=0; i<menuItems.size(); i++){
-                if(menuItems.get(i).getTitle().trim().toLowerCase().contains(text.toLowerCase()))
+                if(menuItems.get(i).getName().trim().toLowerCase().contains(text.toLowerCase()))
                     menuItemList.add(menuItems.get(i));
             }
         }

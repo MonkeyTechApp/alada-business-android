@@ -66,13 +66,13 @@ public class MenuItemAdapter extends RecyclerView.Adapter<MenuItemAdapter.MenuIt
         MenuItem menuItem = this.menuItems.get(position);
 
         holder.txtPrice.setText(menuItem.getPrice()+" "+context.getString(R.string.currency_cfa));
-        holder.txtName.setText(menuItem.getTitle());
+        holder.txtName.setText(menuItem.getName());
         if(!isGrid)
         {
             if(menuItem.getMenuItemCategory()!= null)
                 holder.txtCategory.setText(menuItem.getMenuItemCategory().getName());
             else holder.txtCategory.setText(AppDataBase.getInstance(context).menuItemCategoryDao().getSpecificMenuItemCategory(
-                menuItem.getMenu_item_category_id()).getName()+"");
+                menuItem.getMenu_category_id()).getName()+"");
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

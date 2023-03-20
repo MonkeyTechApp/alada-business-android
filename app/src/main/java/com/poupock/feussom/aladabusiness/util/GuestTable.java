@@ -5,6 +5,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 public class GuestTable {
     @PrimaryKey(autoGenerate = true)
     private int id;
+    @SerializedName("name")
     private String title;
     private int internal_point_id;
     private int user_id;

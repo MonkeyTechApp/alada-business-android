@@ -53,9 +53,9 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
         OrderItem orderItem = this.orderItems.get(position);
 
         if(orderItem.getMenuItem() !=null)
-         holder.txtName.setText(orderItem.getMenuItem().getTitle());
+         holder.txtName.setText(orderItem.getMenuItem().getName());
         else holder.txtName.setText(
-            AppDataBase.getInstance(context).menuItemDao().getSpecificMenuItem(orderItem.getMenu_item_id()).getTitle()
+            AppDataBase.getInstance(context).menuItemDao().getSpecificMenuItem(orderItem.getMenu_item_id()).getName()
         );
 
         holder.txtQuantity.setText(orderItem.getQuantity()+"");

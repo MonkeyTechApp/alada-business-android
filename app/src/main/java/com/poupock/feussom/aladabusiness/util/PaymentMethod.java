@@ -9,7 +9,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity(tableName = "payment_method")
+@Entity(tableName = "payment_methods")
 public class PaymentMethod {
 
     @PrimaryKey(autoGenerate = true)

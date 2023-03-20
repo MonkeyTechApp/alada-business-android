@@ -19,7 +19,9 @@ import java.util.List;
 @Entity(tableName = "users")
 public class User {
 
-    @Ignore private static final String tag = User.class.getSimpleName();
+    @Ignore
+    private static final String tag = User.class.getSimpleName();
+    private static final String LAST_SYNC_TIME = "LAST_SYNC";
     @PrimaryKey(autoGenerate = true)
     int id;
     String role_id;
@@ -32,27 +34,41 @@ public class User {
     private String created_at;
     private String email;
     private String phone;
-    @Ignore private List<Business> businesses;
-    @Ignore private List<Business> owned_businesses;
-    @Ignore List<Role> roles;
-    @Ignore private static final String CONNECTED_USER = "CONNECTED_USER";
+    @Ignore
+    private List<Business> businesses;
+    @Ignore
+    private List<Business> owned_businesses;
+    @Ignore
+    List<Role> roles;
+    @Ignore
+    private static final String CONNECTED_USER = "CONNECTED_USER";
     private static final String USER_FCM = "Firebase-cloud-message-token";
-    @Ignore private static final String USER_TOKEN = "TOKEN";
+    @Ignore
+    private static final String USER_TOKEN = "TOKEN";
+    @Ignore
+    private UserPivot pivot;
 
-    public static boolean storeConnectedUser(User user , Context context) {
+
+    public static boolean storeConnectedUser(User user, Context context) {
         SharedPreferences.Editor editor = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE).edit();
-        editor.putString(CONNECTED_USER,new Gson().toJson(user));
+        editor.putString(CONNECTED_USER, new Gson().toJson(user));
         editor.apply();
         return editor.commit();
     }
 
-    public static boolean storeToken(String token , Context context) {
+    public static boolean storeToken(String token, Context context) {
         SharedPreferences.Editor editor = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE).edit();
-        editor.putString(USER_TOKEN,token);
+        editor.putString(USER_TOKEN, token);
         editor.apply();
         return editor.commit();
     }
 
+    public static boolean storeLastSync(String time, Context context) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE).edit();
+        editor.putString(LAST_SYNC_TIME, time);
+        editor.apply();
+        return editor.commit();
+    }
 
 //    public static User getRegisteredUser(Context context){
 //        User user = null;
@@ -121,18 +137,27 @@ public class User {
         this.businesses = businesses;
     }
 
-    public static String getToken(Context context){
-        SharedPreferences preferences = context.getSharedPreferences(Constant._Preference_name,Context.MODE_PRIVATE);
-        return preferences.getString(USER_TOKEN,null);
+    public static String getToken(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE);
+        return preferences.getString(USER_TOKEN, null);
     }
 
-    public static User  currentUser(Context context) {
+    public static String getLastSyncTime(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE);
+        return preferences.getString(LAST_SYNC_TIME, null);
+    }
+
+    public static User currentUser(Context context) {
         User user = null;
-        SharedPreferences preferences = context.getSharedPreferences(Constant._Preference_name,Context.MODE_PRIVATE);
-        String userStoredString = preferences.getString(CONNECTED_USER,null);
-        try{ user = new Gson().fromJson(userStoredString, User.class); }
-        catch (JsonSyntaxException ex ) { Log.i(tag , "The User JSON exception is "+ex.toString());}
-        catch (NullPointerException ex) { Log.i(tag , "The User NULL exception is "+ex.toString());}
+        SharedPreferences preferences = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE);
+        String userStoredString = preferences.getString(CONNECTED_USER, null);
+        try {
+            user = new Gson().fromJson(userStoredString, User.class);
+        } catch (JsonSyntaxException ex) {
+            Log.i(tag, "The User JSON exception is " + ex.toString());
+        } catch (NullPointerException ex) {
+            Log.i(tag, "The User NULL exception is " + ex.toString());
+        }
 
         return user;
     }
@@ -254,18 +279,25 @@ public class User {
         this.owned_businesses = owned_businesses;
     }
 
+    public UserPivot getPivot() {
+        return pivot;
+    }
 
-    public static boolean storeFCMToken(String token , Context context) {
+    public void setPivot(UserPivot pivot) {
+        this.pivot = pivot;
+    }
+
+    public static boolean storeFCMToken(String token, Context context) {
         SharedPreferences.Editor editor = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE).edit();
-        editor.putString(USER_FCM,token);
+        editor.putString(USER_FCM, token);
         editor.apply();
         return editor.commit();
     }
 
     public static List<User> buildListFromObjects(List<Object> data) {
         List<User> values = new ArrayList<>();
-        if (data != null){
-            for (int i=0 ; i<data.size(); i++){
+        if (data != null) {
+            for (int i = 0; i < data.size(); i++) {
                 values.add(getObjectFromObject(data.get(i)));
             }
         }
@@ -276,4 +308,5 @@ public class User {
         Gson gson = new Gson();
         return gson.fromJson(gson.toJson(data), User.class);
     }
+
 }

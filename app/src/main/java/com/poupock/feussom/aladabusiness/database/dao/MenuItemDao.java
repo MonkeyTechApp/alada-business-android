@@ -33,7 +33,7 @@ public interface MenuItemDao {
     @Query("SELECT * FROM menu_items")
     List<MenuItem> getAllMenuItems();
 
-    @Query("SELECT * FROM menu_items WHERE menu_item_category_id = :id")
+    @Query("SELECT * FROM menu_items WHERE menu_category_id = :id")
     List<MenuItem> getSpecificCategoryItems(int id);
 
 }

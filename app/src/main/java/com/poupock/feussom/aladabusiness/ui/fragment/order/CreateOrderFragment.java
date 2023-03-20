@@ -18,7 +18,6 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -29,7 +28,6 @@ import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.DialogCallback;
 import com.poupock.feussom.aladabusiness.callback.ListItemClickCallback;
 import com.poupock.feussom.aladabusiness.callback.VolleyRequestCallback;
-import com.poupock.feussom.aladabusiness.core.menu.CreateMenuFragment;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.databinding.FragmentCreateOrderBinding;
 import com.poupock.feussom.aladabusiness.ui.adapter.CourseAdapter;
@@ -54,6 +52,7 @@ import com.poupock.feussom.aladabusiness.web.response.DatumResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
 public class CreateOrderFragment extends Fragment implements View.OnClickListener {
@@ -157,7 +156,7 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                                                 Log.i(TAG,"The menu item in the list is index : "+menuItemIndex);
                                                 OrderItem orderItem;
                                                 if(menuItemIndex < 0){
-                                                    Log.i(TAG,"The menu item is new and item is "+ menuItem.getTitle()+ " and the id : "+menuItem.getId());
+                                                    Log.i(TAG,"The menu item is new and item is "+ menuItem.getName()+ " and the id : "+menuItem.getId());
                                                     orderItem = new OrderItem();
                                                     orderItem.setCourse_id(course.getId());
                                                     orderItem.setCourse(course);
@@ -341,6 +340,7 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                 Course course = new Course();
                 course.setTitle("TITLE");
                 course.setOrder_id(order.getId());
+                course.setCode(User.currentUser(requireContext()).getId()+"-"+UUID.randomUUID().toString());
                 course.setGuest_table_id(guestTable.getId());
                 course.setCreated_at(Methods.getCurrentTimeStamp());
                 course.setStatus(Constant.STATUS_OPEN);
@@ -382,8 +382,8 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                         case DialogInterface.BUTTON_POSITIVE:
                             GuestTable guestTable = (orderViewModel.getGuestTableMutableLiveData().getValue());
                             if (guestTable != null){
-                                Order order = new Order( 0, Methods.generateCode(), User.currentUser(requireContext()).getId(), 1,  guestTable.getId(), Constant.STATUS_OPEN,
-                                        Methods.getCurrentTimeStamp()
+                                Order order = new Order( 0, Methods.generateCode(requireContext()), User.currentUser(requireContext()).getId(), 1,  guestTable.getId(), Constant.STATUS_OPEN,
+                                    1,    Methods.getCurrentTimeStamp()
                                 );
 
                                 Log.i(TAG,"The order size is "+AppDataBase.getInstance(requireContext()).orderDao().getAllOrders().size());
@@ -426,7 +426,8 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
 //            new PostTask()
             ProgressDialog dialog = new ProgressDialog(requireContext());
             dialog.setMessage(getString(R.string.sending_order_3_dots));
-            new PostTask(requireContext(), ServerUrl.ORDER, orderViewModel.getOrderMutableLiveData().getValue().buildParams(),
+            Log.i(TAG, "The order is "+ orderViewModel.getOrderMutableLiveData().getValue().buildParams(AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0).getId()).toString());
+            new PostTask(requireContext(), ServerUrl.ORDER_POST, orderViewModel.getOrderMutableLiveData().getValue().buildParams(AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0).getId()),
                     new VolleyRequestCallback() {
                         @Override
                         public void onStart() {
@@ -439,23 +440,23 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                             DatumResponse datumResponse = new Gson().fromJson(response, DatumResponse.class);
                             if (datumResponse.success){
                                 Order datum = Order.getObjectFromObject(datumResponse.data);
-                                datum.setServerId(datum.getId());
 
-                                AppDataBase.getInstance(requireContext()).orderDao().update(datum);
+//                                AppDataBase.getInstance(requireContext()).orderDao().update(datum);
+                                Toast.makeText(requireContext(), R.string.order_sent, Toast.LENGTH_LONG).show();
                             }
                             else {
-                                Toast.makeText(requireContext(), R.string.order_sent, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(requireContext(), R.string.server_error, Toast.LENGTH_SHORT).show();
                             }
                         }
 
                         @Override
                         public void onError(VolleyError error) {
-
+                            Toast.makeText(requireContext(), R.string.server_error, Toast.LENGTH_LONG).show();
                         }
 
                         @Override
                         public void onJobFinished() {
-
+                            dialog.dismiss();
                         }
                     }).execute();
         }

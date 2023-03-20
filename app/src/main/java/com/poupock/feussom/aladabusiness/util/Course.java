@@ -24,14 +24,15 @@ public class Course {
     @ColumnInfo(defaultValue = "0")
     private int guest_table_id;
     private int order_id;
+    private String code;
     @Ignore private GuestTable guestTable;
     @Ignore private User creator;
     @Ignore private Order order;
     private int status;
     @Ignore
-    private List<OrderItem> orderItems;
+    private List<OrderItem> items;
 
-    public Course(int id, String title, String created_at, int user_id, int guest_table_id, int order_id, int status) {
+    public Course(int id, String title, String created_at, int user_id, int guest_table_id, int order_id, int status, String code) {
         this.id = id;
         this.title = title;
         this.created_at = created_at;
@@ -39,12 +40,14 @@ public class Course {
         this.guest_table_id = guest_table_id;
         this.order_id = order_id;
         this.status = status;
+        this.code = code;
     }
 
     @Ignore
     public Course(int id, String title, String created_at, int user_id, int guest_table_id, int order_id, int status, GuestTable guestTable, User creator, Order order,
-                  List<OrderItem> orderItems) {
+                  List<OrderItem> items, String code) {
         this.id = id;
+        this.code = code;
         this.title = title;
         this.created_at = created_at;
         this.user_id = user_id;
@@ -54,7 +57,7 @@ public class Course {
         this.creator = creator;
         this.order = order;
         this.status = status;
-        this.orderItems = orderItems;
+        this.items = items;
     }
 
     @Ignore
@@ -91,6 +94,7 @@ public class Course {
             object.put("title", this.getTitle());
             object.put("created_at", this.getCreated_at());
             object.put("order_id", this.getOrder_id());
+            object.put("code", this.getCode());
             object.put("items", OrderItem.buildJsonArray(this.getOrderItems()));
         }catch (JSONException ex){
 
@@ -179,11 +183,19 @@ public class Course {
     }
 
     public List<OrderItem> getOrderItems() {
-        return orderItems;
+        return items;
     }
 
-    public void setOrderItems(List<OrderItem> orderItems) {
-        this.orderItems = orderItems;
+    public void setOrderItems(List<OrderItem> items) {
+        this.items = items;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public static List<Course> buildListFromObjects(List<Object> data) {

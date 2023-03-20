@@ -9,6 +9,7 @@ import androidx.room.AutoMigration;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.poupock.feussom.aladabusiness.database.dao.BusinessDao;
@@ -30,24 +31,26 @@ import com.poupock.feussom.aladabusiness.util.MenuItem;
 import com.poupock.feussom.aladabusiness.util.MenuItemCategory;
 import com.poupock.feussom.aladabusiness.util.Order;
 import com.poupock.feussom.aladabusiness.util.OrderItem;
+import com.poupock.feussom.aladabusiness.util.PaymentMethod;
 import com.poupock.feussom.aladabusiness.util.Role;
 import com.poupock.feussom.aladabusiness.util.User;
 
+import java.util.UUID;
+
 
 @Database(
-    version = 7,
+    version = 8,
     entities = {User.class, Role.class, InternalPoint.class, MenuItemCategory.class, MenuItem.class, GuestTable.class,
-    Course.class, OrderItem.class, Order.class, Business.class},
-    autoMigrations = {
-        @AutoMigration(
-            from = 6,
-            to = 7
-        )
-    }
+    Course.class, OrderItem.class, Order.class, Business.class, PaymentMethod.class}
+//    autoMigrations = {
+//        @AutoMigration(
+//            from = 6,
+//            to = 7
+//        )
+//    }
 )
 
 public abstract class AppDataBase extends RoomDatabase {
-
     private static AppDataBase instance;
     private static final String tag = AppDataBase.class.getSimpleName();
 
@@ -62,6 +65,16 @@ public abstract class AppDataBase extends RoomDatabase {
     public abstract GuestTableDao guestTableDao();
     public abstract CourseDao courseDao();
 
+    static final Migration MIGRATION_7_8 = new Migration(6, 7) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+//            database.execSQL("CREATE TABLE `payment_methods` (`id` INTEGER NOT NULL , "
+//                    + "`name` TEXT, `description` TEXT , `created_at` TEXT, PRIMARY KEY(`id`))");
+            database.execSQL("ALTER TABLE `courses` "
+                    + " ADD COLUMN `code` TEXT NOT NULL DEFAULT "+ UUID.randomUUID().toString());
+        }
+    };
+
     public static synchronized AppDataBase getInstance(Context context)
     {
         if(instance==null)
@@ -70,7 +83,9 @@ public abstract class AppDataBase extends RoomDatabase {
                     AppDataBase.class, Constant.DB_NAME)
                     .addCallback(roomCallback)
                     .allowMainThreadQueries()
-                    .fallbackToDestructiveMigration().build();
+                    .fallbackToDestructiveMigration()
+                    .addMigrations(MIGRATION_7_8)
+                    .build();
         }
 
         return instance;

@@ -72,6 +72,7 @@ public class OrderItem {
             object.put("id", this.getId());
             object.put("price", this.getPrice());
             object.put("quantity", this.getQuantity());
+            object.put("menu_item_id", this.getMenu_item_id());
         }catch (JSONException ex){
 
         }
