@@ -71,7 +71,7 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
         binding = FragmentCreateOrderBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        buildCourseAdapter(courseListAdapter);
+        courseListAdapter = buildCourseAdapter();
 
         orderViewModel.getGuestTableMutableLiveData().observe(getViewLifecycleOwner(), new Observer<GuestTable>() {
             @Override
@@ -87,7 +87,7 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                     if (courseListAdapter != null)
                         courseListAdapter.setCourses(new ArrayList<>());
                     else {
-                        buildCourseAdapter(courseListAdapter);
+                        courseListAdapter = buildCourseAdapter();
                     }
                     courseListAdapter.notifyDataSetChanged();
                 }
@@ -464,8 +464,8 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
         }
     }
 
-    void buildCourseAdapter(CourseAdapter courseAdapter){
-        courseListAdapter = new CourseAdapter(requireContext(), new ArrayList<>(), new DialogCallback() {
+    CourseAdapter buildCourseAdapter(){
+        return new CourseAdapter(requireContext(), new ArrayList<>(), new DialogCallback() {
             @Override
             public void onActionClicked(Object o, int action) {
 
