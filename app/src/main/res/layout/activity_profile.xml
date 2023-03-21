@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".core.dashboard.DashboardActivity">
+    tools:context=".core.table.TableActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -21,6 +21,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_dashboard" />
+    <include layout="@layout/content_profile" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -63,6 +63,11 @@
             android:label="@string/title_activity_business_creation"
             android:theme="@style/ThemeSplash.NoActionBar" />
         <activity
+            android:name=".core.profile.ProfileActivity"
+            android:exported="false"
+            android:label="@string/profile"
+            android:theme="@style/ThemeSplash.NoActionBar" />
+        <activity
             android:name=".core.menu.MenuItemActivity"
             android:exported="false"
             android:label="@string/title_activity_menu_item"

@@ -94,11 +94,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     }
                 }));
 
-        binding.cardOrder.setOnClickListener(this);
-        binding.cardMenu.setOnClickListener(this);
-        binding.cardUser.setOnClickListener(this);
-        binding.cardTable.setOnClickListener(this);
-
         return root;
     }
 
@@ -111,25 +106,5 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         Gson gson = new Gson();
-        if (view == binding.cardMenu){
-            Intent intent = new Intent(requireContext(), MenuItemActivity.class);
-            intent.putExtra(Constant.ACTIVE_BUSINESS_KEY, gson.toJson(appDataBase.businessDao().getAllBusinesses().get(0)));
-            startActivity(intent);
-        }
-        else if (view == binding.cardTable){
-            Intent intent = new Intent(requireContext(), TableActivity.class);
-            intent.putExtra(Constant.ACTIVE_BUSINESS_KEY, gson.toJson(appDataBase.businessDao().getAllBusinesses().get(0)));
-            startActivity(intent);
-        }
-        else if (view == binding.cardUser){
-            Intent intent = new Intent(requireContext(), UsersActivity.class);
-            intent.putExtra(Constant.ACTIVE_BUSINESS_KEY, gson.toJson(appDataBase.businessDao().getAllBusinesses().get(0)));
-            startActivity(intent);
-        }
-        else if (view == binding.cardOrder){
-            Intent intent = new Intent(requireContext(), OrderActivity.class);
-            intent.putExtra(Constant.ACTIVE_BUSINESS_KEY, gson.toJson(appDataBase.businessDao().getAllBusinesses().get(0)));
-            startActivity(intent);
-        }
     }
 }

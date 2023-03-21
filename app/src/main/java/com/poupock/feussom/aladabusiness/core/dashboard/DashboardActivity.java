@@ -33,7 +33,7 @@ import com.poupock.feussom.aladabusiness.util.User;
 
 public class DashboardActivity extends AppCompatActivity {
 
-    private AppBarConfiguration mAppBarConfiguration;
+    private AppBarConfiguration appBarConfiguration;
     private ActivityDashboardBinding binding;
     private String tag = DashboardActivity.class.getSimpleName();
 
@@ -48,30 +48,25 @@ public class DashboardActivity extends AppCompatActivity {
         binding = ActivityDashboardBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        setSupportActionBar(binding.appBarDashboard.toolbar);
+        setSupportActionBar(binding.toolbar);
 
-        DrawerLayout drawer = binding.drawerLayout;
-        NavigationView navigationView = binding.navView;
+//        DrawerLayout drawer = binding.drawerLayout;
+//        NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.nav_home, R.id.nav_user, R.id.nav_menu,
-                R.id.nav_orders, R.id.nav_table)
-                .setOpenableLayout(drawer)
-                .build();
-        Log.i(tag,"The User connected : "+ new Gson().toJson(User.currentUser(this)));
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_dashboard);
-        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
-
-        txtIdentifier = binding.navView.getHeaderView(0).findViewById(R.id.txtIdentifier);
-        txtUser = binding.navView.getHeaderView(0).findViewById(R.id.txtUser);
-        txtRole = binding.navView.getHeaderView(0).findViewById(R.id.txtRole);
+        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+//
+//        txtIdentifier = binding.navView.getHeaderView(0).findViewById(R.id.txtIdentifier);
+//        txtUser = binding.navView.getHeaderView(0).findViewById(R.id.txtUser);
+//        txtRole = binding.navView.getHeaderView(0).findViewById(R.id.txtRole);
 
         User currentUser = User.currentUser(this);
 
         if (currentUser.getBusinesses().size() > 0){
 //            txtRole.setText(currentUser.getRoles().get(0).getName());
-            txtRole.setVisibility(View.VISIBLE);
+//            txtRole.setVisibility(View.VISIBLE);
 //            launchService();
             startService(this);
         }
@@ -118,10 +113,10 @@ public class DashboardActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_dashboard);
-        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
-                || super.onSupportNavigateUp();
-    }
+//    @Override
+//    public boolean onSupportNavigateUp() {
+//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_dashboard);
+//        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+//                || super.onSupportNavigateUp();
+//    }
 }
