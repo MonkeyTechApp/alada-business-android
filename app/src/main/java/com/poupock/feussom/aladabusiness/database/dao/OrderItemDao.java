@@ -27,6 +27,9 @@ public interface OrderItemDao {
     @Query("SELECT * FROM order_items WHERE id = :id")
     OrderItem getSpecificOrderItem(int id);
 
+    @Query("SELECT * FROM order_items WHERE menu_item_id = :menuId AND course_id = :courseId")
+    OrderItem getSpecificOrderItem(int menuId, int courseId);
+
     @Query("SELECT * FROM order_items WHERE course_id = :course_id AND menu_item_id = :menu_item_id")
     OrderItem getOrderByCourseIdAndMenuItem(int course_id, int menu_item_id);
 

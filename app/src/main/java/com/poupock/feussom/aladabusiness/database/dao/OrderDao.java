@@ -31,6 +31,9 @@ public interface OrderDao {
     @Query("SELECT * FROM orders WHERE id = :id")
     Order getSpecificOrder(long id);
 
+    @Query("SELECT * FROM orders WHERE code = :code")
+    Order getSpecificOrder(String code);
+
     @Query("SELECT * FROM orders WHERE guest_table_id = :id AND status = :status")
     Order getSpecificOrderFromTableId(int id, int status);
 

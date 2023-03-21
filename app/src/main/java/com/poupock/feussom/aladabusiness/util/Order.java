@@ -9,6 +9,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,6 +29,7 @@ public class Order {
     private int status;
     @ColumnInfo(defaultValue =  "1")
     private int payment_method_id ;
+    @SerializedName("table_id")
     @ColumnInfo(defaultValue = "0")
     private int guest_table_id;
     @Ignore private GuestTable guestTable;
@@ -200,6 +202,7 @@ public class Order {
         try {
             params.put("status", this.getStatus()+"");
             params.put("code", this.getCode());
+            params.put("status", this.getStatus());
             params.put("ordered_at", this.getCreated_at());
             params.put("guest_table_id", this.guest_table_id+"");
             params.put("business_id", business_id+"");

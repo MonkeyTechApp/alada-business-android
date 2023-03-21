@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,7 +85,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                                     @Override
                                     public void onStart() {
                                         dialog.setMessage(getString(R.string.connecting_3_dots));
-                                        dialog.setCancelable(true);
+                                        dialog.setCancelable(false);
                                         dialog.show();
                                     }
 
@@ -115,6 +116,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                                                             }
                                                         }
 
+                                                        Log.i(TAG, "The business order is : "+business.getOrders().size());
                                                         for(int j=0;j<business.getOrders().size(); j++){
                                                             dataBase.orderDao().insert(business.getOrders().get(j));
                                                             for (int k=0; k<business.getOrders().get(j).getCourseList().size(); k++){
@@ -124,6 +126,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                                                                 }
                                                             }
                                                         }
+
+                                                        Log.i(TAG, "The business order is : "+dataBase.orderDao().getAllOrders().size());
+                                                        Log.i(TAG, gson.toJson(dataBase.orderDao().getAllOrders()));
+                                                        Log.i(TAG, gson.toJson(dataBase.guestTableDao().getAllGuestTables()));
                                                     }
                                                 }
                                             }

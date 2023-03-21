@@ -1,6 +1,12 @@
 package com.poupock.feussom.aladabusiness.core.dashboard;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
@@ -10,6 +16,7 @@ import android.widget.TextView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -20,6 +27,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.Gson;
 import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.databinding.ActivityDashboardBinding;
+import com.poupock.feussom.aladabusiness.job.OrderService;
+import com.poupock.feussom.aladabusiness.job.OrderSyncService;
 import com.poupock.feussom.aladabusiness.util.User;
 
 public class DashboardActivity extends AppCompatActivity {
@@ -63,12 +72,43 @@ public class DashboardActivity extends AppCompatActivity {
         if (currentUser.getBusinesses().size() > 0){
 //            txtRole.setText(currentUser.getRoles().get(0).getName());
             txtRole.setVisibility(View.VISIBLE);
+//            launchService();
+            startService(this);
         }
         else {
             txtRole.setVisibility(View.GONE);
             txtUser.setText(currentUser.getName());
             txtIdentifier.setText(currentUser.getEmail());
         }
+    }
+
+    private void launchService() {
+        ComponentName componentName = new ComponentName(this, OrderSyncService.class);
+
+        JobInfo jobInfo = new JobInfo.Builder(OrderSyncService.JOB_ID, componentName)
+                .setRequiresCharging(false)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPersisted(true)
+                .build();
+
+        JobScheduler jobScheduler = (JobScheduler) this.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+
+        int resultCode = jobScheduler.schedule(jobInfo);
+
+        if (resultCode == JobScheduler.RESULT_SUCCESS)
+            Log.i(tag, "Job scheduled");
+        else Log.i(tag, "Job scheduling failed");
+    }
+
+    private void startService(Context context){
+        Intent serviceIntent = new Intent(context, OrderService.class);
+        serviceIntent.putExtra(User.LAST_SYNC_TIME, User.getLastSyncTime(context));
+        ContextCompat.startForegroundService(this, serviceIntent);
+    }
+
+    private void stopService(Context context){
+        Intent serviceIntent = new Intent(context, OrderService.class);
+        stopService(serviceIntent);
     }
 
     @Override

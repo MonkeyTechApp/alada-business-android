@@ -29,6 +29,9 @@ public interface CourseDao {
     @Query("SELECT * FROM courses WHERE id = :id")
     Course getSpecificCourse(int id);
 
+    @Query("SELECT * FROM courses WHERE code = :code")
+    Course getSpecificCourse(String code);
+
     @Query("SELECT * FROM courses")
     List<Course> getAllCourses();
 

@@ -27,6 +27,7 @@ import com.google.gson.Gson;
 import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.DialogCallback;
 import com.poupock.feussom.aladabusiness.callback.ListItemClickCallback;
+import com.poupock.feussom.aladabusiness.callback.ProcessCallback;
 import com.poupock.feussom.aladabusiness.callback.VolleyRequestCallback;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.databinding.FragmentCreateOrderBinding;
@@ -313,6 +314,9 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
 //            }));
             updatedOrder.setCourseList(CourseWithItemListRelation.getListCourseFromRelation(
                 AppDataBase.getInstance(requireContext()).courseDao().getOrderCoursesWithOrderItem(updatedOrder.getId())));
+            Log.i(TAG, "The number of courses is : "+updatedOrder.getCourseList().size());
+            Log.i(TAG, "The oder id is : "+updatedOrder.getId());
+            Log.i(TAG, "The courses are : "+gson.toJson(AppDataBase.getInstance(requireContext()).courseDao().getAllCourses()));
             courseListAdapter.setCourses(updatedOrder.getCourseList());
             binding.txtOrderTotal.setText(updatedOrder.getTotal()+" "+getString(R.string.currency_cfa));
             courseListAdapter.notifyDataSetChanged();
@@ -373,9 +377,34 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
             }
         }
         else if(binding.btnPay==view){
-            Order order =  orderViewModel.getOrderMutableLiveData().getValue();
-            Objects.requireNonNull(order).setStatus(Constant.STATUS_CLOSED);
-            AppDataBase.getInstance(requireContext()).orderDao().update(order);
+            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which){
+                        case DialogInterface.BUTTON_POSITIVE:
+                            Order order =  orderViewModel.getOrderMutableLiveData().getValue();
+                            Objects.requireNonNull(order).setStatus(Constant.STATUS_CLOSED);
+                            sendOrder(order, new ProcessCallback() {
+                                @Override
+                                public void done() {
+                                    AppDataBase.getInstance(requireContext()).orderDao().update(order);
+                                }
+
+                                @Override
+                                public void failed() { }
+                            });
+
+                           break;
+                        case DialogInterface.BUTTON_NEGATIVE:
+                            dialog.dismiss();
+                            break;
+                    }
+                }
+            };
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            builder.setMessage(getString(R.string.confirm_payment_received)).setPositiveButton(getString(R.string.yes), dialogClickListener)
+                    .setNegativeButton(getString(R.string.no), dialogClickListener).show();
         }
         else if(binding.btnAddOrder == view){
             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -425,42 +454,15 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                 .setNegativeButton(getString(R.string.no), dialogClickListener).show();
         }
         else if (binding.btnSend == view){
-//            new PostTask()
-            ProgressDialog dialog = new ProgressDialog(requireContext());
-            dialog.setMessage(getString(R.string.sending_order_3_dots));
-            Log.i(TAG, "The order is "+ orderViewModel.getOrderMutableLiveData().getValue().buildParams(AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0).getId()).toString());
-            new PostTask(requireContext(), ServerUrl.ORDER_POST, orderViewModel.getOrderMutableLiveData().getValue().buildParams(AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0).getId()),
-                    new VolleyRequestCallback() {
-                        @Override
-                        public void onStart() {
-                            dialog.setCancelable(false);
-                            dialog.show();
-                        }
+            sendOrder(orderViewModel.getOrderMutableLiveData().getValue(), new ProcessCallback() {
+                @Override
+                public void done() {
+                }
 
-                        @Override
-                        public void onSuccess(String response) {
-                            DatumResponse datumResponse = new Gson().fromJson(response, DatumResponse.class);
-                            if (datumResponse.success){
-                                Order datum = Order.getObjectFromObject(datumResponse.data);
-
-//                                AppDataBase.getInstance(requireContext()).orderDao().update(datum);
-                                Toast.makeText(requireContext(), R.string.order_sent, Toast.LENGTH_LONG).show();
-                            }
-                            else {
-                                Toast.makeText(requireContext(), R.string.server_error, Toast.LENGTH_SHORT).show();
-                            }
-                        }
-
-                        @Override
-                        public void onError(VolleyError error) {
-                            Toast.makeText(requireContext(), R.string.server_error, Toast.LENGTH_LONG).show();
-                        }
-
-                        @Override
-                        public void onJobFinished() {
-                            dialog.dismiss();
-                        }
-                    }).execute();
+                @Override
+                public void failed() {
+                }
+            });
         }
     }
 
@@ -471,5 +473,45 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
 
             }
         });
+    }
+
+    public void sendOrder(Order order, ProcessCallback processCallback){
+        ProgressDialog dialog = new ProgressDialog(requireContext());
+        dialog.setMessage(getString(R.string.sending_order_3_dots));
+        Log.i(TAG, "The order is "+ order.buildParams(AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0).getId()).toString());
+        new PostTask(requireContext(), ServerUrl.ORDER_POST, order.buildParams(AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0).getId()),
+                new VolleyRequestCallback() {
+                    @Override
+                    public void onStart() {
+                        dialog.setCancelable(false);
+                        dialog.show();
+                    }
+
+                    @Override
+                    public void onSuccess(String response) {
+                        DatumResponse datumResponse = new Gson().fromJson(response, DatumResponse.class);
+                        if (datumResponse.success){
+//                            Order datum = Order.getObjectFromObject(datumResponse.data);
+//                            AppDataBase.getInstance(requireContext()).orderDao().update(datum);
+                            processCallback.done();
+                            Toast.makeText(requireContext(), R.string.order_sent, Toast.LENGTH_LONG).show();
+                        }
+                        else {
+                            processCallback.failed();
+                            Toast.makeText(requireContext(), R.string.order_not_sent, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(VolleyError error) {
+                        processCallback.failed();
+                        Toast.makeText(requireContext(), R.string.server_error, Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onJobFinished() {
+                        dialog.dismiss();
+                    }
+                }).execute();
     }
 }

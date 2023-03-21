@@ -251,4 +251,7 @@
     <string name="user_not_inserted">User not inserted!</string>
     <string name="sending_order_3_dots">Sending order…</string>
     <string name="order_sent">Order sent.</string>
+    <string name="service_runing">Order monitor service working</string>
+    <string name="confirm_payment_received">Confirm payment received!</string>
+    <string name="order_not_sent">Order not sent.</string>
 </resources>

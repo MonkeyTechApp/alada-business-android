@@ -5,6 +5,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,6 +18,7 @@ import java.util.List;
 public class OrderItem {
     @PrimaryKey(autoGenerate = true)
     private int id;
+    @SerializedName("menu_id")
     private int menu_item_id;
     private double price;
     private String created_at;

@@ -13,7 +13,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Entity(tableName = "users")
@@ -21,7 +24,7 @@ public class User {
 
     @Ignore
     private static final String tag = User.class.getSimpleName();
-    private static final String LAST_SYNC_TIME = "LAST_SYNC";
+    public static final String LAST_SYNC_TIME = "LAST_SYNC";
     @PrimaryKey(autoGenerate = true)
     int id;
     String role_id;
@@ -143,8 +146,9 @@ public class User {
     }
 
     public static String getLastSyncTime(Context context) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SharedPreferences preferences = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE);
-        return preferences.getString(LAST_SYNC_TIME, null);
+        return preferences.getString(LAST_SYNC_TIME, sdf.format(new Date()));
     }
 
     public static User currentUser(Context context) {
