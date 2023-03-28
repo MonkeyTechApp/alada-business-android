@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 import android.widget.ImageView;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -26,9 +28,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
 import com.poupock.feussom.aladabusiness.R;
+import com.poupock.feussom.aladabusiness.core.profile.ProfileActivity;
+import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.databinding.ActivityDashboardBinding;
 import com.poupock.feussom.aladabusiness.job.OrderService;
 import com.poupock.feussom.aladabusiness.job.OrderSyncService;
+import com.poupock.feussom.aladabusiness.util.Constant;
 import com.poupock.feussom.aladabusiness.util.User;
 
 public class DashboardActivity extends AppCompatActivity {
@@ -113,10 +118,22 @@ public class DashboardActivity extends AppCompatActivity {
         return true;
     }
 
-//    @Override
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.item_profile){
+            Intent intent = new Intent(this, ProfileActivity.class);
+            intent.putExtra(Constant.ACTIVE_BUSINESS_KEY,
+                    new Gson().toJson(AppDataBase.getInstance(this).businessDao().getAllBusinesses().get(0)));
+            startActivity(intent);
+        }
+        return true;
+    }
+
+    //    @Override
 //    public boolean onSupportNavigateUp() {
 //        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_dashboard);
 //        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
 //                || super.onSupportNavigateUp();
 //    }
+
 }

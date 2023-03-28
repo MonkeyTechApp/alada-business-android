@@ -48,6 +48,9 @@ public interface OrderDao {
     @Query("SELECT * FROM orders")
     List<Order> getAllOrders();
 
+    @Query("SELECT * FROM orders WHERE created_at >= DATE('now')")
+    List<Order> getTodayOrders();
+
     @Query("SELECT * FROM orders WHERE guest_table_id = :table_id AND status = :status")
     List<Order> getTableOrders(int table_id, int status);
 }

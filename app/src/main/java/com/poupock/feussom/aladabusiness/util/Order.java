@@ -1,5 +1,6 @@
 package com.poupock.feussom.aladabusiness.util;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -10,6 +11,7 @@ import androidx.room.PrimaryKey;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.poupock.feussom.aladabusiness.database.AppDataBase;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -76,6 +78,24 @@ public class Order {
 
     @Ignore
     public Order() {
+    }
+
+    public static double getCalculateFromList(List<Order> orders, Context context) {
+        double total = 0;
+        for (int i =0; i<orders.size(); i++){
+            List<Course> courses = AppDataBase.getInstance(context).orderDao().getOrderWithCourseList(orders.get(i).getId()).courses;
+            for (int j=0; j<courses.size(); j++){
+                List<OrderItem> orderItems = AppDataBase.getInstance(context).orderItemDao().getAllCourseItems(courses.get(j).getId());
+                if (orderItems != null){
+                    if (!orderItems.isEmpty()){
+                        courses.get(j).setOrderItems(orderItems);
+                    }
+                }
+            }
+            orders.get(i).setCourseList(courses);
+            total = total + orders.get(i).getTotal();
+        }
+        return total;
     }
 
     public int getId() {
@@ -200,7 +220,6 @@ public class Order {
     public JSONObject buildParams(int business_id) {
         JSONObject params = new JSONObject();
         try {
-            params.put("status", this.getStatus()+"");
             params.put("code", this.getCode());
             params.put("status", this.getStatus());
             params.put("ordered_at", this.getCreated_at());
@@ -219,5 +238,15 @@ public class Order {
 
     public void setPayment_method_id(int payment_method_id) {
         this.payment_method_id = payment_method_id;
+    }
+
+    public List<OrderItem> extractAllOrderedItems() {
+        List<OrderItem> items = new ArrayList<>();
+        if (getCourseList()!=null){
+            for (int i=0; i<getCourseList().size(); i++){
+                items.addAll(getCourseList().get(i).getOrderItems());
+            }
+        }
+        return items;
     }
 }

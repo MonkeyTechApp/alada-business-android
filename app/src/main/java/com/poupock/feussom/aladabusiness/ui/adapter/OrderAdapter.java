@@ -62,7 +62,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
 
         holder.txtCode.setText(order.getCode());
         holder.txtTime.setText(Methods.formatTime(order.getCreated_at()));
-        AppDataBase.getInstance(context).courseDao().getOrderCourses(order.getId()).size();
+//        AppDataBase.getInstance(context).courseDao().getOrderCourses(order.getId()).size();
         List<Course> courses = AppDataBase.getInstance(context).orderDao().getOrderWithCourseList(order.getId()).courses;
         if (courses != null){
             if (!courses.isEmpty()){
@@ -82,6 +82,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             holder.txtTable.setText(AppDataBase.getInstance(context).guestTableDao().getSpecificGuestTable(order.getGuest_table_id()).getTitle());
             holder.txtStatus.setText(Methods.processStatus(order.getStatus()));
             holder.txtAmount.setText(order.getTotal() +" "+ context.getString(R.string.currency_cfa));
+            holder.txtTime.setText(order.getCreated_at());
         }
         else {
             holder.txtTable.setVisibility(View.GONE);

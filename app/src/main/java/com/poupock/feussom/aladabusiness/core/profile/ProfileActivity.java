@@ -20,7 +20,6 @@ public class ProfileActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityProfileBinding binding;
-    GuestTableViewModel guestTableViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,16 +32,14 @@ public class ProfileActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.toolbar);
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_table);
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_profile);
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
-        guestTableViewModel = new ViewModelProvider(this).get(GuestTableViewModel.class);
 
         try{
             Business business = new Gson().fromJson(getIntent().getStringExtra(Constant.ACTIVE_BUSINESS_KEY), Business.class);
             if (business==null) onBackPressed();
-            guestTableViewModel.setBusinessMutableLiveData(business);
         }catch (NullPointerException ex){
             onBackPressed();
         }
@@ -51,7 +48,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_table);
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_profile);
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
     }

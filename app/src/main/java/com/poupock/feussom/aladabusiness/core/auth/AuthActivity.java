@@ -24,14 +24,13 @@ public class AuthActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         if(User.currentUser(this) != null){
             Intent intent = new Intent(this, DashboardActivity.class);;
-
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
+            finish();
         }
         else {
             setTheme(R.style.Theme_AlAdaBusiness);
-
             binding = ActivityAuthBinding.inflate(getLayoutInflater());
             setContentView(binding.getRoot());
 

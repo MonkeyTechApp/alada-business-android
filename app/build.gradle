@@ -111,4 +111,5 @@ dependencies {
     // optional - Paging 3 Integration
     implementation "androidx.room:room-paging:2.4.0-alpha04"
     /*--------Room components ends ----------------*/
+    implementation 'com.itextpdf:itextpdf:5.5.13'
 }

@@ -1,133 +1,227 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="@dimen/fab_margin"
     tools:context=".ui.fragment.profile.ProfileFragment">
 
-
-    <GridLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:columnCount="2"
-        android:useDefaultMargins="true"
-        app:layout_constraintTop_toBottomOf="@id/txtLegend">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:padding="@dimen/dimen_padding_mid"
+            android:background="@drawable/back_primary_gradient">
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@mipmap/user"
+                android:id="@+id/imgProfile"
+                android:contentDescription="@string/app_name" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardMenu"
-            android:layout_columnWeight="1"
-            android:layout_gravity="fill"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txtLegend"
-            app:cardCornerRadius="@dimen/card_radius_m"
-            app:contentPadding="@dimen/dimen_padding">
-            <LinearLayout
+            <TextView
+                android:id="@+id/txtName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/profile"
+                android:layout_toRightOf="@id/imgProfile"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:fontFamily="@font/poppins_semibold"
+                android:layout_alignTop="@id/imgProfile"
+                android:gravity="center_vertical"
+                android:layout_marginStart="@dimen/fab_margin"/>
+
+            <TextView
+                android:id="@+id/txtAmount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <ImageView
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
-                    android:src="@mipmap/ic_launcher"
-                    android:layout_gravity="center"
-                    android:contentDescription="@string/app_name"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/menu_management"
-                    android:layout_marginTop="@dimen/fab_margin"
-                    android:gravity="center" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+                android:gravity="center"
+                android:layout_below="@id/txtName"
+                android:text="120 CFA"
+                android:textSize="@dimen/text_h1"
+                android:fontFamily="@font/poppins_bold"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_marginTop="@dimen/dimen_padding_med"/>
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardUser"
-            android:layout_columnWeight="1"
-            android:layout_gravity="fill"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="@dimen/card_radius_m"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cardMenu"
-            app:contentPadding="@dimen/dimen_padding">
-            <LinearLayout
-                android:layout_width="match_parent"
+
+            <TextView
+                android:id="@+id/txtSale"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <ImageView
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
-                    android:src="@mipmap/ic_launcher"
-                    android:layout_gravity="center"
-                    android:contentDescription="@string/app_name"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/user_management"
-                    android:layout_marginTop="@dimen/fab_margin"
-                    android:gravity="center" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+                android:text="@string/today_s_sales"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:gravity="center_vertical"
+                android:layout_marginStart="@dimen/fab_margin"/>
+        </RelativeLayout>
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardTable"
-            android:layout_columnWeight="1"
-            android:layout_gravity="fill"
-            app:cardCornerRadius="@dimen/card_radius_m"
+        <GridLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txtLegend"
-            app:contentPadding="@dimen/dimen_padding">
-            <LinearLayout
-                android:layout_width="match_parent"
+            android:columnCount="3"
+            android:padding="@dimen/fab_margin"
+            android:useDefaultMargins="true"
+            app:layout_constraintTop_toBottomOf="@id/txtLegend">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardMenu"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <ImageView
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
-                    android:src="@mipmap/ic_launcher"
-                    android:layout_gravity="center"
-                    android:contentDescription="@string/app_name"/>
-                <TextView
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/txtLegend"
+                app:cardCornerRadius="@dimen/card_radius_m"
+                app:contentPadding="@dimen/dimen_padding">
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/tables_management"
-                    android:layout_marginTop="@dimen/fab_margin"
-                    android:gravity="center" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@mipmap/menu"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/app_name"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/menus"
+                        android:layout_marginTop="@dimen/fab_margin"
+                        android:fontFamily="@font/poppins_regular"
+                        style="@style/TextAppearance.AppCompat.Body1"
+                        android:gravity="center" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardOrder"
-            android:layout_columnWeight="1"
-            android:layout_gravity="fill"
-            app:cardCornerRadius="@dimen/card_radius_m"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardUser"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="@dimen/card_radius_m"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardMenu"
+                app:contentPadding="@dimen/dimen_padding">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@mipmap/team"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/app_name"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/personnel"
+                        android:layout_marginTop="@dimen/fab_margin"
+                        android:fontFamily="@font/poppins_regular"
+                        style="@style/TextAppearance.AppCompat.Body1"
+                        android:gravity="center" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardTable"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                app:cardCornerRadius="@dimen/card_radius_m"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/txtLegend"
+                app:contentPadding="@dimen/dimen_padding">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@mipmap/dinner"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/app_name"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/floor_plan"
+                        android:layout_marginTop="@dimen/fab_margin"
+                        android:fontFamily="@font/poppins_regular"
+                        style="@style/TextAppearance.AppCompat.Body1"
+                        android:gravity="center" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardOrder"
+                android:layout_columnWeight="1"
+                android:visibility="gone"
+                android:layout_gravity="fill"
+                app:cardCornerRadius="@dimen/card_radius_m"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/txtLegend"
+                app:contentPadding="@dimen/dimen_padding">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@mipmap/ic_launcher"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/app_name"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/order_management"
+                        android:layout_marginTop="@dimen/fab_margin"
+                        android:gravity="center" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </GridLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txtLegend"
-            app:contentPadding="@dimen/dimen_padding">
-            <LinearLayout
-                android:layout_width="match_parent"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <ImageView
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
-                    android:src="@mipmap/ic_launcher"
-                    android:layout_gravity="center"
-                    android:contentDescription="@string/app_name"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/order_management"
-                    android:layout_marginTop="@dimen/fab_margin"
-                    android:gravity="center" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+                android:text="@string/recent_orders"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:fontFamily="@font/poppins_regular"
+                android:gravity="center_vertical"
+                android:layout_alignTop="@id/btnAllOrders"
+                android:layout_alignBottom="@id/btnAllOrders"
+                android:layout_marginStart="@dimen/fab_margin"/>
 
-    </GridLayout>
+            <Button
+                android:id="@+id/btnAllOrders"
+                android:fontFamily="@font/poppins_semibold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:textAllCaps="false"
+                android:layout_alignParentEnd="true"
+                android:text="@string/view_all"/>
+        </RelativeLayout>
 
-</LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/fab_margin"
+            android:id="@+id/list"/>
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

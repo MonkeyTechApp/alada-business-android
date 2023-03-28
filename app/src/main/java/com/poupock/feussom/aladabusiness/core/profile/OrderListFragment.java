@@ -13,14 +13,18 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.gson.Gson;
+import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.ListItemClickCallback;
+import com.poupock.feussom.aladabusiness.core.table.TableListFragment;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.databinding.FragmentOrderListBinding;
 import com.poupock.feussom.aladabusiness.ui.adapter.OrderAdapter;
+import com.poupock.feussom.aladabusiness.util.Order;
 
 public class OrderListFragment extends Fragment {
 
     private FragmentOrderListBinding binding;
+    private ProfileViewModel profileViewModel;
     OrderAdapter orderAdapter = null;
 
     @Override
@@ -28,6 +32,8 @@ public class OrderListFragment extends Fragment {
         @NonNull LayoutInflater inflater, ViewGroup container,
         Bundle savedInstanceState
     ) {
+        profileViewModel =
+                new ViewModelProvider(requireActivity()).get(ProfileViewModel.class);
         binding = FragmentOrderListBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -40,6 +46,9 @@ public class OrderListFragment extends Fragment {
                 new ListItemClickCallback() {
                     @Override
                     public void onItemClickListener(Object o, boolean isLong) {
+                        profileViewModel.setOrderMutableLiveData(Order.getObjectFromObject(o));
+                        NavHostFragment.findNavController(OrderListFragment.this)
+                                .navigate(R.id.action_OrderListFragment_to_OrderDetailFragment);
                     }
                 }
         );

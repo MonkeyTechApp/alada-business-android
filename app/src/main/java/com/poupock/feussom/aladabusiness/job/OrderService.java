@@ -43,12 +43,11 @@ public class OrderService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         String lastSyncTime = intent.getStringExtra(User.LAST_SYNC_TIME);
         Intent notificationIntent = new Intent(this, DashboardActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         Notification notification = new NotificationCompat.Builder(this, CoreApp.CHANNEL_ID)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.service_runing))
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentIntent(pendingIntent)
                 .build();
 
         startForeground(1, notification);

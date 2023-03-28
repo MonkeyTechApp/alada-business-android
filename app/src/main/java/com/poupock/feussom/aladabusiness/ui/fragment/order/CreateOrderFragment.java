@@ -1,19 +1,33 @@
 package com.poupock.feussom.aladabusiness.ui.fragment.order;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -35,6 +49,7 @@ import com.poupock.feussom.aladabusiness.ui.adapter.CourseAdapter;
 import com.poupock.feussom.aladabusiness.ui.adapter.MenuItemAdapter;
 import com.poupock.feussom.aladabusiness.ui.adapter.MenuItemCategoryVerticalAdapter;
 import com.poupock.feussom.aladabusiness.ui.dialog.ListDialogFragment;
+import com.poupock.feussom.aladabusiness.ui.dialog.OrderDetailDialogFragment;
 import com.poupock.feussom.aladabusiness.util.Constant;
 import com.poupock.feussom.aladabusiness.util.Course;
 import com.poupock.feussom.aladabusiness.util.GuestTable;
@@ -50,6 +65,9 @@ import com.poupock.feussom.aladabusiness.web.PostTask;
 import com.poupock.feussom.aladabusiness.web.ServerUrl;
 import com.poupock.feussom.aladabusiness.web.response.DatumResponse;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -63,6 +81,10 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
     Gson gson = new Gson();
     private String TAG = CreateOrderFragment.class.getSimpleName();
     private CourseAdapter courseListAdapter;
+
+    Bitmap bitmap;
+    public static int REQUEST_PERMISSIONS = 1;
+    private boolean boolean_permission;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -388,6 +410,8 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                                 @Override
                                 public void done() {
                                     AppDataBase.getInstance(requireContext()).orderDao().update(order);
+                                    requireActivity().onBackPressed();
+                                    Snackbar.make(requireView(), R.string.order_updated, Snackbar.LENGTH_LONG).show();
                                 }
 
                                 @Override
@@ -397,6 +421,8 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                            break;
                         case DialogInterface.BUTTON_NEGATIVE:
                             dialog.dismiss();
+                            DialogFragment detailDialogFragment = OrderDetailDialogFragment.newInstance("", "");
+                            detailDialogFragment.show(getChildFragmentManager(), OrderDetailDialogFragment.class.getSimpleName());
                             break;
                     }
                 }
@@ -404,7 +430,7 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
 
             AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
             builder.setMessage(getString(R.string.confirm_payment_received)).setPositiveButton(getString(R.string.yes), dialogClickListener)
-                    .setNegativeButton(getString(R.string.no), dialogClickListener).show();
+                    .setNegativeButton(getString(R.string.print), dialogClickListener).show();
         }
         else if(binding.btnAddOrder == view){
             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -514,4 +540,101 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                     }
                 }).execute();
     }
+
+    private void createPdf(){
+        WindowManager wm = (WindowManager) requireActivity().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        float hight = displaymetrics.heightPixels ;
+        float width = displaymetrics.widthPixels ;
+
+        int convertHighet = (int) hight, convertWidth = (int) width;
+
+//        Resources mResources = getResources();
+//        Bitmap bitmap = BitmapFactory.decodeResource(mResources, R.drawable.screenshot);
+
+        PdfDocument document = new PdfDocument();
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(convertWidth, convertHighet, 1).create();
+        PdfDocument.Page page = document.startPage(pageInfo);
+
+        Canvas canvas = page.getCanvas();
+
+
+        Paint paint = new Paint();
+        canvas.drawPaint(paint);
+
+
+        bitmap = Bitmap.createScaledBitmap(bitmap, convertWidth, convertHighet, true);
+
+        paint.setColor(Color.BLUE);
+        canvas.drawBitmap(bitmap, 0, 0 , null);
+        document.finishPage(page);
+
+
+        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/PdfTest/";
+        File dir = new File(path);
+        if (!dir.exists())
+            dir.mkdirs();
+
+        File filePath = new File(dir,"Test.pdf");
+
+        try {
+            document.writeTo(new FileOutputStream(filePath));
+//            btn_generate.setText("Check PDF");
+//            boolean_save=true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(requireContext(), "Something wrong: " + e.toString(), Toast.LENGTH_LONG).show();
+        }
+
+        // close the document
+        document.close();
+    }
+
+
+
+    public static Bitmap loadBitmapFromView(View v, int width, int height) {
+        Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        v.draw(c);
+
+        return b;
+    }
+
+    private void fn_permission() {
+        if ((ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)||
+                (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+
+            if ((ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE))) {
+            } else {
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
+                        REQUEST_PERMISSIONS);
+
+            }
+
+            if ((ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
+            } else {
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        REQUEST_PERMISSIONS);
+
+            }
+        } else {
+            boolean_permission = true;
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSIONS) {
+
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                boolean_permission = true;
+            } else {
+                Toast.makeText(requireContext(), "Please allow the permission", Toast.LENGTH_LONG).show();
+
+            }
+        }
+    }
+
 }

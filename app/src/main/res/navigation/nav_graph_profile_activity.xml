@@ -8,9 +8,8 @@
     <fragment
         android:id="@+id/ProfileFragment"
         android:name="com.poupock.feussom.aladabusiness.core.profile.ProfileFragment"
-        android:label="@string/floor_plan"
+        android:label="@string/profile"
         tools:layout="@layout/fragment_profile">
-
         <action
             android:id="@+id/action_ProfileFragment_to_OrderListFragment"
             app:destination="@id/OrderListFragment" />
@@ -20,9 +19,16 @@
         android:name="com.poupock.feussom.aladabusiness.core.profile.OrderListFragment"
         android:label="@string/order_list"
         tools:layout="@layout/fragment_order_list">
-
         <action
             android:id="@+id/action_OrderListFragment_to_ProfileFragment"
             app:destination="@id/ProfileFragment" />
+        <action
+            android:id="@+id/action_OrderListFragment_to_OrderDetailFragment"
+            app:destination="@id/OrderDetailFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/OrderDetailFragment"
+        android:name="com.poupock.feussom.aladabusiness.ui.fragment.orderdetail.OrderDetailFragment"
+        android:label="@string/orders"
+        tools:layout="@layout/order_detail_fragment"/>
 </navigation>

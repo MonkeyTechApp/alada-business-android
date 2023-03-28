@@ -40,6 +40,7 @@ public class Business {
     @Ignore List<GuestTable> tables;
     @Ignore List<Order> orders;
     @Ignore List<User> users;
+    @Ignore private UserPivot pivot;
 
     public Business(int id, String name, int category_id, String category_name, String owner_name, String owner_phone, String location,
                     double longitude, double latitude, String imageUrl, String imageLocalUrl, int zone_id,
@@ -290,4 +291,11 @@ public class Business {
         return values;
     }
 
+    public UserPivot getPivot() {
+        return pivot;
+    }
+
+    public void setPivot(UserPivot pivot) {
+        this.pivot = pivot;
+    }
 }
