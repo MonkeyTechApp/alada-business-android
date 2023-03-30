@@ -1,7 +1,11 @@
 package com.poupock.feussom.aladabusiness.core.dashboard.ui.home;
 
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -28,6 +33,7 @@ import com.poupock.feussom.aladabusiness.core.table.TableActivity;
 import com.poupock.feussom.aladabusiness.core.user.UsersActivity;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.databinding.FragmentHomeBinding;
+import com.poupock.feussom.aladabusiness.job.DownloadImage;
 import com.poupock.feussom.aladabusiness.ui.adapter.BusinessAdapter;
 import com.poupock.feussom.aladabusiness.ui.adapter.GuestTableOrdersAdapter;
 import com.poupock.feussom.aladabusiness.ui.dialog.ListDialogFragment;
@@ -36,7 +42,14 @@ import com.poupock.feussom.aladabusiness.util.Constant;
 import com.poupock.feussom.aladabusiness.util.GuestTable;
 import com.poupock.feussom.aladabusiness.util.Order;
 import com.poupock.feussom.aladabusiness.util.User;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Calendar;
 import java.util.List;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
@@ -98,6 +111,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        new DownloadImage(requireContext(), "https://alada.poupock.com/img/dinner.png").execute();
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
@@ -107,4 +127,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         Gson gson = new Gson();
     }
+
+
 }

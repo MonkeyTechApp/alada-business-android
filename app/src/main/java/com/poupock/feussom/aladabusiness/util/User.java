@@ -49,6 +49,8 @@ public class User {
     @Ignore
     private static final String USER_TOKEN = "TOKEN";
     @Ignore
+    private static final String PROFILE_PATH = "PATH_PROFILE";
+    @Ignore
     private UserPivot pivot;
 
 
@@ -62,6 +64,13 @@ public class User {
     public static boolean storeToken(String token, Context context) {
         SharedPreferences.Editor editor = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE).edit();
         editor.putString(USER_TOKEN, token);
+        editor.apply();
+        return editor.commit();
+    }
+
+    public static boolean storePath(String path, Context context) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE).edit();
+        editor.putString(PROFILE_PATH, path);
         editor.apply();
         return editor.commit();
     }
@@ -143,6 +152,11 @@ public class User {
     public static String getToken(Context context) {
         SharedPreferences preferences = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE);
         return preferences.getString(USER_TOKEN, null);
+    }
+
+    public static String getPath(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE);
+        return preferences.getString(PROFILE_PATH, null);
     }
 
     public static String getLastSyncTime(Context context) {

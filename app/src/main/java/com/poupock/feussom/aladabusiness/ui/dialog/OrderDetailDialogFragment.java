@@ -69,6 +69,7 @@ import com.poupock.feussom.aladabusiness.util.Constant;
 import com.poupock.feussom.aladabusiness.util.GuestTable;
 import com.poupock.feussom.aladabusiness.util.Order;
 import com.poupock.feussom.aladabusiness.util.OrderItem;
+import com.poupock.feussom.aladabusiness.util.User;
 import com.squareup.picasso.Picasso;
 
 import org.intellij.lang.annotations.JdkConstants;
@@ -171,7 +172,8 @@ public class OrderDetailDialogFragment extends DialogFragment {
             public void onClick(View view) {
                 bitmap = loadBitmapFromView(binding.mainLay, binding.mainLay.getWidth(), binding.mainLay.getHeight());
                 try {
-                    createPDF(viewModel.getOrderMutableLiveData().getValue().extractAllOrderedItems());
+                    createPDF(viewModel.getOrderMutableLiveData().getValue().extractAllOrderedItems() ,
+                            viewModel.getOrderMutableLiveData().getValue());
 //                    generatePDF(viewModel.getOrderMutableLiveData().getValue());
                 } catch (FileNotFoundException | DocumentException e) {
                     Log.e(TAG, "The execption : "+e.toString());
@@ -557,7 +559,7 @@ public class OrderDetailDialogFragment extends DialogFragment {
         }
     }
 
-    public void createPDF(List<OrderItem> orderItems) throws FileNotFoundException, DocumentException {
+    public void createPDF(List<OrderItem> orderItems, Order order) throws FileNotFoundException, DocumentException {
 
         //Create document file
         float PADDING = 1;
@@ -595,7 +597,10 @@ public class OrderDetailDialogFragment extends DialogFragment {
 //                URL url = new URL("https://alada.poupock.com/img/dinner.png");
 
 //                Bitmap bitmap = Picasso.get().load("https://alada.poupock.com/img/dinner.png").get();
-                Bitmap bitmap = drawableToBitmap(getResources().getDrawable(R.mipmap.ic_launcher, requireActivity().getTheme()));
+//                Bitmap bitmap = drawableToBitmap(getResources().getDrawable(R.mipmap.ic_launcher, requireActivity().getTheme()));
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = 3;
+                Bitmap bitmap = BitmapFactory.decodeFile(User.getPath(requireContext()), options);
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 byte[] bitmapLogo = stream.toByteArray();
@@ -624,20 +629,42 @@ public class OrderDetailDialogFragment extends DialogFragment {
                 cell.setBorder(Rectangle.NO_BORDER);
                 cell.setPadding(PADDING);
                 headTable.addCell(cell);
-                document.add(headTable);
 
-                addNewItem(document, AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0).getName(),
-                        Element.ALIGN_CENTER, poppinsBFont);
-                addLineSpace(document);
-                addLineSpace(document);
-                addNewItem(document, getString(R.string.ordered_on)+" : " + format.format(Calendar.getInstance().getTime()),
-                        Element.ALIGN_LEFT, poppinsFont);
-                addLineSpace(document);
-                addLineSeperator(document);
+                cell = new PdfPCell();
+                cell.setColspan(2);
+                cell.addElement(buildCellElt(AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0).getName(),
+                        poppinsBFont, Element.ALIGN_CENTER));
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setPadding(PADDING);
+                headTable.addCell(cell);
+
+                cell = new PdfPCell();
+                cell.addElement(buildCellElt(getString(R.string.ordered_on),
+                        poppinsFont, Element.ALIGN_LEFT));
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setPadding(PADDING);
+                headTable.addCell(cell);
+
+                cell = new PdfPCell();
+                cell.addElement(buildCellElt(order.getCreated_at(),
+                        poppinsFont, Element.ALIGN_RIGHT));
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setPadding(PADDING);
+                headTable.addCell(cell);
+
+                cell = new PdfPCell();
+                cell.setColspan(2);
+                cell.addElement(buildCellElt(order.getCode(),
+                        poppinsFont, Element.ALIGN_CENTER));
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setPadding(PADDING);
+                headTable.addCell(cell);
+
+                document.add(headTable);
 
                 PdfPTable table = new PdfPTable(3);
                 float[] columnWidth = new float[]{60, 20, 30};
-                table.setWidthPercentage(100f);
+//                table.setWidthPercentage(100f);
                 table.setWidths(columnWidth);
 
 //                cell = new PdfPCell(new Phrase(getString(R.string.items)));
@@ -721,10 +748,8 @@ public class OrderDetailDialogFragment extends DialogFragment {
                 document.add(table);
                 addLineSeperator(document);
                 addNewItem(document, getString(R.string.thank_u_for_visit), Element.ALIGN_CENTER, poppinsBFont);
-                addLineSpace(document);
                 addLineSeperator(document);
                 document.close();
-                document.resetPageCount();
                 Toast.makeText(requireActivity(), getString(R.string.ticket_generated) +" "+ dateFormat.format(Calendar.getInstance().getTime()) + ".pdf successfully generated at DOWNLOADS folder", Toast.LENGTH_LONG).show();
                 doPrint(file);
             } catch (DocumentException de) {
@@ -749,7 +774,6 @@ public class OrderDetailDialogFragment extends DialogFragment {
         Chunk chunk = new Chunk(text, font);
         Paragraph paragraph =  new Paragraph(chunk);
         paragraph.setAlignment(alignment);
-        paragraph.setPaddingTop(16f);
         document.add(paragraph);
     }
 
@@ -764,7 +788,6 @@ public class OrderDetailDialogFragment extends DialogFragment {
     private void addLineSeperator(Document document) throws DocumentException{
         LineSeparator lineSeparator = new LineSeparator();
         lineSeparator.setLineColor(new BaseColor(0,0,0, 70));
-        addLineSpace(document);
         document.add(new Chunk(lineSeparator));
         addLineSpace(document);
     }
