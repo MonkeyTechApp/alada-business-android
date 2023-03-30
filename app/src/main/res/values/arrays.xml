@@ -63,6 +63,10 @@
         <item>Edit</item>
         <item>Delete</item>
     </string-array>
+    <string-array name="edit_del">
+        <item>Edit</item>
+        <item>Delete</item>
+    </string-array>
     <string-array name="role_array">
         <item>Owner</item>
         <item>Manager</item>

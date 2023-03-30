@@ -260,6 +260,11 @@ public class Methods {
         return (sdf.format(new Date()));
     }
 
+    public static String getDBCurrentTimeStamp() {
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        return (sdf.format(new Date()));
+    }
+
     public static TextWatcher createTextWatcher(TextInputLayout inputLayout){
         return new TextWatcher() {
             @Override

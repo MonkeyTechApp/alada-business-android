@@ -32,6 +32,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -43,6 +44,7 @@ import com.poupock.feussom.aladabusiness.callback.DialogCallback;
 import com.poupock.feussom.aladabusiness.callback.ListItemClickCallback;
 import com.poupock.feussom.aladabusiness.callback.ProcessCallback;
 import com.poupock.feussom.aladabusiness.callback.VolleyRequestCallback;
+import com.poupock.feussom.aladabusiness.core.menu.ListMenuFragment;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.databinding.FragmentCreateOrderBinding;
 import com.poupock.feussom.aladabusiness.ui.adapter.CourseAdapter;
@@ -50,6 +52,7 @@ import com.poupock.feussom.aladabusiness.ui.adapter.MenuItemAdapter;
 import com.poupock.feussom.aladabusiness.ui.adapter.MenuItemCategoryVerticalAdapter;
 import com.poupock.feussom.aladabusiness.ui.dialog.ListDialogFragment;
 import com.poupock.feussom.aladabusiness.ui.dialog.OrderDetailDialogFragment;
+import com.poupock.feussom.aladabusiness.ui.dialog.OrderItemUpdateQuantityDialogFragment;
 import com.poupock.feussom.aladabusiness.util.Constant;
 import com.poupock.feussom.aladabusiness.util.Course;
 import com.poupock.feussom.aladabusiness.util.GuestTable;
@@ -69,6 +72,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -496,7 +500,96 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
         return new CourseAdapter(requireContext(), new ArrayList<>(), new DialogCallback() {
             @Override
             public void onActionClicked(Object o, int action) {
+                if (DialogCallback.LONG_CLICK == action){
+                    OrderItem orderItem = OrderItem.getObjectFromObject(o);
 
+                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which){
+                                case DialogInterface.BUTTON_POSITIVE:
+
+                                    HashMap<String, String> map = new HashMap<>();
+                                    map.put("course_id", orderItem.getCourse_id()+"");
+                                    map.put("menu_item_id", orderItem.getMenu_item_id()+"");
+
+                                    Log.i(TAG, "The map is "+map.toString());
+                                    ProgressDialog progressDialog = new ProgressDialog(requireContext());
+                                    progressDialog.setMessage(getString(R.string.deleting_order_items_3_dots));
+                                    progressDialog.setCancelable(false);
+                                    new PostTask(requireContext(), ServerUrl.ORDER_ITEM_DEL, map,
+                                            new VolleyRequestCallback() {
+                                                @Override
+                                                public void onStart() {
+                                                    progressDialog.show();
+                                                }
+
+                                                @Override
+                                                public void onSuccess(String response) {
+                                                    DatumResponse datumResponse = new Gson().fromJson(response, DatumResponse.class);
+                                                    if (datumResponse.success){
+                                                        AppDataBase.getInstance(requireContext()).orderItemDao().delete(orderItem);
+                                                        actualiseOrderView(orderViewModel.getOrderMutableLiveData().getValue());
+                                                        Toast.makeText(requireContext(), R.string.order_item_deleted_successs, Toast.LENGTH_LONG).show();
+                                                    }
+                                                    else {
+                                                        if (datumResponse.data == null){
+                                                            AppDataBase.getInstance(requireContext()).orderItemDao().delete(orderItem);
+                                                            actualiseOrderView(orderViewModel.getOrderMutableLiveData().getValue());
+                                                            Toast.makeText(requireContext(), R.string.order_item_deleted_successs, Toast.LENGTH_LONG).show();
+                                                        }
+                                                        Toast.makeText(requireContext(), R.string.order_item_not_deleted, Toast.LENGTH_LONG).show();
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onError(VolleyError error) {
+                                                    Toast.makeText(requireContext(), R.string.server_error, Toast.LENGTH_LONG).show();
+                                                }
+
+                                                @Override
+                                                public void onJobFinished() {
+                                                    progressDialog.dismiss();
+                                                }
+                                            }).execute();
+
+                                    break;
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    dialog.dismiss();
+                                    break;
+                            }
+                        }
+                    };
+
+                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext());
+                    builder.setTitle(R.string.order_item_actions)
+                            .setCancelable(true)
+                            .setItems(R.array.edit_del, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int which) {
+                                    if(which == 0){
+                                        DialogFragment updateDialog = OrderItemUpdateQuantityDialogFragment.newInstance(orderItem.getId(),
+                                                new DialogCallback() {
+                                                    @Override
+                                                    public void onActionClicked(Object o, int action) {
+                                                        actualiseOrderView(orderViewModel.getOrderMutableLiveData().getValue());
+                                                    }
+                                                });
+                                        updateDialog.show(getChildFragmentManager(), OrderItemUpdateQuantityDialogFragment.class.getSimpleName());
+                                    }
+                                    else if(which == 1){
+                                        AlertDialog.Builder deletionBuilder = new AlertDialog.Builder(requireContext());
+                                        deletionBuilder.setMessage(getString(R.string.confirm_order_item_deletion)+" : "
+                                                        + AppDataBase.getInstance(requireContext()).menuItemDao().getSpecificMenuItem(orderItem.getMenu_item_id()).getName()
+                                                        +" "+getString(R.string.with_quantity)+" "+ orderItem.getQuantity())
+                                                .setPositiveButton(getString(R.string.yes), dialogClickListener)
+                                                .setNegativeButton(getString(R.string.no), dialogClickListener).show();
+                                    }
+                                }
+                            }).create().show();
+
+
+                }
             }
         });
     }
@@ -539,67 +632,6 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                         dialog.dismiss();
                     }
                 }).execute();
-    }
-
-    private void createPdf(){
-        WindowManager wm = (WindowManager) requireActivity().getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        float hight = displaymetrics.heightPixels ;
-        float width = displaymetrics.widthPixels ;
-
-        int convertHighet = (int) hight, convertWidth = (int) width;
-
-//        Resources mResources = getResources();
-//        Bitmap bitmap = BitmapFactory.decodeResource(mResources, R.drawable.screenshot);
-
-        PdfDocument document = new PdfDocument();
-        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(convertWidth, convertHighet, 1).create();
-        PdfDocument.Page page = document.startPage(pageInfo);
-
-        Canvas canvas = page.getCanvas();
-
-
-        Paint paint = new Paint();
-        canvas.drawPaint(paint);
-
-
-        bitmap = Bitmap.createScaledBitmap(bitmap, convertWidth, convertHighet, true);
-
-        paint.setColor(Color.BLUE);
-        canvas.drawBitmap(bitmap, 0, 0 , null);
-        document.finishPage(page);
-
-
-        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/PdfTest/";
-        File dir = new File(path);
-        if (!dir.exists())
-            dir.mkdirs();
-
-        File filePath = new File(dir,"Test.pdf");
-
-        try {
-            document.writeTo(new FileOutputStream(filePath));
-//            btn_generate.setText("Check PDF");
-//            boolean_save=true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(requireContext(), "Something wrong: " + e.toString(), Toast.LENGTH_LONG).show();
-        }
-
-        // close the document
-        document.close();
-    }
-
-
-
-    public static Bitmap loadBitmapFromView(View v, int width, int height) {
-        Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(b);
-        v.draw(c);
-
-        return b;
     }
 
     private void fn_permission() {

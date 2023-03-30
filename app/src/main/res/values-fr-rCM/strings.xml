@@ -222,6 +222,7 @@
     <string name="order_sent">Commande envoyée.</string>
     <string name="service_runing">Service de moniteur de commande fonctionnant</string>
     <string name="confirm_payment_received">Confirmer le paiement reçu!</string>
+    <string name="confirm_order_item_deletion">Voulez-vous supprimer cette ligne</string>
     <string name="order_not_sent">Commande non envoyée.</string>
     <string name="print">Imprimer</string>
     <string name="ticket_generated">Ticket généré avec succès.</string>
@@ -238,4 +239,5 @@
     <string name="order_updated">Commande mise à jour!</string>
     <string name="thank_u_for_visit">Merci pour votre visite!!!</string>
     <string name="set_interval">Définir l\'intervalle de temps</string>
+    <string name="deleting_order_items_3_dots">Deleting order items ...</string>
 </resources>

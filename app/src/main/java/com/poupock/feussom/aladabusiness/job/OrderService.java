@@ -19,6 +19,7 @@ import com.poupock.feussom.aladabusiness.core.CoreApp;
 import com.poupock.feussom.aladabusiness.core.dashboard.DashboardActivity;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.util.Course;
+import com.poupock.feussom.aladabusiness.util.Methods;
 import com.poupock.feussom.aladabusiness.util.Order;
 import com.poupock.feussom.aladabusiness.util.OrderItem;
 import com.poupock.feussom.aladabusiness.util.User;
@@ -112,6 +113,8 @@ public class OrderService extends Service {
                                     }
                                 }
                             }
+                            Log.i(tag, "The DB Time : "+Methods.getDBCurrentTimeStamp());
+                            User.storeLastSync(Methods.getDBCurrentTimeStamp(), getApplicationContext());
                         }
 
                         @Override

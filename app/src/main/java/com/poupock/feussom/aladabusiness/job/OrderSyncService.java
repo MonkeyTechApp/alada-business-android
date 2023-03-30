@@ -7,9 +7,12 @@ import android.util.Log;
 
 import com.android.volley.VolleyError;
 import com.poupock.feussom.aladabusiness.callback.VolleyRequestCallback;
+import com.poupock.feussom.aladabusiness.util.Methods;
 import com.poupock.feussom.aladabusiness.util.User;
 import com.poupock.feussom.aladabusiness.web.Fetch;
 import com.poupock.feussom.aladabusiness.web.ServerUrl;
+
+import java.lang.reflect.Method;
 
 public class OrderSyncService extends JobService {
 
@@ -40,6 +43,7 @@ public class OrderSyncService extends JobService {
                     @Override
                     public void onSuccess(String response) {
                         Log.i(tag, "RESPONSE : "+response);
+                        User.storeLastSync(Methods.getCurrentTimeStamp(), getApplicationContext());
                     }
 
                     @Override

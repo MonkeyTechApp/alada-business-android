@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.poupock.feussom.aladabusiness.R;
@@ -60,6 +61,14 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
 
         holder.txtQuantity.setText(orderItem.getQuantity()+"");
         holder.txtPrice.setText((orderItem.getPrice() * orderItem.getQuantity())+" "+context.getString(R.string.currency_cfa));
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                callback.onActionClicked(orderItem, DialogCallback.LONG_CLICK);
+                return false;
+            }
+        });
     }
 
     @Override
