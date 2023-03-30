@@ -9,13 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.google.gson.Gson;
 import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.ListItemClickCallback;
-import com.poupock.feussom.aladabusiness.core.table.TableListFragment;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.databinding.FragmentOrderListBinding;
 import com.poupock.feussom.aladabusiness.ui.adapter.OrderAdapter;

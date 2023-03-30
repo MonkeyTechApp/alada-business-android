@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">AlAda Business</string>
     <string name="msg_token_fmt">"message du token "</string>
-    <string name="title_activity_story">FullscreenActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_story" translatable="false">FullscreenActivity</string>
+    <string name="dummy_button" translatable="false">Dummy Button</string>
+    <string name="dummy_content" translatable="false">DUMMY\nCONTENT</string>
     <string name="getStarted">Get started</string>
     <string name="next">Next</string>
     <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris</string>
@@ -47,8 +47,8 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="hello_first_fragment" translatable="false">Hello first fragment</string>
+    <string name="hello_second_fragment" translatable="false">Hello second fragment. Arg: %1$s</string>
     <string name="mail">E mail</string>
     <string name="log_out">Log out</string>
     <string name="settings">Settings</string>
@@ -74,16 +74,16 @@
     <string name="ordered_products">Ordered products</string>
     <string name="pay">pay</string>
     <string name="title_activity_dashboard">DashboardActivity</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
+    <string name="nav_header_title" translatable="false">Android Studio</string>
+    <string name="nav_header_subtitle" translatable="false">android.studio@android.com</string>
+    <string name="nav_header_desc" translatable="false">Navigation header</string>
     <string name="action_settings">Settings</string>
 
     <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_gallery" translatable="false">Gallery</string>
+    <string name="menu_slideshow" translatable="false">Slideshow</string>
     <string name="title_activity_menu_item">MenuItemActivity</string>
     <string name="currency_cfa">F CFA</string>
     <string name="infos_de_base">Infos de base</string>
@@ -94,7 +94,7 @@
     <string name="save">Save</string>
     <string name="product_category">Category of product</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="add_category">Add a new category</string>
     <string name="title_activity_business_creation">BusinessCreationActivity</string>
     <string name="business_creation_intro">Give us details on your business, to help us better serve you.</string>
@@ -114,7 +114,7 @@
     <string name="done">Done</string>
     <string name="business_phone_2">Business phone 2 (Optional)</string>
     <string name="business_phone">Business phone</string>
-    <string name="title_activity_main2">MainActivity2</string>
+    <string name="title_activity_main2" translatable="false">MainActivity2</string>
     <string name="category_name">Category name</string>
     <string name="category_menu">Menu Category</string>
     <string name="category_description_text">A category is a group of element in your menu. This will help you organise your menu and propose a clear comprehensible experience to your guest.</string>
@@ -143,25 +143,25 @@
     <string name="actions">Actions</string>
     <string name="by_course">By course</string>
     <string name="mode_by_course">Order by course</string>
-    <string name="clear_symbol">C</string>
-    <string name="dot_symbol">.</string>
-    <string name="back_space_symbol">_</string>
-    <string name="symbol_7">7</string>
-    <string name="symbol_8">8</string>
-    <string name="symbol_9">9</string>
-    <string name="symbol_4">4</string>
-    <string name="symbol_5">5</string>
-    <string name="symbol_6">6</string>
-    <string name="symbol_1">1</string>
-    <string name="symbol_2">2</string>
-    <string name="symbol_3">3</string>
-    <string name="symbol_00">00</string>
-    <string name="symbol_0">0</string>
-    <string name="symbol_cross">X</string>
+    <string name="clear_symbol" translatable="false">C</string>
+    <string name="dot_symbol" translatable="false">.</string>
+    <string name="back_space_symbol" translatable="false">_</string>
+    <string name="symbol_7" translatable="false">7</string>
+    <string name="symbol_8" translatable="false">8</string>
+    <string name="symbol_9" translatable="false">9</string>
+    <string name="symbol_4" translatable="false">4</string>
+    <string name="symbol_5" translatable="false">5</string>
+    <string name="symbol_6" translatable="false">6</string>
+    <string name="symbol_1" translatable="false">1</string>
+    <string name="symbol_2" translatable="false">2</string>
+    <string name="symbol_3" translatable="false">3</string>
+    <string name="symbol_00" translatable="false">00</string>
+    <string name="symbol_0" translatable="false">0</string>
+    <string name="symbol_cross" translatable="false">X</string>
     <string name="search_table">search table</string>
     <string name="select_a_table">Select a table</string>
     <string name="customer">Customer</string>
-    <string name="title_activity_table">TableActivity</string>
+    <string name="title_activity_table" translatable="false">TableActivity</string>
     <string name="create_a_table">Create a table</string>
     <string name="list_of_table">List of tables</string>
     <string name="floor_plan">Floor plan</string>
@@ -235,7 +235,7 @@
     <string name="order_management">Order management</string>
     <string name="create_a_business">create a business</string>
     <string name="create_your_first_business_and_start_tracking_key_informations">Create your first business and start tracking key informations</string>
-    <string name="title_activity_business">BusinessActivity</string>
+    <string name="title_activity_business" translatable="false">BusinessActivity</string>
     <string name="business_management">Manage your Business</string>
     <string name="business_edition">Edit your Business</string>
     <string name="manage_menu">Manage Menu</string>
@@ -259,6 +259,7 @@
     <string name="order">Order</string>
     <string name="items">Items</string>
     <string name="quantity">Quantity</string>
+    <string name="qty">Qty</string>
     <string name="price">Price</string>
     <string name="amount_in_cashier">Amount in cashier</string>
     <string name="menus">Menus</string>
@@ -266,4 +267,6 @@
     <string name="recent_orders">Recent orders</string>
     <string name="view_all">View all</string>
     <string name="order_updated">Order updated!</string>
+    <string name="thank_u_for_visit">Thank you for your visit!!!</string>
+    <string name="set_interval">Set time interval</string>
 </resources>
