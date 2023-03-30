@@ -36,6 +36,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.poupock.feussom.aladabusiness.R;
+import com.poupock.feussom.aladabusiness.database.AppDataBase;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -255,7 +256,7 @@ public class Methods {
     }
 
     public static String getCurrentTimeStamp() {
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-DD hh:mm:ss");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd hh:mm:ss");
         return (sdf.format(new Date()));
     }
 
@@ -279,7 +280,7 @@ public class Methods {
     }
 
     public static String generateCode(Context context) {
-        return "ORD_"+User.currentUser(context).id+"_"+ UUID.randomUUID().toString() +"";
+        return "ORD_"+User.currentUser(context).id+ new Date().getTime()+"";
     }
 
     @NonNull

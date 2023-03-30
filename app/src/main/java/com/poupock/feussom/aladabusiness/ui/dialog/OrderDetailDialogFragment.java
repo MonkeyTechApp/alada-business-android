@@ -1,5 +1,6 @@
 package com.poupock.feussom.aladabusiness.ui.dialog;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Resources;
@@ -98,6 +99,10 @@ public class OrderDetailDialogFragment extends DialogFragment {
     private String mParam2;
     private Bitmap bitmap;
     private boolean boolean_save;
+    private PdfPCell cell;
+    private Image imgReportLogo;
+
+    BaseColor tableHeadColor = WebColors.getRGBColor("#000000");
 
     public static OrderDetailDialogFragment newInstance(String param1, String param2) {
         OrderDetailDialogFragment fragment = new OrderDetailDialogFragment();
@@ -369,208 +374,22 @@ public class OrderDetailDialogFragment extends DialogFragment {
         return b;
     }
 
-    private PdfPCell cell;
-    private Image imgReportLogo;
-
-    BaseColor headColor = WebColors.getRGBColor("#DEDEDE");
-    BaseColor tableHeadColor = WebColors.getRGBColor("#F5ABAB");
-
-    public void createOldPDF(List<OrderItem> orderItems) throws FileNotFoundException, DocumentException {
-
-        //Create document file
-        Document document = new Document();
-        try {
-            SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss a");
-            SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyyyy_HHmm");
-            String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/PdfTest/";
-            File dir = new File(path);
-            if (!dir.exists())
-                dir.mkdirs();
-
-            File file = new File(dir, "GFG_"+ dateFormat.format(Calendar.getInstance().getTime()) +".pdf");
-            FileOutputStream outputStream = new FileOutputStream(file);
-
-            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-
-            //Open the document
-            document.open();
-
-            document.setPageSize(PageSize.A8);
-            document.addCreationDate();
-            document.addAuthor(getString(R.string.app_name));
-            document.addCreator(getString(R.string.app_name));
-
-            Font titleFont = new Font(Font.FontFamily.COURIER, 22.0f, Font.BOLD, BaseColor.BLACK);
-
-            addNewItem(document, AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0).getName(),
-                    Element.ALIGN_CENTER, titleFont);
-
-            //Create Header table
-            PdfPTable header = new PdfPTable(3);
-            header.setWidthPercentage(100);
-            float[] fl = new float[]{20, 45, 35};
-            header.setWidths(fl);
-            cell = new PdfPCell();
-            cell.setBorder(Rectangle.NO_BORDER);
-
-            //Set Logo in Header Cell
-//            Drawable logo = getResources().getDrawable(R.mipmap.ic_launcher);
-            Bitmap bitmap = drawableToBitmap(getResources().getDrawable(R.mipmap.ic_launcher, requireActivity().getTheme()));
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            byte[] bitmapLogo = stream.toByteArray();
-            try {
-                imgReportLogo = Image.getInstance(bitmapLogo);
-                imgReportLogo.setAbsolutePosition(330f, 642f);
-
-                cell.addElement(imgReportLogo);
-                header.addCell(cell);
-
-                cell = new PdfPCell();
-                cell.setBorder(Rectangle.NO_BORDER);
-
-                // Heading
-                //BaseFont font = BaseFont.createFont("assets/fonts/brandon_medium.otf", "UTF-8", BaseFont.EMBEDDED);
-
-                //Creating Chunk
-                Chunk titleChunk = new Chunk(AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0).getName(),
-                        titleFont);
-                //Paragraph
-                Paragraph titleParagraph = new Paragraph(titleChunk);
-
-                cell.addElement(titleParagraph);
-                cell.addElement(new Paragraph(getString(R.string.order)));
-                cell.addElement(new Paragraph(getString(R.string.ordered_on)+" : " + format.format(Calendar.getInstance().getTime())));
-                header.addCell(cell);
-
-//                cell = new PdfPCell(new Paragraph(""));
-//                cell.setBorder(Rectangle.NO_BORDER);
-//                header.addCell(cell);
-
-                PdfPTable pTable = new PdfPTable(1);
-                pTable.setWidthPercentage(100);
-                cell = new PdfPCell();
-                cell.setColspan(1);
-                cell.setBorder(Rectangle.NO_BORDER);
-                cell.addElement(header);
-                pTable.addCell(cell);
-
-                PdfPTable table = new PdfPTable(3);
-                float[] columnWidth = new float[]{60, 20, 30};
-                table.setWidths(columnWidth);
-
-                cell = new PdfPCell();
-                cell.setBackgroundColor(headColor);
-                cell.setColspan(3);
-                cell.setBorder(Rectangle.NO_BORDER);
-                cell.addElement(pTable);
-                table.addCell(cell);
-
-                cell = new PdfPCell(new Phrase(" "));
-                cell.setColspan(3);
-                table.addCell(cell);
-
-                cell = new PdfPCell();
-                cell.setColspan(3);
-                cell.setBorder(Rectangle.NO_BORDER);
-                cell.setBackgroundColor(tableHeadColor);
-
-                cell = new PdfPCell(new Phrase(getString(R.string.items)));
-                cell.setBackgroundColor(tableHeadColor);
-                cell.setBorder(Rectangle.NO_BORDER);
-                table.addCell(cell);
-
-                cell = new PdfPCell(new Phrase(getString(R.string.quantity)));
-                cell.setBackgroundColor(tableHeadColor);
-                cell.setBorder(Rectangle.NO_BORDER);
-                table.addCell(cell);
-
-                cell = new PdfPCell(new Phrase(getString(R.string.price)));
-                cell.setBackgroundColor(tableHeadColor);
-                cell.setBorder(Rectangle.NO_BORDER);
-                table.addCell(cell);
-
-                cell = new PdfPCell();
-                cell.setColspan(3);
-
-                for (int i = 0; i < orderItems.size(); i++) {
-                    cell = new PdfPCell(new Phrase(AppDataBase.getInstance(requireContext()).menuItemDao().
-                            getSpecificMenuItem(orderItems.get(i).getMenu_item_id()).getName()));
-                    cell.setBorder(Rectangle.NO_BORDER);
-                    table.addCell(cell);
-
-                    cell = new PdfPCell(new Phrase(orderItems.get(i).getQuantity()+""));
-                    cell.setBorder(Rectangle.NO_BORDER);
-                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                    table.addCell(cell);
-
-                    cell = new PdfPCell(new Phrase((orderItems.get(i).getPrice()*orderItems.get(i).getQuantity())+""));
-                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                    cell.setBorder(Rectangle.NO_BORDER);
-                    table.addCell(cell);
-                }
-
-                PdfPTable ftable = new PdfPTable(3);
-                ftable.setWidthPercentage(100);
-                float[] columnWidtha = new float[]{50, 20, 30};
-                ftable.setWidths(columnWidtha);
-                cell = new PdfPCell();
-                cell.setColspan(3);
-                cell.setBackgroundColor(tableHeadColor);
-                cell = new PdfPCell(new Phrase("Total Number"));
-                cell.setBorder(Rectangle.NO_BORDER);
-                cell.setBackgroundColor(tableHeadColor);
-                ftable.addCell(cell);
-
-                cell = new PdfPCell(new Phrase(""));
-                cell.setBorder(Rectangle.NO_BORDER);
-                cell.setBackgroundColor(tableHeadColor);
-                ftable.addCell(cell);
-
-                cell = new PdfPCell(new Phrase(""));
-                cell.setBorder(Rectangle.NO_BORDER);
-                cell.setBackgroundColor(tableHeadColor);
-                ftable.addCell(cell);
-
-                cell = new PdfPCell(new Paragraph("Footer"));
-                cell.setColspan(3);
-                cell.setBorder(Rectangle.NO_BORDER);
-                ftable.addCell(cell);
-
-                cell = new PdfPCell();
-                cell.setColspan(3);
-                cell.addElement(ftable);
-                cell.setBorder(Rectangle.NO_BORDER);
-                table.addCell(cell);
-
-                document.add(table);
-
-                Toast.makeText(requireActivity(), getString(R.string.ticket_generated) +" "+ dateFormat.format(Calendar.getInstance().getTime()) + ".pdf successfully generated at DOWNLOADS folder", Toast.LENGTH_LONG).show();
-                doPrint(file);
-            } catch (DocumentException de) {
-                Log.e("PDFCreator", "DocumentException:" + de);
-            } catch (IOException e) {
-                Log.e("PDFCreator", "ioException:" + e);
-            } finally {
-                document.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
+    @SuppressLint("SimpleDateFormat")
     public void createPDF(List<OrderItem> orderItems, Order order) throws FileNotFoundException, DocumentException {
 
         //Create document file
         float PADDING = 1;
+        boolean b = false;
+//        Document document = new Document(new RectangleReadOnly(114, 213));
         Document document = new Document(new RectangleReadOnly(114, 213));
         try {
-            SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss a");
+//            SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss a");
             SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyyyy_HHmm");
-            String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/PdfTest/";
+            String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() +
+                    "/alada-business/Tickets/";
             File dir = new File(path);
             if (!dir.exists())
-                dir.mkdirs();
+                b = dir.mkdirs();
 
             File file = new File(dir, "ALD_"+ dateFormat.format(Calendar.getInstance().getTime()) +".pdf");
             FileOutputStream outputStream = new FileOutputStream(file);
@@ -579,48 +398,27 @@ public class OrderDetailDialogFragment extends DialogFragment {
 
             //Open the document
             document.open();
-
-//            document.setPageSize(new RectangleReadOnly(114, 213));
-//            document.setPageSize(new RectangleReadOnly(114, 213));
             document.addCreationDate();
             document.addAuthor(getString(R.string.app_name));
             document.addCreator(getString(R.string.app_name));
 
             BaseFont poppins = BaseFont.createFont("res/font/poppins_regular.ttf", "UTF-8", BaseFont.EMBEDDED);
             Font poppinsFont = new Font(poppins, 2.0f, Font.NORMAL, BaseColor.BLACK);
+            Font poppinsWhFont = new Font(poppins, 2.0f, Font.NORMAL, BaseColor.WHITE);
             Font poppinsBFont = new Font(poppins, 2.0f, Font.BOLD, BaseColor.BLACK);
 
-            //Set Logo in Header Cell
-//            Drawable logo = getResources().getDrawable(R.mipmap.ic_launcher);
 
             try {
-//                URL url = new URL("https://alada.poupock.com/img/dinner.png");
 
-//                Bitmap bitmap = Picasso.get().load("https://alada.poupock.com/img/dinner.png").get();
-//                Bitmap bitmap = drawableToBitmap(getResources().getDrawable(R.mipmap.ic_launcher, requireActivity().getTheme()));
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inSampleSize = 3;
                 Bitmap bitmap = BitmapFactory.decodeFile(User.getPath(requireContext()), options);
+
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 byte[] bitmapLogo = stream.toByteArray();
-//                PdfPTable tTable = new PdfPTable(1);
-//                float[] columnTWidth = new float[]{60};
-//                tTable.setWidthPercentage(100f);
-//                tTable.setWidths(columnTWidth);
-                imgReportLogo = Image.getInstance(bitmapLogo);
-//                imgReportLogo.setAbsolutePosition(330f, 642f);
-//                document.add(imgReportLogo);
-//                cell = new PdfPCell();
-//                cell.addElement(imgReportLogo);
-//
-//                cell.setBorder(Rectangle.NO_BORDER);
-//                cell.setPadding(PADDING);
-//                tTable.addCell(cell);
-//
-//                document.add(tTable);
 
-//                addImage(document, imgReportLogo, Element.ALIGN_CENTER, titleFont);
+                imgReportLogo = Image.getInstance(bitmapLogo);
                 PdfPTable headTable = new PdfPTable(2);
                 cell = new PdfPCell();
                 cell.setColspan(2);
@@ -664,22 +462,20 @@ public class OrderDetailDialogFragment extends DialogFragment {
 
                 PdfPTable table = new PdfPTable(3);
                 float[] columnWidth = new float[]{60, 20, 30};
-//                table.setWidthPercentage(100f);
+                table.setWidthPercentage(100f);
                 table.setWidths(columnWidth);
 
-//                cell = new PdfPCell(new Phrase(getString(R.string.items)));
                 cell = new PdfPCell();
                 cell.addElement(buildCellElt(getString(R.string.items)
-                        , poppinsFont, Element.ALIGN_LEFT));
+                        , poppinsWhFont, Element.ALIGN_LEFT));
                 cell.setBackgroundColor(tableHeadColor);
                 cell.setBorder(Rectangle.NO_BORDER);
                 cell.setPadding(PADDING);
                 table.addCell(cell);
 
-//                cell = new PdfPCell(new Phrase(getString(R.string.quantity)));
                 cell = new PdfPCell();
                 cell.addElement(buildCellElt(getString(R.string.qty)
-                        , poppinsFont, Element.ALIGN_LEFT));
+                        , poppinsWhFont, Element.ALIGN_LEFT));
                 cell.setBackgroundColor(tableHeadColor);
                 cell.setBorder(Rectangle.NO_BORDER);
                 cell.setPadding(PADDING);
@@ -689,7 +485,7 @@ public class OrderDetailDialogFragment extends DialogFragment {
 
                 cell = new PdfPCell();
                 cell.addElement(buildCellElt(getString(R.string.price)
-                        , poppinsFont, Element.ALIGN_LEFT));
+                        , poppinsWhFont, Element.ALIGN_LEFT));
                 cell.setBackgroundColor(tableHeadColor);
                 cell.setBorder(Rectangle.NO_BORDER);;
                 cell.setPadding(PADDING);
@@ -709,7 +505,6 @@ public class OrderDetailDialogFragment extends DialogFragment {
                     cell.setPadding(PADDING);
                     table.addCell(cell);
 
-//                    cell = new PdfPCell(new Phrase(orderItems.get(i).getQuantity()+""));
                     cell = new PdfPCell();
                     cell.addElement(buildCellElt(orderItems.get(i).getQuantity() +"", poppinsFont, Element.ALIGN_RIGHT));
                     cell.setBorder(Rectangle.NO_BORDER);
@@ -717,7 +512,6 @@ public class OrderDetailDialogFragment extends DialogFragment {
                     cell.setPadding(PADDING);
                     table.addCell(cell);
 
-//                    cell = new PdfPCell(new Phrase((orderItems.get(i).getPrice()*orderItems.get(i).getQuantity())+""));
                     cell = new PdfPCell();
                     cell.addElement(buildCellElt((orderItems.get(i).getQuantity() * orderItems.get(i).getPrice())+"", poppinsFont, Element.ALIGN_RIGHT));
                     cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -749,8 +543,7 @@ public class OrderDetailDialogFragment extends DialogFragment {
                 addLineSeperator(document);
                 addNewItem(document, getString(R.string.thank_u_for_visit), Element.ALIGN_CENTER, poppinsBFont);
                 addLineSeperator(document);
-                document.close();
-                Toast.makeText(requireActivity(), getString(R.string.ticket_generated) +" "+ dateFormat.format(Calendar.getInstance().getTime()) + ".pdf successfully generated at DOWNLOADS folder", Toast.LENGTH_LONG).show();
+                Toast.makeText(requireActivity(), getString(R.string.ticket_generated) +" "+ dateFormat.format(Calendar.getInstance().getTime()) , Toast.LENGTH_LONG).show();
                 doPrint(file);
             } catch (DocumentException de) {
                 Log.e("PDFCreator", "DocumentException:" + de);
@@ -777,23 +570,15 @@ public class OrderDetailDialogFragment extends DialogFragment {
         document.add(paragraph);
     }
 
-    private void addImage(Document document, Image image, int alignment, Font font) throws DocumentException {
-        Chunk chunk = new Chunk("", font);
-        Paragraph paragraph =  new Paragraph(chunk);
-        paragraph.add(image);
-        paragraph.setAlignment(alignment);
-        document.add(paragraph);
-    }
-
     private void addLineSeperator(Document document) throws DocumentException{
         LineSeparator lineSeparator = new LineSeparator();
+        addLineSpace(document);
         lineSeparator.setLineColor(new BaseColor(0,0,0, 70));
         document.add(new Chunk(lineSeparator));
         addLineSpace(document);
     }
 
     private void addLineSpace(Document document) throws DocumentException {
-        document.add(new Paragraph(""));
         document.add(new Paragraph(""));
     }
 

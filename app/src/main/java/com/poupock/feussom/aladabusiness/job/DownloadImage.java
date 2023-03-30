@@ -28,20 +28,6 @@ public class DownloadImage extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
         try {
-//            int responseCode = -1;
-//            URL url = new URL("https://alada.poupock.com/img/dinner.png");
-//            HttpURLConnection con = (HttpURLConnection)url.openConnection();
-//            con.setDoInput(true);
-//            con.connect();
-//            responseCode = con.getResponseCode();
-//            if(responseCode == HttpURLConnection.HTTP_OK)
-//            {
-//                //download
-//                in = con.getInputStream();
-//                bmp = BitmapFactory.decodeStream(in);
-//                in.close();
-//                iv.setImageBitmap(bmp);
-//            }
             String path = saveToInternalStorage(Picasso.get().load(url).get());
             User.storePath(path, context);
             Log.i(tag, "The file path is "+path);
