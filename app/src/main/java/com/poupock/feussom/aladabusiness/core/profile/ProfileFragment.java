@@ -49,15 +49,23 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
 
         String role = "";
+        int role_id = 0;
         AppDataBase dataBase = AppDataBase.getInstance(requireContext());
         List<User> users = dataBase.userDao().getAllUsers();
         for(int i=0; i<users.size(); i++){
             if (users.get(i).getEmail().equals(User.currentUser(requireContext()).getEmail())){
 //                binding.txtRole.setText();
                 role = User.currentUser(requireContext()).getEmail()+" - "+
-                        requireContext().getResources().getStringArray(R.array.role_array)[Integer.parseInt(users.get(i).getRole_id())];
+                        requireContext().getResources().getStringArray(R.array.role_array)[Integer.parseInt(users.get(i).getRole_id()) -1];
+                role_id = Integer.parseInt(users.get(i).getRole_id());
                 break;
             }
+        }
+        Log.i(tag, "The role is : "+role_id);
+        if (role_id > 2){
+            binding.cardMenu.setVisibility(View.GONE);
+            binding.cardUser.setVisibility(View.GONE);
+            binding.cardTable.setVisibility(View.GONE);
         }
         binding.txtName.setText(User.currentUser(requireContext()).getName()+" "+role);
         Log.i(tag, "The profile : "+

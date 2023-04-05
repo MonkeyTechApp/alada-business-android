@@ -2,6 +2,7 @@ package com.poupock.feussom.aladabusiness.core.auth;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -33,6 +34,7 @@ import com.poupock.feussom.aladabusiness.web.response.Connection;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Objects;
 
 public class LoginFragment extends Fragment implements View.OnClickListener {
@@ -66,6 +68,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         binding.btnLogin.setOnClickListener(this);
 
         binding.txtRegister.setOnClickListener(this);
+
+        Configuration configuration = getResources().getConfiguration();
+        configuration.setLocale(Locale.getDefault());
     }
 
     @Override

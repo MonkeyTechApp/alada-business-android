@@ -50,6 +50,10 @@ public class CreateMenuFragment extends Fragment implements View.OnClickListener
             @Override
             public void handleOnBackPressed() {
                 Log.i(TAG,"Back pressed");
+                if(viewModel.getSelectedMenuItemLiveData().getValue() != null) {
+                   viewModel.setSelectedMenuItemMutableLiveData(null);
+//            viewModel.setMenuItemCategoryMutableLiveData(viewModel.getSelectedMenuItemLiveData().getValue().getMenuItemCategory());
+                }
                 NavHostFragment.findNavController(CreateMenuFragment.this)
                     .navigate(R.id.action_createMenuFragment_to_listMenuFragment);
             }
@@ -133,8 +137,9 @@ public class CreateMenuFragment extends Fragment implements View.OnClickListener
                                                         menuItem
                                                 );
 
-                                                NavHostFragment.findNavController(CreateMenuFragment.this)
-                                                        .navigate(R.id.action_createMenuFragment_to_listMenuFragment);
+                                                requireActivity().onBackPressed();
+//                                                NavHostFragment.findNavController(CreateMenuFragment.this)
+//                                                        .navigate(R.id.action_createMenuFragment_to_listMenuFragment);
                                             }
                                             else {
                                                 Toast.makeText(requireContext(), R.string.menu_not_created, Toast.LENGTH_SHORT).show();
@@ -186,8 +191,9 @@ public class CreateMenuFragment extends Fragment implements View.OnClickListener
                                                         menuItem
                                                 );
 
-                                                NavHostFragment.findNavController(CreateMenuFragment.this)
-                                                        .navigate(R.id.action_createMenuFragment_to_listMenuFragment);
+                                                requireActivity().onBackPressed();
+//                                                NavHostFragment.findNavController(CreateMenuFragment.this)
+//                                                        .navigate(R.id.action_createMenuFragment_to_listMenuFragment);
                                             }
                                             else {
                                                 Toast.makeText(requireContext(), R.string.menu_not_created, Toast.LENGTH_SHORT).show();
