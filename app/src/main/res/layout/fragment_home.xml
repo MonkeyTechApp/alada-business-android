@@ -11,24 +11,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            android:gravity="center"
-            android:paddingHorizontal="@dimen/dimen_padding"
-            android:layout_marginHorizontal="@dimen/dimen_padding"
-            android:layout_marginTop="@dimen/dimen_padding"
-            style="@style/fontSemiBold"
-            android:textColor="@color/white"
-            android:text="@string/create_your_first_business_and_start_tracking_key_informations"
-            android:id="@+id/txtLegend"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/list"/>
     </LinearLayout>
-
 
 </androidx.core.widget.NestedScrollView>

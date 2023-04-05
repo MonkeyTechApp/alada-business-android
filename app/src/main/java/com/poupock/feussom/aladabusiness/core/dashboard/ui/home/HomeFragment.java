@@ -40,13 +40,16 @@ import com.poupock.feussom.aladabusiness.ui.dialog.ListDialogFragment;
 import com.poupock.feussom.aladabusiness.util.Business;
 import com.poupock.feussom.aladabusiness.util.Constant;
 import com.poupock.feussom.aladabusiness.util.GuestTable;
+import com.poupock.feussom.aladabusiness.util.Methods;
 import com.poupock.feussom.aladabusiness.util.Order;
 import com.poupock.feussom.aladabusiness.util.User;
+import com.poupock.feussom.aladabusiness.web.ServerUrl;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
@@ -67,8 +70,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         appDataBase = AppDataBase.getInstance(requireContext());
         View root = binding.getRoot();
 
-        final TextView textView = binding.txtLegend;
-        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+//        final TextView textView = binding.txtLegend;
+//        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
         binding.list.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         binding.list.setAdapter(new GuestTableOrdersAdapter(requireContext(), AppDataBase.getInstance(requireContext()).guestTableDao().getAllGuestTables(),
@@ -114,7 +117,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        new DownloadImage(requireContext(), "https://alada.poupock.com/img/dinner.png").execute();
+//        new DownloadImage(requireContext(), "https://alada.poupock.com/img/dinner.png").execute();
+        if (!Methods.runtimeWritePermissions(requireActivity()) ){
+            new DownloadImage(requireContext(),
+                    ServerUrl.BASE_URL+AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0).getPath()).execute();
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
     }
 
     @Override

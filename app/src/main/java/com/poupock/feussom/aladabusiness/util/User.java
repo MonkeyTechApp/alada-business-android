@@ -25,6 +25,7 @@ public class User {
     @Ignore
     private static final String tag = User.class.getSimpleName();
     public static final String LAST_SYNC_TIME = "LAST_SYNC";
+    private static final String PRINTER_EPSON_MODEL_TARGET = "PRINTER_EPSON_MODEL_TARGET";
     @PrimaryKey(autoGenerate = true)
     int id;
     String role_id;
@@ -163,6 +164,11 @@ public class User {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SharedPreferences preferences = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE);
         return preferences.getString(LAST_SYNC_TIME, sdf.format(new Date()));
+    }
+
+    public static String getPrinterModelTarget(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE);
+        return preferences.getString(PRINTER_EPSON_MODEL_TARGET, null);
     }
 
     public static User currentUser(Context context) {
@@ -308,6 +314,13 @@ public class User {
     public static boolean storeFCMToken(String token, Context context) {
         SharedPreferences.Editor editor = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE).edit();
         editor.putString(USER_FCM, token);
+        editor.apply();
+        return editor.commit();
+    }
+
+    public static boolean storePrinterModelTarget(String printerModelTarget, Context context) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE).edit();
+        editor.putString(PRINTER_EPSON_MODEL_TARGET, printerModelTarget);
         editor.apply();
         return editor.commit();
     }

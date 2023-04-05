@@ -270,7 +270,7 @@
     <string name="order_updated">Order updated!</string>
     <string name="thank_u_for_visit">Thank you for your visit!!!</string>
     <string name="set_interval">Set time interval</string>
-    <string name="deleting_order_items_3_dots">Deleting order items ...</string>
+    <string name="deleting_order_items_3_dots">Deleting order items …</string>
     <string name="order_item_deleted_successs">Order item deleted successfully!</string>
     <string name="order_item_not_deleted">Order item not deleted</string>
     <string name="with_quantity">with quantity</string>
@@ -279,8 +279,47 @@
     <string name="warning_same_quantity">Warning same quantity!</string>
     <string name="quantity_must_be_number_n_greater_than_0">The quantity must be a number and greater than 0.</string>
     <string name="confirm_order_item_update">"Confirm order item update to "</string>
-    <string name="updating_order_item_3_dot">Updating order item ...</string>
+    <string name="updating_order_item_3_dot">Updating order item …</string>
     <string name="order_item_updated_successs">Order item updated successfully!</string>
     <string name="order_item_not_updated">Order item not updated.</string>
     <string name="order_item_actions">Order item actions</string>
+    <string name="list_of_printers">List of printers</string>
+
+    <string name="title_warnings">Printer Warnings</string>
+    <string name="print_job_id">ABC123</string>
+    <string name="title_err_code">Error Code</string>
+    <string name="title_err_method">Method</string>
+    <string name="title_msg_result">Result</string>
+    <string name="title_msg_description">Description</string>
+
+
+    <string name="lang_ank">ANK</string>
+    <string name="lang_japanese">JAPANESE</string>
+    <string name="lang_chinese">CHINESE</string>
+    <string name="lang_taiwan">TAIWAN</string>
+    <string name="lang_korean">KOREAN</string>
+    <string name="lang_thai">THAI</string>
+    <string name="lang_southasia">SOUTH ASIA</string>
+
+
+    <string name="handlingmsg_warn_receipt_near_end">Roll paper is nearly end.\n</string>
+    <string name="handlingmsg_warn_battery_near_end">Battery level of printer is low.\n</string>
+    <string name="handlingmsg_err_no_response">Please check the connection of the printer and the mobile terminal.\nConnection get lost.\n</string>
+    <string name="handlingmsg_err_cover_open">Please close roll paper cover.\n</string>
+    <string name="handlingmsg_err_receipt_end">Please check roll paper.\n</string>
+    <string name="handlingmsg_err_paper_feed">Please release a paper feed switch.\n</string>
+    <string name="handlingmsg_err_autocutter">Please remove jammed paper and close roll paper cover.\nRemove any jammed paper or foreign substances in the printer, and then turn the printer off and turn the printer on again.\n</string>
+    <string name="handlingmsg_err_need_recover">Then, If the printer doesn\'t recover from error, please cycle the power switch.\n</string>
+    <string name="handlingmsg_err_unrecover">Please cycle the power switch of the printer.\nIf same errors occurred even power cycled, the printer may out of order.</string>
+    <string name="handlingmsg_err_overheat">Please wait until error LED of the printer turns off. \n</string>
+    <string name="handlingmsg_err_head">Print head of printer is hot.\n</string>
+    <string name="handlingmsg_err_motor">Motor Driver IC of printer is hot.\n</string>
+    <string name="handlingmsg_err_battery">Battery of printer is hot.\n</string>
+    <string name="handlingmsg_err_wrong_paper">Please set correct roll paper.\n</string>
+    <string name="handlingmsg_err_battery_real_end">Please connect AC adapter or change the battery.\nBattery of printer is almost empty.\n</string>
+    <string name="handlingmsg_err_offline">Printer is offline.\n</string>
+    <string name="handlingmsg_err_wait_removal">Please remove paper.\n</string>
+    <string name="handlingmsg_err_voltage">Please check the voltage status.\n</string>
+    <string name="printer_warning">Printer Warning</string>
+    <string name="ok">OK</string>
 </resources>

@@ -43,6 +43,7 @@ dependencies {
     def lifecycle_version = "2.4.0-alpha03"
     def room_version = "2.4.3"
 
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'

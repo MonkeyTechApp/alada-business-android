@@ -36,5 +36,6 @@
     <dimen name="rounded_corner_small">8dp</dimen>
     <dimen name="card_height">180dp</dimen>
     <dimen name="dimen_padding_micro">2dp</dimen>
+    <dimen name="progress_bar_size">24dp</dimen>
 
 </resources>

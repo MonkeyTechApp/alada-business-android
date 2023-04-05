@@ -34,6 +34,7 @@ import com.poupock.feussom.aladabusiness.databinding.ActivityDashboardBinding;
 import com.poupock.feussom.aladabusiness.job.OrderService;
 import com.poupock.feussom.aladabusiness.job.OrderSyncService;
 import com.poupock.feussom.aladabusiness.util.Constant;
+import com.poupock.feussom.aladabusiness.util.Methods;
 import com.poupock.feussom.aladabusiness.util.User;
 
 public class DashboardActivity extends AppCompatActivity {
@@ -74,6 +75,7 @@ public class DashboardActivity extends AppCompatActivity {
 //            txtRole.setVisibility(View.VISIBLE);
 //            launchService();
             startService(this);
+            Methods.runtimeWritePermissions(this);
         }
         else {
             txtRole.setVisibility(View.GONE);

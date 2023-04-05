@@ -3,6 +3,7 @@ package com.poupock.feussom.aladabusiness.ui.dialog;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,16 +26,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.epson.epos2.Epos2Exception;
+import com.epson.epos2.discovery.DeviceInfo;
+import com.epson.epos2.printer.Printer;
+import com.epson.epos2.printer.PrinterStatusInfo;
+import com.epson.epos2.printer.ReceiveListener;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
@@ -58,6 +68,7 @@ import com.itextpdf.text.pdf.draw.VerticalPositionMark;
 import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.DialogCallback;
 import com.poupock.feussom.aladabusiness.callback.ListItemClickCallback;
+import com.poupock.feussom.aladabusiness.callback.PrinterSelectedCallback;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.databinding.DialogListBinding;
 import com.poupock.feussom.aladabusiness.databinding.OrderDetailFragmentBinding;
@@ -66,10 +77,13 @@ import com.poupock.feussom.aladabusiness.ui.adapter.OrderAdapter;
 import com.poupock.feussom.aladabusiness.ui.adapter.OrderItemAdapter;
 import com.poupock.feussom.aladabusiness.ui.adapter.PrintAdapter;
 import com.poupock.feussom.aladabusiness.ui.fragment.order.OrderViewModel;
+import com.poupock.feussom.aladabusiness.util.Business;
 import com.poupock.feussom.aladabusiness.util.Constant;
 import com.poupock.feussom.aladabusiness.util.GuestTable;
 import com.poupock.feussom.aladabusiness.util.Order;
 import com.poupock.feussom.aladabusiness.util.OrderItem;
+import com.poupock.feussom.aladabusiness.util.ShowMsg;
+import com.poupock.feussom.aladabusiness.util.SpnModelsItem;
 import com.poupock.feussom.aladabusiness.util.User;
 import com.squareup.picasso.Picasso;
 
@@ -86,7 +100,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
-public class OrderDetailDialogFragment extends DialogFragment {
+public class OrderDetailDialogFragment extends DialogFragment implements ReceiveListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -103,6 +117,8 @@ public class OrderDetailDialogFragment extends DialogFragment {
     private Image imgReportLogo;
 
     BaseColor tableHeadColor = WebColors.getRGBColor("#000000");
+    private Printer printer = null;
+    private static final int DISCONNECT_INTERVAL = 500;
 
     public static OrderDetailDialogFragment newInstance(String param1, String param2) {
         OrderDetailDialogFragment fragment = new OrderDetailDialogFragment();
@@ -172,74 +188,293 @@ public class OrderDetailDialogFragment extends DialogFragment {
                     }
                 }));
 
+
+        initializeObject();
+
         binding.btnPay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bitmap = loadBitmapFromView(binding.mainLay, binding.mainLay.getWidth(), binding.mainLay.getHeight());
-                try {
-                    createPDF(viewModel.getOrderMutableLiveData().getValue().extractAllOrderedItems() ,
-                            viewModel.getOrderMutableLiveData().getValue());
-//                    generatePDF(viewModel.getOrderMutableLiveData().getValue());
-                } catch (FileNotFoundException | DocumentException e) {
-                    Log.e(TAG, "The execption : "+e.toString());
+                if (User.getPrinterModelTarget(requireContext()) == null){
+                    DialogFragment epsonDiscoverDialog = EpsonPrintersListDialogFragment.newInstance(1,
+                            new PrinterSelectedCallback() {
+                                @Override
+                                public void onItemClickListener(DeviceInfo o, boolean isLong) {
+                                    Log.i(TAG, "Printer selected!!");
+                                    User.storePrinterModelTarget(o.getTarget(), requireContext());
+                                }
+                            });
+                    epsonDiscoverDialog.show(getParentFragmentManager(), EpsonPrintersListDialogFragment.class.getSimpleName());
                 }
+                else {
+                    if (!runPrintReceiptSequence()) {
+                        updateButtonState(true);
+                    }else{
+                        Log.i(TAG, "Printing sequence FALSE");
+                    }
+                }
+//                try {
+//                    createPDF(viewModel.getOrderMutableLiveData().getValue().extractAllOrderedItems() ,
+//                            viewModel.getOrderMutableLiveData().getValue());
+////                    generatePDF(viewModel.getOrderMutableLiveData().getValue());
+//                } catch (FileNotFoundException | DocumentException e) {
+//                    Log.e(TAG, "The execption : "+e.toString());
+//                }
             }
         });
     }
 
+    private boolean runPrintReceiptSequence() {
 
-    private void createPdf(float width , float hight) {
-        WindowManager wm = (WindowManager) requireActivity().getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-//        float hight = displaymetrics.heightPixels;
-//        float width = displaymetrics.widthPixels;
-
-        int convertHighet = (int) hight, convertWidth = (int) width;
-
-//        Resources mResources = getResources();
-//        Bitmap bitmap = BitmapFactory.decodeResource(mResources, R.drawable.screenshot);
-
-        PdfDocument document = new PdfDocument();
-        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(convertWidth, convertHighet, 1).create();
-        PdfDocument.Page page = document.startPage(pageInfo);
-
-        Canvas canvas = page.getCanvas();
-
-
-        Paint paint = new Paint();
-        canvas.drawPaint(paint);
-
-
-        bitmap = Bitmap.createScaledBitmap(bitmap, convertWidth, convertHighet, true);
-
-        paint.setColor(Color.BLUE);
-        canvas.drawBitmap(bitmap, 0, 0, null);
-        document.finishPage(page);
-
-
-        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/PdfTest/";
-        File dir = new File(path);
-        if (!dir.exists())
-            dir.mkdirs();
-
-        File filePath = new File(dir, "Test.pdf");
-
-        try {
-            document.writeTo(new FileOutputStream(filePath));
-//            btn_generate.setText("Check PDF");
-            boolean_save=true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(requireContext(), "Something wrong: " + e.toString(), Toast.LENGTH_LONG).show();
+        if (!createReceiptData(viewModel.getOrderMutableLiveData().getValue(),
+                viewModel.getOrderMutableLiveData().getValue().extractAllOrderedItems())) {
+            return false;
         }
 
-        // close the document
-        document.close();
+        if (!printData()) {
+            return false;
+        }
+
+        return true;
     }
 
-    Bitmap bmp, scaledbmp;
+    private boolean createReceiptData(Order order, List<OrderItem> orderItems) {
+        String method = "";
+//        Bitmap logoData = BitmapFactory.decodeResource(getResources(), R.drawable.store);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 3;
+        Bitmap logoData = BitmapFactory.decodeFile(User.getPath(requireContext()), options);
+        StringBuilder textData = new StringBuilder();
+        final int barcodeWidth = 2;
+        final int barcodeHeight = 100;
+
+        if (printer == null) {
+            return false;
+        }
+
+        try {
+
+//            if(mDrawer.isChecked()) {
+//                method = "addPulse";
+//                printer.addPulse(Printer.PARAM_DEFAULT,
+//                        Printer.PARAM_DEFAULT);
+//            }
+
+            method = "addTextAlign";
+            printer.addTextAlign(Printer.ALIGN_CENTER);
+
+            method = "addImage";
+            printer.addImage(logoData, 0, 0,
+                    logoData.getWidth(),
+                    logoData.getHeight(),
+                    Printer.COLOR_1,
+                    Printer.MODE_MONO,
+                    Printer.HALFTONE_DITHER,
+                    Printer.PARAM_DEFAULT,
+                    Printer.COMPRESS_AUTO);
+
+            method = "addFeedLine";
+            printer.addFeedLine(1);
+            Business business = AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0);
+            List<User> users = AppDataBase.getInstance(requireContext()).userDao().getAllUsers();
+            String role = User.currentUser(requireContext()).getName();
+            for(int i=0; i<users.size(); i++){
+                if (users.get(i).getEmail().equals(User.currentUser(requireContext()).getEmail())){
+//                binding.txtRole.setText();
+                    role = User.currentUser(requireContext()).getEmail()+" - "+
+                            requireContext().getResources().getStringArray(R.array.role_array)[Integer.parseInt(users.get(i).getRole_id())];
+                    break;
+                }
+            }
+            textData.append("").append(business.getName().toUpperCase()).append(" ").append(business.getPhone()).append("\n");
+            textData.append(role.toUpperCase()).append("\n");
+            textData.append("\n");
+            textData.append(order.getCreated_at()).append("\n");
+            textData.append(order.getCode()).append("\n");
+            textData.append("------------------------------\n");
+            method = "addText";
+            printer.addText(textData.toString());
+            textData.delete(0, textData.length());
+
+            float total = 0;
+            for (int i = 0; i < orderItems.size(); i++) {
+                total = (float) (total + (orderItems.get(i).getPrice() * orderItems.get(i).getQuantity()));
+                textData.append(orderItems.get(i).getQuantity()).append(" ")
+                        .append(AppDataBase.getInstance(requireContext()).menuItemDao().
+                            getSpecificMenuItem(orderItems.get(i).getMenu_item_id()).getName())
+                        .append(" ")
+                        .append((orderItems.get(i).getQuantity() * orderItems.get(i).getPrice()))
+                        .append(getString(R.string.currency_cfa))
+                        .append("\n");
+
+            }
+
+            textData.append("------------------------------\n");
+            method = "addText";
+            printer.addText(textData.toString());
+            textData.delete(0, textData.length());
+
+//            textData.append("TOTAL  ").append(total).append(getString(R.string.currency_cfa)).append("\n");
+//            textData.append("TAX                      14.43\n");
+            method = "addText";
+            printer.addText(textData.toString());
+            textData.delete(0, textData.length());
+
+            method = "addTextSize";
+            printer.addTextSize(2, 2);
+            method = "addText";
+            printer.addText("TOTAL "+total+" "+ getString(R.string.currency_cfa)+"\n");
+            method = "addTextSize";
+            printer.addTextSize(1, 1);
+            method = "addFeedLine";
+            printer.addFeedLine(1);
+
+//            textData.append("CASH                    200.00\n");
+//            textData.append("CHANGE                   25.19\n");
+            textData.append("------------------------------\n");
+            method = "addText";
+            printer.addText(textData.toString());
+            textData.delete(0, textData.length());
+
+//            textData.append("Purchased item total number\n");
+            textData.append(getString(R.string.thank_u_for_visit)).append("!\n");
+//            textData.append("With Preferred Saving Card\n");
+            method = "addText";
+            printer.addText(textData.toString());
+            textData.delete(0, textData.length());
+            method = "addFeedLine";
+            printer.addFeedLine(2);
+
+            method = "addBarcode";
+            printer.addBarcode(order.getId()+"",
+                    Printer.BARCODE_CODE39,
+                    Printer.HRI_BELOW,
+                    Printer.FONT_A,
+                    barcodeWidth,
+                    barcodeHeight);
+
+            method = "addCut";
+            printer.addCut(Printer.CUT_FEED);
+        }
+        catch (Exception e) {
+            printer.clearCommandBuffer();
+            ShowMsg.showException(e, method, requireContext());
+            return false;
+        }
+
+        textData = null;
+
+        return true;
+    }
+
+    private boolean printData() {
+        if (printer == null) {
+            return false;
+        }
+
+        if (!connectPrinter()) {
+            printer.clearCommandBuffer();
+            return false;
+        }
+
+        try {
+            printer.sendData(Printer.PARAM_DEFAULT);
+        }
+        catch (Exception e) {
+            printer.clearCommandBuffer();
+            ShowMsg.showException(e, "sendData", requireContext());
+            try {
+                printer.disconnect();
+            }
+            catch (Exception ex) {
+                // Do nothing
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean initializeObject() {
+        try {
+
+            printer = new Printer(Printer.TM_M30,
+                    Printer.MODEL_ANK,
+                    requireContext());
+        }
+        catch (Exception e) {
+            ShowMsg.showException(e, "Printer", requireContext());
+            return false;
+        }
+
+        printer.setReceiveEventListener(this);
+
+        return true;
+    }
+
+    private void finalizeObject() {
+        if (printer == null) {
+            return;
+        }
+
+        printer.setReceiveEventListener(null);
+
+        printer = null;
+    }
+
+    private boolean connectPrinter() {
+        if (printer == null) {
+            return false;
+        }
+
+        try {
+            printer.connect(User.getPrinterModelTarget(requireContext()), Printer.PARAM_DEFAULT);
+        }
+        catch (Exception e) {
+            ShowMsg.showException(e, "connect", requireContext());
+            return false;
+        }
+
+        return true;
+    }
+
+    private void disconnectPrinter() {
+        if (printer == null) {
+            return;
+        }
+
+        while (true) {
+            try {
+                printer.disconnect();
+                break;
+            } catch (final Exception e) {
+                if (e instanceof Epos2Exception) {
+                    //Note: If printer is processing such as printing and so on, the disconnect API returns ERR_PROCESSING.
+                    if (((Epos2Exception) e).getErrorStatus() == Epos2Exception.ERR_PROCESSING) {
+                        try {
+                            Thread.sleep(DISCONNECT_INTERVAL);
+                        } catch (Exception ex) {
+                        }
+                    }else{
+                        requireActivity().runOnUiThread(new Runnable() {
+                            public synchronized void run() {
+                                ShowMsg.showException(e, "disconnect", requireContext());
+                            }
+                        });
+                        break;
+                    }
+                }else{
+                    requireActivity().runOnUiThread(new Runnable() {
+                        public synchronized void run() {
+                            ShowMsg.showException(e, "disconnect", requireContext());
+                        }
+                    });
+                    break;
+                }
+            }
+        }
+
+        printer.clearCommandBuffer();
+    }
 
     public static Bitmap drawableToBitmap (Drawable drawable) {
 
@@ -264,106 +499,6 @@ public class OrderDetailDialogFragment extends DialogFragment {
         } catch (Exception e){
             Log.e(TAG, "The error is : "+e.toString());
         }
-    }
-
-    private void generatePDF(Order order){
-        // creating an object variable
-        // for our PDF document.
-        bmp = drawableToBitmap(getResources().getDrawable(R.mipmap.ic_launcher, requireActivity().getTheme()));
-        scaledbmp = Bitmap.createScaledBitmap(bmp, 30, 30, false);
-        PdfDocument pdfDocument = new PdfDocument();
-
-        // two variables for paint "paint" is used
-        // for drawing shapes and we will use "title"
-        // for adding text in our PDF file.
-        Paint paint = new Paint();
-        Paint title = new Paint();
-
-        // we are adding page info to our PDF file
-        // in which we will be passing our pageWidth,
-        // pageHeight and number of pages and after that
-        // we are calling it to create our PDF.
-        PdfDocument.PageInfo mypageInfo = new PdfDocument.PageInfo.Builder(213  , 114, 1).create();
-
-        // below line is used for setting
-        // start page for our PDF file.
-        PdfDocument.Page myPage = pdfDocument.startPage(mypageInfo);
-
-        // creating a variable for canvas
-        // from our page of PDF.
-        Canvas canvas = myPage.getCanvas();
-
-        // below line is used to draw our image on our PDF file.
-        // the first parameter of our drawbitmap method is
-        // our bitmap
-        // second parameter is position from left
-        // third parameter is position from top and last
-        // one is our variable for paint.
-        canvas.drawBitmap(scaledbmp, 59, 10, paint);
-
-        // below line is used for adding typeface for
-        // our text which we will be adding in our PDF file.
-        title.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL));
-
-        // below line is used for setting text size
-        // which we will be displaying in our PDF file.
-        title.setTextSize(8);
-
-        // below line is sued for setting color
-        // of our text inside our PDF file.
-        title.setColor(ContextCompat.getColor(requireContext(), R.color.black));
-        title.setTextAlign(Paint.Align.CENTER);
-
-        // below line is used to draw text in our PDF file.
-        // the first parameter is our text, second parameter
-        // is position from start, third parameter is position from top
-        // and then we are passing our variable of paint which is title.
-        canvas.drawText("\n "
-                +AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0).getName(), 10, 100, title);
-        canvas.drawText("\n "+getString(R.string.code_command)+" : "+
-                order.getCode(), 10, 80, title);
-
-        // similarly we are creating another text and in this
-        // we are aligning this text to center of our PDF file.
-        title.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
-        title.setColor(ContextCompat.getColor(requireContext(), R.color.black));
-        title.setTextSize(15);
-
-        // below line is used for setting
-        // our text to center of PDF.
-        title.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText("This is sample document which we have created.", 10, 560, title);
-        // after adding all attributes to our
-        // PDF file we will be finishing our page.
-        pdfDocument.finishPage(myPage);
-
-        // below line is used to set the name of
-        // our PDF file and its path.
-
-        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/PdfTest/";
-        File dir = new File(path);
-        if (!dir.exists())
-            dir.mkdirs();
-
-        File file = new File(dir, "GFG_"+ UUID.randomUUID().toString()+".pdf");
-
-        try {
-            // after creating a file name we will
-            // write our PDF file to that location.
-            pdfDocument.writeTo(new FileOutputStream(file));
-
-            // below line is to print toast message
-            // on completion of PDF generation.
-            Toast.makeText(requireActivity(), R.string.ticket_generated, Toast.LENGTH_SHORT).show();
-            doPrint(file);
-        } catch (IOException e) {
-            // below line is used
-            // to handle error
-            e.printStackTrace();
-        }
-        // after storing our pdf to that
-        // location we are closing our PDF file.
-        pdfDocument.close();
     }
 
     public static Bitmap loadBitmapFromView(View v, int width, int height) {
@@ -563,6 +698,7 @@ public class OrderDetailDialogFragment extends DialogFragment {
         paragraph.setAlignment(align);
         return paragraph;
     }
+
     private void addNewItem(Document document, String text, int alignment, Font font) throws DocumentException {
         Chunk chunk = new Chunk(text, font);
         Paragraph paragraph =  new Paragraph(chunk);
@@ -589,5 +725,121 @@ public class OrderDetailDialogFragment extends DialogFragment {
         paragraph.add(new VerticalPositionMark());
         paragraph.add(rightChunk);
         document.add(paragraph);
+    }
+
+    @Override
+    public void onPtrReceive(Printer printer, final int code, final PrinterStatusInfo status, final String printJobId) {
+        requireActivity().runOnUiThread(new Runnable() {
+            @Override
+            public synchronized void run() {
+                ShowMsg.showResult(code, makeErrorMessage(status), requireContext());
+
+                displayPrinterWarnings(status);
+
+                updateButtonState(true);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        disconnectPrinter();
+                    }
+                }).start();
+            }
+        });
+    }
+
+    private void updateButtonState(boolean state) {
+        binding.btnPay.setEnabled(state);
+    }
+
+    private void displayPrinterWarnings(PrinterStatusInfo status) {
+        String warningsMsg = "";
+
+        if (status == null) {
+            return;
+        }
+
+        if (status.getPaper() == Printer.PAPER_NEAR_END) {
+            warningsMsg += getString(R.string.handlingmsg_warn_receipt_near_end);
+        }
+
+        if (status.getBatteryLevel() == Printer.BATTERY_LEVEL_1) {
+            warningsMsg += getString(R.string.handlingmsg_warn_battery_near_end);
+        }
+
+        if (!warningsMsg.isEmpty()){
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            builder.setTitle(R.string.printer_warning);
+            builder.setMessage(warningsMsg)
+                    .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dismiss();
+                        }
+                    }).show();
+        }
+    }
+
+
+    private String makeErrorMessage(PrinterStatusInfo status) {
+        String msg = "";
+
+        if (status.getOnline() == Printer.FALSE) {
+            msg += getString(R.string.handlingmsg_err_offline);
+        }
+        if (status.getConnection() == Printer.FALSE) {
+            msg += getString(R.string.handlingmsg_err_no_response);
+        }
+        if (status.getCoverOpen() == Printer.TRUE) {
+            msg += getString(R.string.handlingmsg_err_cover_open);
+        }
+        if (status.getPaper() == Printer.PAPER_EMPTY) {
+            msg += getString(R.string.handlingmsg_err_receipt_end);
+        }
+        if (status.getPaperFeed() == Printer.TRUE || status.getPanelSwitch() == Printer.SWITCH_ON) {
+            msg += getString(R.string.handlingmsg_err_paper_feed);
+        }
+        if (status.getErrorStatus() == Printer.MECHANICAL_ERR || status.getErrorStatus() == Printer.AUTOCUTTER_ERR) {
+            msg += getString(R.string.handlingmsg_err_autocutter);
+            msg += getString(R.string.handlingmsg_err_need_recover);
+        }
+        if (status.getErrorStatus() == Printer.UNRECOVER_ERR) {
+            msg += getString(R.string.handlingmsg_err_unrecover);
+        }
+        if (status.getErrorStatus() == Printer.AUTORECOVER_ERR) {
+            if (status.getAutoRecoverError() == Printer.HEAD_OVERHEAT) {
+                msg += getString(R.string.handlingmsg_err_overheat);
+                msg += getString(R.string.handlingmsg_err_head);
+            }
+            if (status.getAutoRecoverError() == Printer.MOTOR_OVERHEAT) {
+                msg += getString(R.string.handlingmsg_err_overheat);
+                msg += getString(R.string.handlingmsg_err_motor);
+            }
+            if (status.getAutoRecoverError() == Printer.BATTERY_OVERHEAT) {
+                msg += getString(R.string.handlingmsg_err_overheat);
+                msg += getString(R.string.handlingmsg_err_battery);
+            }
+            if (status.getAutoRecoverError() == Printer.WRONG_PAPER) {
+                msg += getString(R.string.handlingmsg_err_wrong_paper);
+            }
+        }
+        if (status.getBatteryLevel() == Printer.BATTERY_LEVEL_0) {
+            msg += getString(R.string.handlingmsg_err_battery_real_end);
+        }
+        if (status.getRemovalWaiting() == Printer.REMOVAL_WAIT_PAPER) {
+            msg += getString(R.string.handlingmsg_err_wait_removal);
+        }
+        if(status.getUnrecoverError() == Printer.HIGH_VOLTAGE_ERR ||
+                status.getUnrecoverError() == Printer.LOW_VOLTAGE_ERR) {
+            msg += getString(R.string.handlingmsg_err_voltage);
+        }
+
+        return msg;
+    }
+
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        super.onDismiss(dialog);
+        finalizeObject();
     }
 }

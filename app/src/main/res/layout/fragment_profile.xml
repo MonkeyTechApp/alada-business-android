@@ -66,8 +66,7 @@
             android:layout_height="wrap_content"
             android:columnCount="3"
             android:padding="@dimen/fab_margin"
-            android:useDefaultMargins="true"
-            app:layout_constraintTop_toBottomOf="@id/txtLegend">
+            android:useDefaultMargins="true">
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardMenu"
@@ -75,7 +74,6 @@
                 android:layout_gravity="fill"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/txtLegend"
                 app:cardCornerRadius="@dimen/card_radius_m"
                 app:contentPadding="@dimen/dimen_padding">
                 <LinearLayout
@@ -136,7 +134,6 @@
                 app:cardCornerRadius="@dimen/card_radius_m"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/txtLegend"
                 app:contentPadding="@dimen/dimen_padding">
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -167,7 +164,6 @@
                 app:cardCornerRadius="@dimen/card_radius_m"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/txtLegend"
                 app:contentPadding="@dimen/dimen_padding">
                 <LinearLayout
                     android:layout_width="match_parent"

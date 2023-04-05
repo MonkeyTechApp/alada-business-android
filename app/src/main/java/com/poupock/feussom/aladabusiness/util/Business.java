@@ -31,6 +31,7 @@ public class Business {
     private String hours;
     private String phone;
     private String phone2;
+    private String path;
     private int floors;
     private String created_at;
     @ColumnInfo(defaultValue = "1")
@@ -45,7 +46,7 @@ public class Business {
     public Business(int id, String name, int category_id, String category_name, String owner_name, String owner_phone, String location,
                     double longitude, double latitude, String imageUrl, String imageLocalUrl, int zone_id,
                     String description, String hours, String phone, String phone2, int floors, int salePointCount,
-                    String created_at) {
+                    String created_at, String path) {
         this.id = id;
         this.name = name;
         this.category_id = category_id;
@@ -65,6 +66,7 @@ public class Business {
         this.floors = floors;
         this.created_at = created_at;
         this.salePointCount = salePointCount;
+        this.path = path;
     }
 
     @Ignore
@@ -297,5 +299,13 @@ public class Business {
 
     public void setPivot(UserPivot pivot) {
         this.pivot = pivot;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }
