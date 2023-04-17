@@ -12,8 +12,8 @@ android {
         applicationId "com.poupock.feussom.aladabusiness"
         minSdkVersion 22
         targetSdkVersion 33
-        versionCode 1
-        versionName ".3"
+        versionCode 2
+        versionName ".4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {

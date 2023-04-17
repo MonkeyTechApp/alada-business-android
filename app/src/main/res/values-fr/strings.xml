@@ -239,17 +239,73 @@
     <string name="order_updated">Commande mise à jour!</string>
     <string name="thank_u_for_visit">Merci pour votre visite!!!</string>
     <string name="set_interval">Définir l\'intervalle de temps</string>
-    <string name="deleting_order_items_3_dots">Deleting order items ...</string>
-    <string name="confirm_sending_order">Do you confirm sending the order\'s infos?</string>
-    <string name="confirmation_code">Confirmation code</string>
-    <string name="confirm">Confirm</string>
-    <string name="deleting_course">Deleting course</string>
-    <string name="course_deleted_successs">Course deleted successfully!</string>
-    <string name="course_not_deleted">Course not deleted !</string>
-    <string name="confirm_course_deletion">Confirm course deletion</string>
-    <string name="delete">Delete</string>
-    <string name="order_deleted_successs">Order deleted successfully!</string>
-    <string name="order_not_deleted">Order not deleted!</string>
-    <string name="confirm_order_deletion">Confirm order deletion?</string>
-    <string name="deleting_order_3_dots">Deleting order ...</string>
+    <string name="deleting_order_items_3_dots">Suppression d\'articles de la commande …</string>
+    <string name="confirm_sending_order">Confirmez-vous l\'envoi des informations de la commande?</string>
+    <string name="confirmation_code">Code de confirmation</string>
+    <string name="confirm">Confirmer</string>
+    <string name="deleting_course">Supprimer une tournée</string>
+    <string name="course_deleted_successs">La tournée à été supprimé avec succès!</string>
+    <string name="course_not_deleted">Echec de suppréssion de la tournée!</string>
+    <string name="confirm_course_deletion">Confirmer la suppression de la tournée</string>
+    <string name="delete">Suppression</string>
+    <string name="order_deleted_successs">Commande supprimée avec succès!</string>
+    <string name="order_not_deleted">Commande non supprimée!</string>
+    <string name="confirm_order_deletion">Confirmer la suppression de la commande?</string>
+    <string name="deleting_order_3_dots">Suppression de la commande …</string>
+    <string name="refreshing_categories_3_dots">Rafraîchissement des catégories…</string>
+    <string name="refreshing_items_3_dots">Actualisation des éléments de menu …</string>
+    <string name="actualised">Actualisation de</string>
+    <string name="menu_categories">catégorie(s) de menus</string>
+
+    <string name="order_item_deleted_successs">Article de commande supprimé avec succès!</string>
+    <string name="order_item_not_deleted">Article de commande non supprimé!</string>
+    <string name="with_quantity">avec quantité</string>
+    <string name="modify_qty">Modifier la quantité de l\'article de la commande</string>
+    <string name="order_item">Article de commande</string>
+    <string name="warning_same_quantity">Attention quantité identique!</string>
+    <string name="quantity_must_be_number_n_greater_than_0">La quantité doit être un nombre et supérieur à 0.</string>
+    <string name="confirm_order_item_update">"Confirmer la mise à jour de l'article de commande à "</string>
+    <string name="updating_order_item_3_dot">Mise à jour de l\'article de commande …</string>
+    <string name="order_item_updated_successs">Article de la commande mis à jour avec succès!</string>
+    <string name="order_item_not_updated">Article de la commande non mis à jour.</string>
+    <string name="order_item_actions">Actions sur les articles de commande</string>
+    <string name="list_of_printers">Liste des imprimantes</string>
+
+    <string name="title_warnings">Avertissement(s) de l\'imprimante</string>
+    <string name="print_job_id">ABC123</string>
+    <string name="title_err_code">Code d\'erreur</string>
+    <string name="title_err_method">Méthode</string>
+    <string name="title_msg_result">Résultat</string>
+    <string name="title_msg_description">Description</string>
+
+
+    <string name="lang_ank">ANK</string>
+    <string name="lang_japanese">JAPANESE</string>
+    <string name="lang_chinese">CHINESE</string>
+    <string name="lang_taiwan">TAIWAN</string>
+    <string name="lang_korean">KOREAN</string>
+    <string name="lang_thai">THAI</string>
+    <string name="lang_southasia">SOUTH ASIA</string>
+
+
+    <string name="handlingmsg_warn_receipt_near_end">Le papier rouleau est presque terminé.\n</string>
+    <string name="handlingmsg_warn_battery_near_end">Le niveau de la batterie de l\'imprimante est faible.\n</string>
+    <string name="handlingmsg_err_no_response">Veuillez vérifier la connexion de l\'imprimante et du terminal mobile.\nLa connexion est perdue.\n</string>
+    <string name="handlingmsg_err_cover_open">Veuillez fermer le couvercle du papier rouleau.\n</string>
+    <string name="handlingmsg_err_receipt_end">Veuillez vérifier le papier rouleau.\n</string>
+    <string name="handlingmsg_err_paper_feed">Veuillez relâcher un interrupteur d\'alimentation papier.\n</string>
+    <string name="handlingmsg_err_autocutter">Veuillez retirer le papier coincé et fermer le capot du papier rouleau.\nRetirez tout papier coincé ou toute substance étrangère dans l\'imprimante, puis éteignez l\'imprimante et rallumez-la.\n</string>
+    <string name="handlingmsg_err_need_recover">Ensuite, si l\'imprimante ne récupère pas d\'une erreur, veuillez allumer l\'interrupteur d\'alimentation.\n</string>
+    <string name="handlingmsg_err_unrecover">Veuillez allumer l\'interrupteur d\'alimentation de l\'imprimante.\nSi les mêmes erreurs se sont produites même après un cycle d\'alimentation, l\'imprimante peut être hors service.</string>
+    <string name="handlingmsg_err_overheat">Veuillez patienter jusqu\'à ce que le voyant d\'erreur de l\'imprimante s\'éteigne. \n</string>
+    <string name="handlingmsg_err_head">La tête d\'impression de l\'imprimante est chaude.\n</string>
+    <string name="handlingmsg_err_motor">Le circuit intégré du pilote du moteur de l\'imprimante est chaud.\n</string>
+    <string name="handlingmsg_err_battery">La batterie de \'imprimante est chaude.\n</string>
+    <string name="handlingmsg_err_wrong_paper">Veuillez définir le bon rouleau de papier.\n</string>
+    <string name="handlingmsg_err_battery_real_end">Veuillez connecter l\'adaptateur secteur ou changer la batterie.\nLa batterie de l\'imprimante est presque vide.\n</string>
+    <string name="handlingmsg_err_offline">L\'imprimante est hors ligne.\n</string>
+    <string name="handlingmsg_err_wait_removal">Veuillez retirer le papier.\n</string>
+    <string name="handlingmsg_err_voltage">Veuillez vérifier l\'état de la tension.\n</string>
+    <string name="printer_warning">Avertissement de l\'imprimante</string>
+    <string name="ok">OK</string>
 </resources>

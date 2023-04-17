@@ -9,12 +9,14 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.poupock.feussom.aladabusiness.callback.VolleyRequestCallback;
 import com.poupock.feussom.aladabusiness.net.SingleRequest;
 import com.poupock.feussom.aladabusiness.util.User;
 
 import org.json.JSONObject;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +46,7 @@ public class Fetch extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
 
+        Log.i(tag, "The url is : "+Url);
         StringRequest request = new StringRequest(Url,
                 new Response.Listener<String>() {
                     @Override
@@ -57,6 +60,15 @@ public class Fetch extends AsyncTask<Void, Void, Void> {
             public void onErrorResponse(VolleyError error){
                 callback.onError(error);
                 callback.onJobFinished();
+                Log.i(tag,"The volley error is "+error.toString());
+                try {
+                    Log.e(tag,new String(error.networkResponse.data, StandardCharsets.UTF_8));
+                    FirebaseCrashlytics.getInstance().log(tag+ " - "+Url+" \n \n "+
+                            new String(error.networkResponse.data, StandardCharsets.UTF_8));
+                }catch (NullPointerException exception){
+                    Log.i(tag,"The Null error is "+exception.toString());
+                    FirebaseCrashlytics.getInstance().recordException(exception);
+                }
             }
         }){
             @Override

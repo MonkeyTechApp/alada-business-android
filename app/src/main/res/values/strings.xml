@@ -334,4 +334,8 @@
     <string name="order_not_deleted">Order not deleted!</string>
     <string name="confirm_order_deletion">Confirm order deletion?</string>
     <string name="deleting_order_3_dots">Deleting order ...</string>
+    <string name="refreshing_categories_3_dots">Refreshing categories...</string>
+    <string name="refreshing_items_3_dots">Refreshing menu items ...</string>
+    <string name="actualised">Actualised</string>
+    <string name="menu_categories">menu category(s)</string>
 </resources>
