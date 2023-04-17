@@ -128,7 +128,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/dimen_padding"
                 app:layout_constraintTop_toBottomOf="@id/txtElement"
-                app:layout_constraintBottom_toTopOf="@id/btnPay"
+                app:layout_constraintBottom_toTopOf="@id/btnAction"
                 android:id="@+id/listDetails"/>
 
             <Button
@@ -138,7 +138,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:text="@string/print"
                 android:layout_marginVertical="@dimen/dimen_padding_small"
-                android:id="@+id/btnPay"/>
+                android:id="@+id/btnAction"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 

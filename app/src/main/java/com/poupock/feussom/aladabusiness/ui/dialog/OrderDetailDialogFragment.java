@@ -191,7 +191,7 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
 
         initializeObject();
 
-        binding.btnPay.setOnClickListener(new View.OnClickListener() {
+        binding.btnAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (User.getPrinterModelTarget(requireContext()) == null){
@@ -749,7 +749,7 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
     }
 
     private void updateButtonState(boolean state) {
-        binding.btnPay.setEnabled(state);
+        binding.btnAction.setEnabled(state);
     }
 
     private void displayPrinterWarnings(PrinterStatusInfo status) {

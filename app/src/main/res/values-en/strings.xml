@@ -298,4 +298,9 @@
     <string name="course_deleted_successs">Course deleted successfully!</string>
     <string name="course_not_deleted">Course not deleted !</string>
     <string name="confirm_course_deletion">Confirm course deletion</string>
+    <string name="delete">Delete</string>
+    <string name="order_deleted_successs">Order deleted successfully!</string>
+    <string name="order_not_deleted">Order not deleted!</string>
+    <string name="confirm_order_deletion">Confirm order deletion?</string>
+    <string name="deleting_order_3_dots">Deleting order ...</string>
 </resources>
