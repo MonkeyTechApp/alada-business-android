@@ -484,15 +484,33 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                 .setNegativeButton(getString(R.string.no), dialogClickListener).show();
         }
         else if (binding.btnSend == view){
-            sendOrder(orderViewModel.getOrderMutableLiveData().getValue(), new ProcessCallback() {
-                @Override
-                public void done() {
-                }
+            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 
                 @Override
-                public void failed() {
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    switch (i){
+                        case DialogInterface.BUTTON_POSITIVE:
+                            sendOrder(orderViewModel.getOrderMutableLiveData().getValue(), new ProcessCallback() {
+                                @Override
+                                public void done() {
+                                }
+
+                                @Override
+                                public void failed() {
+                                }
+                            });
+                            dialogInterface.dismiss();
+                            break;
+                        case DialogInterface.BUTTON_NEGATIVE:
+                            dialogInterface.dismiss();
+                            break;
+                    }
                 }
-            });
+            };
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            builder.setMessage(getString(R.string.confirm_sending_order)).setPositiveButton(getString(R.string.yes), dialogClickListener)
+                    .setNegativeButton(getString(R.string.no), dialogClickListener).show();
+
         }
     }
 
@@ -510,48 +528,51 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                                 case DialogInterface.BUTTON_POSITIVE:
 
                                     HashMap<String, String> map = new HashMap<>();
-                                    map.put("course_id", orderItem.getCourse_id()+"");
-                                    map.put("menu_item_id", orderItem.getMenu_item_id()+"");
+                                    Course course = AppDataBase.getInstance(requireContext()).courseDao().getSpecificCourse(orderItem.getCourse_id());
+                                    if (course != null){
+                                        map.put("course_id", course.getCode());
+                                        map.put("menu_item_id", orderItem.getMenu_item_id()+"");
 
-                                    Log.i(TAG, "The map is "+map.toString());
-                                    ProgressDialog progressDialog = new ProgressDialog(requireContext());
-                                    progressDialog.setMessage(getString(R.string.deleting_order_items_3_dots));
-                                    progressDialog.setCancelable(false);
-                                    new PostTask(requireContext(), ServerUrl.ORDER_ITEM_DEL, map,
-                                            new VolleyRequestCallback() {
-                                                @Override
-                                                public void onStart() {
-                                                    progressDialog.show();
-                                                }
-
-                                                @Override
-                                                public void onSuccess(String response) {
-                                                    DatumResponse datumResponse = new Gson().fromJson(response, DatumResponse.class);
-                                                    if (datumResponse.success){
-                                                        AppDataBase.getInstance(requireContext()).orderItemDao().delete(orderItem);
-                                                        actualiseOrderView(orderViewModel.getOrderMutableLiveData().getValue());
-                                                        Toast.makeText(requireContext(), R.string.order_item_deleted_successs, Toast.LENGTH_LONG).show();
+                                        Log.i(TAG, "The map is "+map.toString());
+                                        ProgressDialog progressDialog = new ProgressDialog(requireContext());
+                                        progressDialog.setMessage(getString(R.string.deleting_order_items_3_dots));
+                                        progressDialog.setCancelable(false);
+                                        new PostTask(requireContext(), ServerUrl.ORDER_ITEM_DEL, map,
+                                                new VolleyRequestCallback() {
+                                                    @Override
+                                                    public void onStart() {
+                                                        progressDialog.show();
                                                     }
-                                                    else {
-                                                        if (datumResponse.data == null){
+
+                                                    @Override
+                                                    public void onSuccess(String response) {
+                                                        DatumResponse datumResponse = new Gson().fromJson(response, DatumResponse.class);
+                                                        if (datumResponse.success){
                                                             AppDataBase.getInstance(requireContext()).orderItemDao().delete(orderItem);
                                                             actualiseOrderView(orderViewModel.getOrderMutableLiveData().getValue());
                                                             Toast.makeText(requireContext(), R.string.order_item_deleted_successs, Toast.LENGTH_LONG).show();
                                                         }
-                                                        Toast.makeText(requireContext(), R.string.order_item_not_deleted, Toast.LENGTH_LONG).show();
+                                                        else {
+                                                            if (datumResponse.data == null){
+                                                                AppDataBase.getInstance(requireContext()).orderItemDao().delete(orderItem);
+                                                                actualiseOrderView(orderViewModel.getOrderMutableLiveData().getValue());
+                                                                Toast.makeText(requireContext(), R.string.order_item_deleted_successs, Toast.LENGTH_LONG).show();
+                                                            }
+                                                            Toast.makeText(requireContext(), R.string.order_item_not_deleted, Toast.LENGTH_LONG).show();
+                                                        }
                                                     }
-                                                }
 
-                                                @Override
-                                                public void onError(VolleyError error) {
-                                                    Toast.makeText(requireContext(), R.string.server_error, Toast.LENGTH_LONG).show();
-                                                }
+                                                    @Override
+                                                    public void onError(VolleyError error) {
+                                                        Toast.makeText(requireContext(), R.string.server_error, Toast.LENGTH_LONG).show();
+                                                    }
 
-                                                @Override
-                                                public void onJobFinished() {
-                                                    progressDialog.dismiss();
-                                                }
-                                            }).execute();
+                                                    @Override
+                                                    public void onJobFinished() {
+                                                        progressDialog.dismiss();
+                                                    }
+                                                }).execute();
+                                    }
 
                                     break;
                                 case DialogInterface.BUTTON_NEGATIVE:
@@ -590,6 +611,11 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
 
 
                 }
+            }
+        }, requireActivity().getSupportFragmentManager(), new DialogCallback() {
+            @Override
+            public void onActionClicked(Object o, int action) {
+                actualiseOrderView(orderViewModel.getOrderMutableLiveData().getValue());
             }
         });
     }

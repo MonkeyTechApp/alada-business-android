@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.database.sqlite.SQLiteConstraintException;
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.util.Log;
@@ -12,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.android.volley.VolleyError;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
 import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.VolleyRequestCallback;
@@ -146,14 +148,30 @@ public class OrderService extends Service {
                         if (up > 0) Log.i(tag, "Updated");
                     }else {
                         Log.i(tag, "Inserting");
-                        dataBase.orderItemDao().insert(orderItem);
+                        try {
+                            dataBase.orderItemDao().insert(orderItem);
+                        }catch (SQLiteConstraintException exception){
+                            FirebaseCrashlytics.getInstance().recordException(exception);
+                            FirebaseCrashlytics.getInstance().recordException(new Exception(new Gson().toJson(orderItem)));
+                        }
                     }
                 }
             }else{
-                dataBase.courseDao().insert(course);
+
+                try {
+                    dataBase.courseDao().insert(course);
+                }catch (SQLiteConstraintException exception){
+                    FirebaseCrashlytics.getInstance().recordException(exception);
+                }
+
                 for (int k=0; k<course.getOrderItems().size(); k++){
                     OrderItem orderItem = course.getOrderItems().get(k);
-                    dataBase.orderItemDao().insert(orderItem);
+                    try {
+                        dataBase.orderItemDao().insert(orderItem);
+                    }catch (SQLiteConstraintException exception){
+                        FirebaseCrashlytics.getInstance().recordException(exception);
+                        FirebaseCrashlytics.getInstance().recordException(new Exception(new Gson().toJson(orderItem)));
+                    }
                 }
             }
         }

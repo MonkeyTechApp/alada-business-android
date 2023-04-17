@@ -11,10 +11,21 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:text="Course Title"
+        android:paddingVertical="@dimen/dimen_padding_small"
         android:paddingHorizontal="@dimen/dimen_padding_small"
         style="@style/fontSemiBold"
         android:background="@color/colorBlackBack"
         android:id="@+id/txtCourseTitle"/>
+
+    <ImageButton
+        android:id="@+id/imgDelete"
+        android:background="@color/transparent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_delete_outline_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="6dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"

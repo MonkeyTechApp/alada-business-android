@@ -68,9 +68,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         binding.btnLogin.setOnClickListener(this);
 
         binding.txtRegister.setOnClickListener(this);
-
-        Configuration configuration = getResources().getConfiguration();
-        configuration.setLocale(Locale.getDefault());
     }
 
     @Override

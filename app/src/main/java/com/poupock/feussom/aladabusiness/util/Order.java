@@ -244,7 +244,12 @@ public class Order {
         List<OrderItem> items = new ArrayList<>();
         if (getCourseList()!=null){
             for (int i=0; i<getCourseList().size(); i++){
-                items.addAll(getCourseList().get(i).getOrderItems());
+                try{
+                    items.addAll(getCourseList().get(i).getOrderItems());
+                }catch (NullPointerException ex){
+
+                }
+
             }
         }
         return items;

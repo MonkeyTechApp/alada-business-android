@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dimen_padding"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_semibold"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:text="@string/confirmation_code"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/codeTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            app:boxCornerRadiusBottomEnd="@dimen/rounded_corner"
+            app:boxCornerRadiusBottomStart="@dimen/rounded_corner"
+            app:boxCornerRadiusTopEnd="@dimen/rounded_corner"
+            app:boxCornerRadiusTopStart="@dimen/rounded_corner"
+            android:hint="@string/Code"
+            style="@style/TextInputLayoutOutlined">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:gravity="top|start"
+                style="@style/fontRegular"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/btnSave"
+            style="@style/buttonNormal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/confirm"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginVertical="@dimen/activity_vertical_margin"
+            app:layout_constraintTop_toBottomOf="@id/btnRole"/>
+    </LinearLayout>
+</RelativeLayout>

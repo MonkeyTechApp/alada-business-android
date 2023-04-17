@@ -256,7 +256,7 @@ public class Methods {
     }
 
     public static String getCurrentTimeStamp() {
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd hh:mm:ss");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         return (sdf.format(new Date()));
     }
 

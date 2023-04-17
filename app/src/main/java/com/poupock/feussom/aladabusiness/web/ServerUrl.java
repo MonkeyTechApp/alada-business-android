@@ -8,6 +8,8 @@ public class ServerUrl {
     public static final String CREATE_USER = BASE_URL + "api/create-user";
     public static final String ORDER = BASE_URL + "api/order";
     public static final String ORDER_ITEM_DEL = BASE_URL + "api/order_item/delete";
+    public static final String ORDER_DEL = BASE_URL + "api/delete/order";
+    public static final String COURSE_DEL = BASE_URL + "api/delete/course";
     public static final String ORDER_ITEM_UPD = BASE_URL + "api/order_item/update";
     public static final String ORDER_POST = BASE_URL + "api/order-post";
     public static final String ORDER_SYNC = BASE_URL + "api/order-sync";

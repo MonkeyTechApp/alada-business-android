@@ -322,4 +322,11 @@
     <string name="handlingmsg_err_voltage">Please check the voltage status.\n</string>
     <string name="printer_warning">Printer Warning</string>
     <string name="ok">OK</string>
+    <string name="confirm_sending_order">Do you confirm sending the order\'s infos?</string>
+    <string name="confirmation_code">Confirmation code</string>
+    <string name="confirm">Confirm</string>
+    <string name="deleting_course">Deleting course</string>
+    <string name="course_deleted_successs">Course deleted successfully!</string>
+    <string name="course_not_deleted">Course not deleted !</string>
+    <string name="confirm_course_deletion">Confirm course deletion</string>
 </resources>
