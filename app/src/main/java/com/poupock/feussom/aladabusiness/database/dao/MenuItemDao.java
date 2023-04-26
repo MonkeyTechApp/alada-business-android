@@ -36,4 +36,6 @@ public interface MenuItemDao {
     @Query("SELECT * FROM menu_items WHERE menu_category_id = :id")
     List<MenuItem> getSpecificCategoryItems(int id);
 
+    @Query("DELETE FROM menu_items")
+    void emptyTable();
 }

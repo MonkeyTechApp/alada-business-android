@@ -12,8 +12,8 @@ android {
         applicationId "com.poupock.feussom.aladabusiness"
         minSdkVersion 22
         targetSdkVersion 33
-        versionCode 2
-        versionName ".4"
+        versionCode 6
+        versionName "0.1.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
@@ -40,10 +40,12 @@ android {
 
 dependencies {
 
+    implementation 'androidx.preference:preference:1.1.1'
     def lifecycle_version = "2.4.0-alpha03"
     def room_version = "2.4.3"
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar'], dir: 'aidl')
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'

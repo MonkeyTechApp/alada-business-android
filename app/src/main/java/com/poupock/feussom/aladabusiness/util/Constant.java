@@ -13,5 +13,6 @@ public class Constant {
     public static final String ACTIVE_BUSINESS_KEY = "ACTIVE_BUSINESS";
     public static final String ACTIVE_TABLE_KEY = "ACTIVE_TABLE";
     public static String _Preference_name = "com.poupock.alada-business";
+
 }
 

@@ -32,4 +32,7 @@ public interface MenuItemCategoryDao {
 
     @Query("SELECT * FROM menu_item_categories WHERE name = :name")
     MenuItemCategory getSpecificMenuItemCategory(String name);
+
+    @Query("DELETE FROM menu_item_categories")
+    void emptyTable();
 }

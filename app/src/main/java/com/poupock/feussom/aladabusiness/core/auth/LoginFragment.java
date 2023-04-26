@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.VolleyRequestCallback;
 import com.poupock.feussom.aladabusiness.core.dashboard.DashboardActivity;
@@ -32,8 +33,10 @@ import com.poupock.feussom.aladabusiness.web.PostTask;
 import com.poupock.feussom.aladabusiness.web.ServerUrl;
 import com.poupock.feussom.aladabusiness.web.response.Connection;
 
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -102,6 +105,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                                                 AppDataBase dataBase = AppDataBase.getInstance(requireContext());
                                                 for (int i = 0 ; i < connection.data.getBusinesses().size(); i++){
                                                     Business business = connection.data.getBusinesses().get(i);
+                                                    List<String> strings = gson.fromJson(business.getPhone_numbers(),
+                                                            new TypeToken<List<String>>(){}.getType());
+                                                    if (strings != null){
+                                                        if (!strings.isEmpty()){
+                                                            business.setPhone(strings.get(0));
+                                                            Log.i(TAG, "The phone is : "+business.getPhone());
+                                                        }
+                                                    }
                                                     dataBase.businessDao().insert(connection.data.getBusinesses().get(i));
                                                     if (connection.data.getBusinesses().get(i).getTables().size()>0){
                                                         for(int j=0; j<business.getUsers().size(); j++){

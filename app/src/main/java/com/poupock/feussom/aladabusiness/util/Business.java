@@ -36,6 +36,7 @@ public class Business {
     private String created_at;
     @ColumnInfo(defaultValue = "1")
     private int salePointCount;
+    @Ignore String phone_numbers;
     @Ignore List<MenuItemCategory> menu_categories;
     @Ignore List<MenuItem> menus;
     @Ignore List<GuestTable> tables;
@@ -67,6 +68,34 @@ public class Business {
         this.created_at = created_at;
         this.salePointCount = salePointCount;
         this.path = path;
+    }
+
+    @Ignore
+    public Business(int id, String name, int category_id, String category_name, String owner_name, String owner_phone, String location,
+                    double longitude, double latitude, String imageUrl, String imageLocalUrl, int zone_id,
+                    String description, String hours, String phone, String phone2, int floors, int salePointCount,
+                    String created_at, String path, String phone_numbers) {
+        this.id = id;
+        this.name = name;
+        this.category_id = category_id;
+        this.category_name = category_name;
+        this.owner_name = owner_name;
+        this.owner_phone = owner_phone;
+        this.location = location;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.imageUrl = imageUrl;
+        this.imageLocalUrl = imageLocalUrl;
+        this.zone_id = zone_id;
+        this.description = description;
+        this.hours = hours;
+        this.phone = phone;
+        this.phone2 = phone2;
+        this.floors = floors;
+        this.created_at = created_at;
+        this.salePointCount = salePointCount;
+        this.path = path;
+        this.phone_numbers = phone_numbers;
     }
 
     @Ignore
@@ -307,5 +336,13 @@ public class Business {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getPhone_numbers() {
+        return phone_numbers;
+    }
+
+    public void setPhone_numbers(String phone_numbers) {
+        this.phone_numbers = phone_numbers;
     }
 }

@@ -19,6 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
+            app:title="@string/settings"
             app:popupTheme="@style/ThemeSplash.PopupOverlay" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -26,14 +27,5 @@
     <include android:id="@+id/contentSetting"
         layout="@layout/content_setting"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_order_light"
-        android:layout_gravity="bottom|right"
-        android:contentDescription="@string/create_an_order" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

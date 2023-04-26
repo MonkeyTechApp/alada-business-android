@@ -358,7 +358,8 @@
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="0dip"
         android:layout_weight="3"
         android:paddingStart="@dimen/dimen_padding_tiny"
@@ -367,7 +368,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dip"
+            android:layout_weight="2"
             android:id="@+id/listMenuCategory"/>
 
         <TextView
@@ -386,6 +388,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="0dip"
+            android:layout_weight="3"
             app:layout_constraintBottom_toTopOf="@id/linButtons"
             app:layout_constraintTop_toBottomOf="@id/txtCategory"
             android:id="@+id/listMenuItems"/>
@@ -424,7 +427,7 @@
         </LinearLayout>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 
 </LinearLayout>

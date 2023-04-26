@@ -31,4 +31,6 @@ public interface InternalPointDao {
     @Query("SELECT * FROM internal_points")
     List<InternalPoint> getAllInternalPoints();
 
+    @Query("DELETE FROM internal_points")
+    void emptyTable();
 }

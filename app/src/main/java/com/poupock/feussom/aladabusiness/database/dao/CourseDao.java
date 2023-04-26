@@ -41,4 +41,7 @@ public interface CourseDao {
     @Transaction
     @Query("SELECT * FROM courses WHERE order_id = :id")
     List<CourseWithItemListRelation> getOrderCoursesWithOrderItem(int id);
+
+    @Query("DELETE FROM courses")
+    void emptyTable();
 }

@@ -3,56 +3,75 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingTop="@dimen/dimen_16"
     xmlns:tools="http://schemas.android.com/tools"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_setting">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/dimen_32"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sales_settings"
+                android:id="@+id/txtSales"
+                style="@style/TextAppearance.AppCompat.Title"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/green"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/your_sales_mode"
+                android:layout_marginTop="@dimen/dimen_16"
+                android:fontFamily="@font/poppins_regular"
+                android:background="@color/transparent"
+                android:paddingVertical="8dp"
+                android:textColor="@color/white"
+                android:id="@+id/txtSalesMode"/>
+
+            <RadioGroup
+                android:id="@+id/rdgSalesMode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:id="@+id/rdbCourseMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/course_mode"
+                    android:fontFamily="@font/poppins_regular"/>
+
+                <RadioButton
+                    android:id="@+id/rdbDirectMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/direct_sale"
+                    android:layout_marginHorizontal="@dimen/dimen_16"
+                    android:fontFamily="@font/poppins_regular"/>
+            </RadioGroup>
+
+        </LinearLayout>
 
         <Button
-            style="@style/buttonText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/activity_horizontal_margin"
-            android:paddingVertical="@dimen/activity_vertical_margin"
-            android:text="@string/menu_management"
-            android:gravity="center_vertical"
-            android:id="@+id/btnMenu" />
-
-        <Button
-            style="@style/buttonText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/activity_horizontal_margin"
-            android:paddingVertical="@dimen/activity_vertical_margin"
-            android:text="@string/tables_management"
-            android:gravity="center_vertical"
-            android:id="@+id/btnFloorPlan" />
-
-        <Button
-            style="@style/buttonText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/activity_horizontal_margin"
-            android:paddingVertical="@dimen/activity_vertical_margin"
-            android:text="@string/user_management"
-            android:gravity="center_vertical"
-            android:id="@+id/btnUser" />
-
-        <Button
-            style="@style/buttonText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/activity_horizontal_margin"
-            android:paddingVertical="@dimen/activity_vertical_margin"
-            android:text="@string/restaurant_management"
-            android:gravity="center_vertical"
-            android:id="@+id/btnRestaurant" />
-
-
+            android:layout_margin="@dimen/dimen_16"
+            android:text="@string/log_out"
+            android:fontFamily="@font/poppins_semibold"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/flat_red_secondary"
+            android:id="@+id/btnLogOut"/>
     </LinearLayout>
+
 
 </androidx.core.widget.NestedScrollView>

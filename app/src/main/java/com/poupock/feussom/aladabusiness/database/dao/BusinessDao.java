@@ -49,4 +49,7 @@ public interface BusinessDao {
 
     @Query("SELECT * FROM businesses")
     List<Business> getAllBusinesses();
+
+    @Query("DELETE FROM businesses")
+    void emptyTable();
 }

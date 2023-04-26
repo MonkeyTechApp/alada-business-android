@@ -30,6 +30,7 @@ import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.ui.dialog.ConfirmationCodeDialogFragment;
 import com.poupock.feussom.aladabusiness.util.Course;
 import com.poupock.feussom.aladabusiness.util.OrderItem;
+import com.poupock.feussom.aladabusiness.util.User;
 import com.poupock.feussom.aladabusiness.web.PostTask;
 import com.poupock.feussom.aladabusiness.web.ServerUrl;
 import com.poupock.feussom.aladabusiness.web.response.DatumResponse;
@@ -75,6 +76,16 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         holder.list.setLayoutManager(new LinearLayoutManager(context));
         if(course.getOrderItems()!=null)
             holder.list.setAdapter(new OrderItemAdapter(context, course.getOrderItems(), dialogCallback));
+
+        // Handle direct sale hide delete button.
+        if (User.getSaleMode(context).equalsIgnoreCase(User.SALE_DIRECT_MODE)){
+            holder.imgDelete.setVisibility(View.GONE);
+            holder.imgDelete.setEnabled(false);
+        }
+        else {
+            holder.imgDelete.setVisibility(View.VISIBLE);
+            holder.imgDelete.setEnabled(true);
+        }
 
         holder.imgDelete.setOnClickListener(new View.OnClickListener() {
             @Override

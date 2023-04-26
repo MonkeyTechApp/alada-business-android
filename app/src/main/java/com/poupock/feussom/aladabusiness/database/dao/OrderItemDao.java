@@ -41,4 +41,7 @@ public interface OrderItemDao {
 
     @Query("SELECT * FROM order_items WHERE course_id IN (:ids)")
     List<OrderItem> getAllOrderItems(String ids);
+
+    @Query("DELETE FROM order_items")
+    void emptyTable();
 }

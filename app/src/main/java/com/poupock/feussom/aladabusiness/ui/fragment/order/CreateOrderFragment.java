@@ -177,59 +177,64 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                                         Order order = orderViewModel.getOrderMutableLiveData().getValue();
                                         if(order != null){
                                             if(order.getCourseList() != null){
-                                                int courseIndex = Course.getActiveCourseIndex(order.getCourseList());
-                                                Log.i(TAG,"The course index is "+courseIndex);
-                                                Course course = order.getCourseList().get(courseIndex);
-                                                Log.i(TAG,"The course index is "+course.getTitle()+" and the status is "+course.getStatus());
-                                                MenuItem menuItem = gson.fromJson(gson.toJson(o), MenuItem.class);
-                                                int menuItemIndex = MenuItem.getMenuIndexInList(course.getOrderItems(),menuItem);
-                                                Log.i(TAG,"The menu item in the list is index : "+menuItemIndex);
-                                                OrderItem orderItem;
-                                                if(menuItemIndex < 0){
-                                                    Log.i(TAG,"The menu item is new and item is "+ menuItem.getName()+ " and the id : "+menuItem.getId());
-                                                    orderItem = new OrderItem();
-                                                    orderItem.setCourse_id(course.getId());
-                                                    orderItem.setCourse(course);
-                                                    orderItem.setMenuItem(menuItem);
-                                                    orderItem.setMenu_item_id(menuItem.getId());
-                                                    orderItem.setQuantity(1);
-                                                    orderItem.setCreated_at(Methods.getCurrentTimeStamp());
-                                                    orderItem.setPrice(menuItem.getPrice());
-                                                    AppDataBase.getInstance(requireContext()).orderItemDao().insert(orderItem); // add the new added order item to the DB.
-                                                    orderItem =
-                                                        AppDataBase.getInstance(requireContext()).orderItemDao().getOrderByCourseIdAndMenuItem(course.getId(),menuItem.getId());
-                                                }
-                                                else {
-                                                    orderItem = course.getOrderItems().get(menuItemIndex);
-                                                    orderItem.setQuantity(orderItem.getQuantity() + 1);
-                                                    Log.i(TAG,"Setting the quantity upper "+orderItem.getQuantity());
-                                                    AppDataBase.getInstance(requireContext()).orderItemDao().update(orderItem);
+                                                if (!order.getCourseList().isEmpty()){
+                                                    int courseIndex = Course.getActiveCourseIndex(order.getCourseList());
+                                                    Log.i(TAG,"The course index is "+courseIndex);
+                                                    Course course = order.getCourseList().get(courseIndex);
+                                                    Log.i(TAG,"The course index is "+course.getTitle()+" and the status is "+course.getStatus());
+                                                    MenuItem menuItem = gson.fromJson(gson.toJson(o), MenuItem.class);
+                                                    int menuItemIndex = MenuItem.getMenuIndexInList(course.getOrderItems(),menuItem);
+                                                    Log.i(TAG,"The menu item in the list is index : "+menuItemIndex);
+                                                    OrderItem orderItem;
+                                                    if(menuItemIndex < 0){
+                                                        Log.i(TAG,"The menu item is new and item is "+ menuItem.getName()+ " and the id : "+menuItem.getId());
+                                                        orderItem = new OrderItem();
+                                                        orderItem.setCourse_id(course.getId());
+                                                        orderItem.setCourse(course);
+                                                        orderItem.setMenuItem(menuItem);
+                                                        orderItem.setMenu_item_id(menuItem.getId());
+                                                        orderItem.setQuantity(1);
+                                                        orderItem.setCreated_at(Methods.getCurrentTimeStamp());
+                                                        orderItem.setPrice(menuItem.getPrice());
+                                                        AppDataBase.getInstance(requireContext()).orderItemDao().insert(orderItem); // add the new added order item to the DB.
+                                                        orderItem =
+                                                                AppDataBase.getInstance(requireContext()).orderItemDao().getOrderByCourseIdAndMenuItem(course.getId(),menuItem.getId());
+                                                    }
+                                                    else {
+                                                        orderItem = course.getOrderItems().get(menuItemIndex);
+                                                        orderItem.setQuantity(orderItem.getQuantity() + 1);
+                                                        Log.i(TAG,"Setting the quantity upper "+orderItem.getQuantity());
+                                                        AppDataBase.getInstance(requireContext()).orderItemDao().update(orderItem);
 
-                                                }
-                                                if(course.getOrderItems() != null){
-                                                    Log.i(TAG, "The course has a list of items");
-                                                    if(menuItemIndex < 0) course.getOrderItems().add(orderItem);
-                                                    else course.getOrderItems().set(menuItemIndex, orderItem);
-                                                }
-                                                else {
-                                                    Log.i(TAG, "The course has no items");
-                                                    List<OrderItem> orderItems = new ArrayList<>();
-                                                    orderItems.add(orderItem);
-                                                    course.setOrderItems(orderItems);
-                                                }
-                                                order.getCourseList().set(courseIndex, course); // set the course to its new value
-                                                Log.i(TAG,"The order course has been updated");
-                                                orderViewModel.setOrderMutableLiveData(order);
-                                                actualiseOrderView(orderViewModel.getOrderMutableLiveData().getValue());
+                                                    }
+                                                    if(course.getOrderItems() != null){
+                                                        Log.i(TAG, "The course has a list of items");
+                                                        if(menuItemIndex < 0) course.getOrderItems().add(orderItem);
+                                                        else course.getOrderItems().set(menuItemIndex, orderItem);
+                                                    }
+                                                    else {
+                                                        Log.i(TAG, "The course has no items");
+                                                        List<OrderItem> orderItems = new ArrayList<>();
+                                                        orderItems.add(orderItem);
+                                                        course.setOrderItems(orderItems);
+                                                    }
+                                                    order.getCourseList().set(courseIndex, course); // set the course to its new value
+                                                    Log.i(TAG,"The order course has been updated");
+                                                    orderViewModel.setOrderMutableLiveData(order);
+                                                    actualiseOrderView(orderViewModel.getOrderMutableLiveData().getValue());
 //                                                if(orderViewModel.getGuestTableMutableLiveData().getValue()!=null)
 //                                                    actualiseOrderView((orderViewModel.getGuestTableMutableLiveData().getValue()));
+                                                }
+                                                else {
+                                                    Toast.makeText(requireContext(), R.string.please_select_add_a_course, Toast.LENGTH_LONG).show();
+                                                }
                                             }
                                             else {
                                                 Toast.makeText(requireContext(), R.string.please_select_add_a_course, Toast.LENGTH_LONG).show();
                                             }
                                         }
                                         else {
-                                            Toast.makeText(requireContext(), R.string.please_select_a_table, Toast.LENGTH_LONG).show();
+                                            Toast.makeText(requireContext(), R.string.please_add_an_order, Toast.LENGTH_LONG).show();
                                         }
                                     }
                                 }
@@ -238,6 +243,12 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
 
                 }
             }));
+
+        // Hiding and disabling the button if sales mode is set to private.
+        if (User.getSaleMode(requireContext()).equalsIgnoreCase(User.SALE_DIRECT_MODE)) {
+            binding.btnAddCourse.setVisibility(View.GONE);
+            binding.btnAddCourse.setEnabled(false);
+        }
 
         binding.btnTable.setOnClickListener(this);
         binding.btnAddCourse.setOnClickListener(this);
@@ -455,8 +466,25 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                                 Log.i(TAG, "The order id is "+order.getId());
                                 order.setCourseList(AppDataBase.getInstance(requireContext()).courseDao().getOrderCourses(order.getId()));
 
+                                if (User.getSaleMode(requireContext()).equalsIgnoreCase(User.SALE_DIRECT_MODE)){
+                                    Course course = new Course();
+                                    course.setTitle("TITLE");
+                                    course.setOrder_id(order.getId());
+                                    course.setCode(User.currentUser(requireContext()).getId()+"-"+UUID.randomUUID().toString());
+
+                                    course.setGuest_table_id(guestTable.getId());
+                                    course.setCreated_at(Methods.getCurrentTimeStamp());
+                                    course.setStatus(Constant.STATUS_OPEN);
+
+                                    AppDataBase.getInstance(requireContext()).courseDao().insert(course);
+                                    if (order.getCourseList() == null){
+                                        order.setCourseList(new ArrayList<>());
+                                    }
+                                    order.getCourseList().add(course);
+                                }
 
                                 orderViewModel.setOrderMutableLiveData(order);
+
                                 if(order.getCourseList() != null) {
                                     Log.i(TAG, "Setting the course list");
                                     courseListAdapter.setCourses(order.getCourseList());

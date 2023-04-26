@@ -2,32 +2,30 @@ package com.poupock.feussom.aladabusiness.ui.dialog;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.Resources;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.RemoteException;
 import android.print.PrintAttributes;
 import android.print.PrintManager;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,6 +37,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.poupock.feussom.aladabusiness.core.auth.AuthActivity;
+import com.poupock.feussom.aladabusiness.core.profile.ProfileActivity;
+import com.poupock.feussom.aladabusiness.posq2.MemInfo.*;
+
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.discovery.DeviceInfo;
 import com.epson.epos2.printer.Printer;
@@ -46,6 +49,8 @@ import com.epson.epos2.printer.PrinterStatusInfo;
 import com.epson.epos2.printer.ReceiveListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
+import com.iposprinter.iposprinterservice.IPosPrinterCallback;
+import com.iposprinter.iposprinterservice.IPosPrinterService;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -72,6 +77,10 @@ import com.poupock.feussom.aladabusiness.callback.PrinterSelectedCallback;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.databinding.DialogListBinding;
 import com.poupock.feussom.aladabusiness.databinding.OrderDetailFragmentBinding;
+import com.poupock.feussom.aladabusiness.posq2.ThreadPoolManager;
+import com.poupock.feussom.aladabusiness.posq2.Utils.ButtonDelayUtils;
+import com.poupock.feussom.aladabusiness.posq2.Utils.BytesUtil;
+import com.poupock.feussom.aladabusiness.posq2.Utils.HandlerUtils;
 import com.poupock.feussom.aladabusiness.ui.adapter.GuestTableAdapter;
 import com.poupock.feussom.aladabusiness.ui.adapter.OrderAdapter;
 import com.poupock.feussom.aladabusiness.ui.adapter.OrderItemAdapter;
@@ -98,6 +107,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 public class OrderDetailDialogFragment extends DialogFragment implements ReceiveListener {
@@ -119,6 +129,55 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
     BaseColor tableHeadColor = WebColors.getRGBColor("#000000");
     private Printer printer = null;
     private static final int DISCONNECT_INTERVAL = 500;
+
+    private IPosPrinterService mIPosPrinterService;
+    private HandlerUtils.MyHandler handler;
+    private IPosPrinterCallback callback = null;
+
+    /*定义打印机状态*/
+    private final int PRINTER_NORMAL = 0;
+    private final int PRINTER_PAPERLESS = 1;
+    private final int PRINTER_THP_HIGH_TEMPERATURE = 2;
+    private final int PRINTER_MOTOR_HIGH_TEMPERATURE = 3;
+    private final int PRINTER_IS_BUSY = 4;
+    private final int PRINTER_ERROR_UNKNOWN = 5;
+    /*打印机当前状态*/
+    private int printerStatus = 0;
+
+    /*定义状态广播*/
+    private final String  PRINTER_NORMAL_ACTION = "com.iposprinter.iposprinterservice.NORMAL_ACTION";
+    private final String  PRINTER_PAPERLESS_ACTION = "com.iposprinter.iposprinterservice.PAPERLESS_ACTION";
+    private final String  PRINTER_PAPEREXISTS_ACTION = "com.iposprinter.iposprinterservice.PAPEREXISTS_ACTION";
+    private final String  PRINTER_THP_HIGHTEMP_ACTION = "com.iposprinter.iposprinterservice.THP_HIGHTEMP_ACTION";
+    private final String  PRINTER_THP_NORMALTEMP_ACTION = "com.iposprinter.iposprinterservice.THP_NORMALTEMP_ACTION";
+    private final String  PRINTER_MOTOR_HIGHTEMP_ACTION = "com.iposprinter.iposprinterservice.MOTOR_HIGHTEMP_ACTION";
+    private final String  PRINTER_BUSY_ACTION = "com.iposprinter.iposprinterservice.BUSY_ACTION";
+    private final String  PRINTER_CURRENT_TASK_PRINT_COMPLETE_ACTION = "com.iposprinter.iposprinterservice.CURRENT_TASK_PRINT_COMPLETE_ACTION";
+
+    /*定义消息*/
+    private final int MSG_TEST                               = 1;
+    private final int MSG_IS_NORMAL                          = 2;
+    private final int MSG_IS_BUSY                            = 3;
+    private final int MSG_PAPER_LESS                         = 4;
+    private final int MSG_PAPER_EXISTS                       = 5;
+    private final int MSG_THP_HIGH_TEMP                      = 6;
+    private final int MSG_THP_TEMP_NORMAL                    = 7;
+    private final int MSG_MOTOR_HIGH_TEMP                    = 8;
+    private final int MSG_MOTOR_HIGH_TEMP_INIT_PRINTER       = 9;
+    private final int MSG_CURRENT_TASK_PRINT_COMPLETE     = 10;
+
+    /*循环打印类型*/
+    private final int  MULTI_THREAD_LOOP_PRINT  = 1;
+    private final int  INPUT_CONTENT_LOOP_PRINT = 2;
+    private final int  DEMO_LOOP_PRINT          = 3;
+    private final int  PRINT_DRIVER_ERROR_TEST  = 4;
+    private final int  DEFAULT_LOOP_PRINT       = 0;
+
+    //循环打印标志位
+    private       int  loopPrintFlag            = DEFAULT_LOOP_PRINT;
+    private       byte loopContent              = 0x00;
+    private       int  printDriverTestCount     = 0;
+
 
     public static OrderDetailDialogFragment newInstance(String param1, String param2) {
         OrderDetailDialogFragment fragment = new OrderDetailDialogFragment();
@@ -188,30 +247,142 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
                     }
                 }));
 
+        binding.btnAction.setImageResource(R.drawable.ic_baseline_print_24);
 
         initializeObject();
+        connectService = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                mIPosPrinterService = IPosPrinterService.Stub.asInterface(service);
+                binding.btnAction.setEnabled(true);
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                FirebaseCrashlytics.getInstance().recordException(new Exception("Service set to null"));
+                Toast.makeText(requireContext(),"Service disconnected!!", Toast.LENGTH_SHORT).show();
+                mIPosPrinterService = null;
+            }
+        };
+
+        handler = new HandlerUtils.MyHandler(iHandlerIntent);
+
+        callback = new IPosPrinterCallback.Stub() {
+
+            @Override
+            public void onRunResult(final boolean isSuccess) throws RemoteException {
+                Log.i(TAG,"result:" + isSuccess + "\n");
+            }
+
+            @Override
+            public void onReturnString(final String value) throws RemoteException {
+                Log.i(TAG,"result:" + value + "\n");
+            }
+        };
+
+        //绑定服务
+        Intent intent=new Intent();
+        intent.setPackage("com.iposprinter.iposprinterservice");
+        intent.setAction("com.iposprinter.iposprinterservice.IPosPrintService");
+        //startService(intent);
+        requireActivity().bindService(intent, connectService, Context.BIND_AUTO_CREATE);
+
+        //注册打印机状态接收器
+        IntentFilter printerStatusFilter = new IntentFilter();
+        printerStatusFilter.addAction(PRINTER_NORMAL_ACTION);
+        printerStatusFilter.addAction(PRINTER_PAPERLESS_ACTION);
+        printerStatusFilter.addAction(PRINTER_PAPEREXISTS_ACTION);
+        printerStatusFilter.addAction(PRINTER_THP_HIGHTEMP_ACTION);
+        printerStatusFilter.addAction(PRINTER_THP_NORMALTEMP_ACTION);
+        printerStatusFilter.addAction(PRINTER_MOTOR_HIGHTEMP_ACTION);
+        printerStatusFilter.addAction(PRINTER_BUSY_ACTION);
+
+        requireActivity().registerReceiver(IPosPrinterStatusListener,printerStatusFilter);
+        if (ButtonDelayUtils.isFastDoubleClick())
+        {
+            return;
+        }
+
+        FirebaseCrashlytics.getInstance().recordException(new Exception("Actions initiated!"));
 
         binding.btnAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (User.getPrinterModelTarget(requireContext()) == null){
-                    DialogFragment epsonDiscoverDialog = EpsonPrintersListDialogFragment.newInstance(1,
-                            new PrinterSelectedCallback() {
-                                @Override
-                                public void onItemClickListener(DeviceInfo o, boolean isLong) {
-                                    Log.i(TAG, "Printer selected!!");
-                                    User.storePrinterModelTarget(o.getTarget(), requireContext());
-                                }
-                            });
-                    epsonDiscoverDialog.show(getParentFragmentManager(), EpsonPrintersListDialogFragment.class.getSimpleName());
+                String printOption = User.getPrinterOption(requireContext());
+                if(printOption == null){
+                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which){
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    User.storePrinterOption(User.EPSON, requireContext());
+                                    if (User.getPrinterModelTarget(requireContext()) == null){
+                                        DialogFragment epsonDiscoverDialog = EpsonPrintersListDialogFragment.newInstance(1,
+                                                new PrinterSelectedCallback() {
+                                                    @Override
+                                                    public void onItemClickListener(DeviceInfo o, boolean isLong) {
+                                                        Log.i(TAG, "Printer selected!!");
+                                                        User.storePrinterModelTarget(o.getTarget(), requireContext());
+                                                    }
+                                                });
+                                        epsonDiscoverDialog.show(getParentFragmentManager(), EpsonPrintersListDialogFragment.class.getSimpleName());
+                                    }
+                                    else {
+                                        if (!runPrintReceiptSequence()) {
+                                            updateButtonState(true);
+                                        }else{
+                                            Log.i(TAG, "Printing sequence FALSE");
+                                        }
+                                    }
+                                    break;
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    User.storePrinterOption(User.I_POS_PRINTER, requireContext());
+                                    if (getPrinterStatus() == PRINTER_NORMAL){
+                                        printText(viewModel.getOrderMutableLiveData().getValue(),
+                                                viewModel.getOrderMutableLiveData().getValue().extractAllOrderedItems());
+                                    }
+                                    dialog.dismiss();
+                            }
+                        }
+                    };
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                    builder.setMessage(getString(R.string.select_printer_option)).setPositiveButton(getString(R.string.epson_printer), dialogClickListener)
+                            .setNegativeButton(getString(R.string.ipos_printer), dialogClickListener).show();
                 }
                 else {
-                    if (!runPrintReceiptSequence()) {
-                        updateButtonState(true);
-                    }else{
-                        Log.i(TAG, "Printing sequence FALSE");
+                    if (printOption.equalsIgnoreCase(User.EPSON)){
+                        if (User.getPrinterModelTarget(requireContext()) == null){
+                            DialogFragment epsonDiscoverDialog = EpsonPrintersListDialogFragment.newInstance(1,
+                                    new PrinterSelectedCallback() {
+                                        @Override
+                                        public void onItemClickListener(DeviceInfo o, boolean isLong) {
+                                            Log.i(TAG, "Printer selected!!");
+                                            User.storePrinterModelTarget(o.getTarget(), requireContext());
+                                        }
+                                    });
+                            epsonDiscoverDialog.show(getParentFragmentManager(), EpsonPrintersListDialogFragment.class.getSimpleName());
+                        }
+                        else {
+                            if (!runPrintReceiptSequence()) {
+                                updateButtonState(true);
+                            }else{
+                                Log.i(TAG, "Printing sequence FALSE");
+                            }
+                        }
+                    }
+                    else if (printOption.equalsIgnoreCase(User.I_POS_PRINTER)){
+                        if (getPrinterStatus() == PRINTER_NORMAL){
+                            printText(viewModel.getOrderMutableLiveData().getValue(),
+                                    viewModel.getOrderMutableLiveData().getValue().extractAllOrderedItems());
+                        }
+                    }
+                    else {
+                        Toast.makeText(requireContext(), R.string.print_option_not_valid, Toast.LENGTH_LONG).show();
                     }
                 }
+
+
 //                try {
 //                    createPDF(viewModel.getOrderMutableLiveData().getValue().extractAllOrderedItems() ,
 //                            viewModel.getOrderMutableLiveData().getValue());
@@ -219,9 +390,272 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
 //                } catch (FileNotFoundException | DocumentException e) {
 //                    Log.e(TAG, "The execption : "+e.toString());
 //                }
+
+
+
             }
         });
     }
+
+    /**
+     * 打印机初始化
+     */
+    public void printerInit(){
+        ThreadPoolManager.getInstance().executeTask(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    mIPosPrinterService.printerInit(callback);
+                }catch (RemoteException e){
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+
+    public int getPrinterStatus(){
+
+        Log.i(TAG,"***** printerStatus"+printerStatus);
+        try{
+            printerStatus = mIPosPrinterService.getPrinterStatus();
+        }catch (RemoteException e){
+            e.printStackTrace();
+        }
+        Log.i(TAG,"#### printerStatus"+printerStatus);
+        return  printerStatus;
+    }
+
+    public void loopPrint(int flag)
+    {
+        switch (flag)
+        {
+//            case MULTI_THREAD_LOOP_PRINT:
+//                multiThreadLoopPrint();
+//                break;
+//            case DEMO_LOOP_PRINT:
+//                demoLoopPrint();
+//                break;
+//            case INPUT_CONTENT_LOOP_PRINT:
+//                bigDataPrintTest(127, loopContent);
+//                break;
+//            case PRINT_DRIVER_ERROR_TEST:
+//                printDriverTest();
+//                break;
+            default:
+                break;
+        }
+    }
+
+    private HandlerUtils.IHandlerIntent iHandlerIntent = new HandlerUtils.IHandlerIntent()
+    {
+        @Override
+        public void handlerIntent(Message msg)
+        {
+            if (isAdded()){
+                switch (msg.what)
+                {
+                    case MSG_TEST:
+                        break;
+                    case MSG_IS_NORMAL:
+                        if(getPrinterStatus() == PRINTER_NORMAL)
+                        {
+                            loopPrint(loopPrintFlag);
+                        }
+                        break;
+                    case MSG_IS_BUSY:
+                        Toast.makeText(requireContext(), R.string.printer_is_working, Toast.LENGTH_SHORT).show();
+                        break;
+                    case MSG_PAPER_LESS:
+                        loopPrintFlag = DEFAULT_LOOP_PRINT;
+                        Toast.makeText(requireContext(), R.string.out_of_paper, Toast.LENGTH_SHORT).show();
+                        break;
+                    case MSG_PAPER_EXISTS:
+                        Toast.makeText(requireContext(), R.string.exists_paper, Toast.LENGTH_SHORT).show();
+                        break;
+                    case MSG_THP_HIGH_TEMP:
+                        Toast.makeText(requireContext(), R.string.printer_high_temp_alarm, Toast.LENGTH_SHORT).show();
+                        break;
+                    case MSG_MOTOR_HIGH_TEMP:
+                        loopPrintFlag = DEFAULT_LOOP_PRINT;
+                        Toast.makeText(requireContext(), R.string.motor_high_temp_alarm, Toast.LENGTH_SHORT).show();
+                        handler.sendEmptyMessageDelayed(MSG_MOTOR_HIGH_TEMP_INIT_PRINTER, 180000);  //马达高温报警，等待3分钟后复位打印机
+                        break;
+                    case MSG_MOTOR_HIGH_TEMP_INIT_PRINTER:
+                        printerInit();
+                        break;
+                    case MSG_CURRENT_TASK_PRINT_COMPLETE:
+                        Toast.makeText(requireContext(), R.string.printer_current_task_print_complete, Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+        }
+    };
+
+    public void printText(Order order, List<OrderItem> orderItems)
+    {
+        Business business = AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0);
+        List<User> users = AppDataBase.getInstance(requireContext()).userDao().getAllUsers();
+        String role = User.currentUser(requireContext()).getName();
+        for(int i=0; i<users.size(); i++){
+            if (users.get(i).getEmail().equals(User.currentUser(requireContext()).getEmail())){
+//                binding.txtRole.setText();
+                role =(users.get(i).getName());
+                break;
+            }
+        }
+        String finalRole = role;
+        ThreadPoolManager.getInstance().executeTask(new Runnable() {
+            @Override
+            public void run() {
+//                Bitmap mBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = 3;
+                Bitmap logoData = BitmapFactory.decodeFile(User.getPath(requireContext()), options);
+
+                try {
+                    mIPosPrinterService.printSpecifiedTypeText(business.getName().toUpperCase()+"  \n", "ST", 32, callback);
+                    mIPosPrinterService.printBlankLines(1, 16, callback);
+                    mIPosPrinterService.printSpecifiedTypeText(getString(R.string.phone)+" : "+business.getPhone()+"    \n", "ST", 24, callback);
+                    mIPosPrinterService.printBlankLines(1, 8, callback);
+                    mIPosPrinterService.printSpecifiedTypeText(getString(R.string.cashier)+" : "+ finalRole +" \n", "ST", 24, callback);
+                    mIPosPrinterService.printBlankLines(1, 8, callback);
+                    mIPosPrinterService.printSpecifiedTypeText(getString(R.string.date)+" : "+ order.getCode()+"\n", "ST", 24, callback);
+                    mIPosPrinterService.printBlankLines(1, 8, callback);
+                    mIPosPrinterService.printBlankLines(1, 8, callback);
+                    mIPosPrinterService.printBlankLines(1, 16, callback);
+                    mIPosPrinterService.printBitmap(1, 12, logoData, callback);
+                    mIPosPrinterService.printSpecifiedTypeText("********************************", "ST", 24, callback);
+                    float total = 0;
+                    StringBuilder textData = new StringBuilder();
+                    for (int i = 0; i < orderItems.size(); i++) {
+                        total = (float) (total + (orderItems.get(i).getPrice() * orderItems.get(i).getQuantity()));
+                        textData.append(orderItems.get(i).getQuantity()).append(" ")
+                                .append(AppDataBase.getInstance(requireContext()).menuItemDao().
+                                        getSpecificMenuItem(orderItems.get(i).getMenu_item_id()).getName())
+                                .append(" ").append((int) (orderItems.get(i).getQuantity() * orderItems.get(i).getPrice()))
+                                .append(getString(R.string.currency_cfa))
+                                .append("\n");
+                    }
+
+                    mIPosPrinterService.printSpecifiedTypeText(textData.toString(), "ST", 24, callback);
+                    mIPosPrinterService.printBlankLines(1, 16, callback);
+                    mIPosPrinterService.PrintSpecFormatText(getString(R.string.total)+" : "+total+"F CFA \n", "ST", 32, 1, callback);
+                    mIPosPrinterService.printSpecifiedTypeText("********************************", "ST", 24, callback);
+//                    mIPosPrinterService.printSpecifiedTypeText("这是一行16号字体\n", "ST", 16, callback);
+//                    mIPosPrinterService.printSpecifiedTypeText("这是一行24号字体\n", "ST", 24, callback);
+//                    mIPosPrinterService.PrintSpecFormatText("这是一行24号字体\n", "ST", 24, 2, callback);
+//                    mIPosPrinterService.printSpecifiedTypeText("这是一行32号字体\n", "ST", 32, callback);
+//                    mIPosPrinterService.PrintSpecFormatText("这是一行32号字体\n", "ST", 32, 2, callback);
+//                    mIPosPrinterService.printSpecifiedTypeText("这是一行48号字体\n", "ST", 48, callback);
+//                    mIPosPrinterService.printSpecifiedTypeText("ABCDEFGHIJKLMNOPQRSTUVWXYZ01234\n", "ST", 16, callback);
+//                    mIPosPrinterService.printSpecifiedTypeText("abcdefghijklmnopqrstuvwxyz56789\n", "ST", 24, callback);
+//                    mIPosPrinterService.printSpecifiedTypeText("κρχκμνκλρκνκνμρτυφ\n", "ST", 24, callback);
+                    mIPosPrinterService.setPrinterPrintAlignment(0,callback);
+//                    mIPosPrinterService.printQRCode(order.getCode()+"", 10, 1, callback);
+                    mIPosPrinterService.printBarCode(order.getCode(), 8, 2, 5, 0, callback);
+                    mIPosPrinterService.printBlankLines(1, 16, callback);
+                    mIPosPrinterService.printBlankLines(1, 16, callback);
+//                    for (int i = 0; i < 12; i++)
+//                    {
+//                        mIPosPrinterService.printRawData(BytesUtil.initLine1(384, i),callback);
+//                    }
+//                    mIPosPrinterService.PrintSpecFormatText("打印测试完成\n", "ST", 32, 1, callback);
+                    mIPosPrinterService.PrintSpecFormatText("*"+getString(R.string.thank_u_for_visit)+"*\n", "ST", 32, 1,
+                            callback);
+                    bitmapRecycle(logoData);
+                    mIPosPrinterService.printerPerformPrint(160,  callback);
+                }catch (RemoteException e){
+                    e.printStackTrace();
+                }
+            }
+        });
+        Toast.makeText(requireContext(), R.string.order_printed_success, Toast.LENGTH_LONG).show();
+//        dismiss();
+    }
+
+    public static String Baidu = "本店留存\n************************\n      百度外卖\n      [货到付款]\n" +
+            "************************\n期望送达时间：立即配送\n" +
+            "订单备注:送到西门,不要辣\n发票信息:百度外卖\n************************\n下单编号: 14187186911689\n下单时间: " +
+            "2014-12-16 16:31************************\n" +
+            "菜品名称     数量  金额\n------------------------\n" +
+            "香辣面套餐     1   40.00\n素食天线汉堡   1   38.00\n香辣面套餐     1   40.00\n" +
+            "素食天线汉堡   1   38.00\n香辣面         1   43.00\n" +
+            "素食天线       1   34.00\n" +
+            "------------------------\n" +
+            "************************\n姓名:百度测试\n" +
+            "地址:泰然工贸园\n电话:18665248965\n" +
+            "************************\n百度测试商户\n" +
+            "18665248965\n#15 百度外卖 11月09号 \n\n\n";
+
+    public void printBaiduBill()
+    {
+        ThreadPoolManager.getInstance().executeTask(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    mIPosPrinterService.printSpecifiedTypeText(Baidu, "ST", 32, callback);
+                    mIPosPrinterService.printerPerformPrint(160,  callback);
+                }catch (RemoteException e){
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private BroadcastReceiver IPosPrinterStatusListener = new BroadcastReceiver(){
+        @Override
+        public void onReceive(Context context, Intent intent){
+            String action = intent.getAction();
+            if(action == null)
+            {
+                Log.d(TAG,"IPosPrinterStatusListener onReceive action = null");
+                return;
+            }
+            Log.d(TAG,"IPosPrinterStatusListener action = "+action);
+            if(action.equals(PRINTER_NORMAL_ACTION))
+            {
+                handler.sendEmptyMessageDelayed(MSG_IS_NORMAL,0);
+            }
+            else if (action.equals(PRINTER_PAPERLESS_ACTION))
+            {
+                handler.sendEmptyMessageDelayed(MSG_PAPER_LESS,0);
+            }
+            else if (action.equals(PRINTER_BUSY_ACTION))
+            {
+                handler.sendEmptyMessageDelayed(MSG_IS_BUSY,0);
+            }
+            else if (action.equals(PRINTER_PAPEREXISTS_ACTION))
+            {
+                handler.sendEmptyMessageDelayed(MSG_PAPER_EXISTS,0);
+            }
+            else if (action.equals(PRINTER_THP_HIGHTEMP_ACTION))
+            {
+                handler.sendEmptyMessageDelayed(MSG_THP_HIGH_TEMP,0);
+            }
+            else if (action.equals(PRINTER_THP_NORMALTEMP_ACTION))
+            {
+                handler.sendEmptyMessageDelayed(MSG_THP_TEMP_NORMAL,0);
+            }
+            else if (action.equals(PRINTER_MOTOR_HIGHTEMP_ACTION))  //此时当前任务会继续打印，完成当前任务后，请等待2分钟以上时间，继续下一个打印任务
+            {
+                handler.sendEmptyMessageDelayed(MSG_MOTOR_HIGH_TEMP,0);
+            }
+            else if(action.equals(PRINTER_CURRENT_TASK_PRINT_COMPLETE_ACTION))
+            {
+                handler.sendEmptyMessageDelayed(MSG_CURRENT_TASK_PRINT_COMPLETE,0);
+            }
+            else
+            {
+                handler.sendEmptyMessageDelayed(MSG_TEST,0);
+            }
+        }
+    };
+
+    private ServiceConnection connectService = null;
 
     private boolean runPrintReceiptSequence() {
 
@@ -235,6 +669,35 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
         }
 
         return true;
+    }
+
+    private String createPrintingText(Order order, List<OrderItem> orderItems){
+        Business business = AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0);
+        List<User> users = AppDataBase.getInstance(requireContext()).userDao().getAllUsers();
+        String role = User.currentUser(requireContext()).getName();
+        for(int i=0; i<users.size(); i++){
+            if (users.get(i).getEmail().equals(User.currentUser(requireContext()).getEmail())){
+//                binding.txtRole.setText();
+                role = User.currentUser(requireContext()).getEmail()+" - "+
+                        requireContext().getResources().getStringArray(R.array.role_array)[Integer.parseInt(users.get(i).getRole_id())];
+                break;
+            }
+        }
+
+        String data = business.getName().toUpperCase()+"\n************************\n      百度外卖\n      [货到付款]\n" +
+                "************************\n期望送达时间：立即配送\n" +
+                "订单备注:送到西门,不要辣\n发票信息:百度外卖\n************************\n下单编号: 14187186911689\n下单时间: " +
+                "2014-12-16 16:31************************\n" +
+                "菜品名称     数量  金额\n------------------------\n" +
+                "香辣面套餐     1   40.00\n素食天线汉堡   1   38.00\n香辣面套餐     1   40.00\n" +
+                "素食天线汉堡   1   38.00\n香辣面         1   43.00\n" +
+                "素食天线       1   34.00\n" +
+                "------------------------\n" +
+                "************************\n姓名:百度测试\n" +
+                "地址:泰然工贸园\n电话:18665248965\n" +
+                "************************\n百度测试商户\n" +
+                "18665248965\n#15 百度外卖 11月09号 \n\n\n";
+        return data;
     }
 
     private boolean createReceiptData(Order order, List<OrderItem> orderItems) {
@@ -780,7 +1243,6 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
         }
     }
 
-
     private String makeErrorMessage(PrinterStatusInfo status) {
         String msg = "";
 
@@ -841,5 +1303,16 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
     public void onDismiss(@NonNull DialogInterface dialog) {
         super.onDismiss(dialog);
         finalizeObject();
+        requireActivity().unregisterReceiver(IPosPrinterStatusListener);
+        requireActivity().unbindService(connectService);
+        handler.removeCallbacksAndMessages(null);
+    }
+
+    public static void bitmapRecycle(Bitmap bitmap)
+    {
+        if (bitmap != null && !bitmap.isRecycled())
+        {
+            bitmap.recycle();
+        }
     }
 }

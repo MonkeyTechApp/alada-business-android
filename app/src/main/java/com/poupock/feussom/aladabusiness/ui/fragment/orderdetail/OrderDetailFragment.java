@@ -84,9 +84,9 @@ public class OrderDetailFragment extends Fragment {
                     }
                 }));
 
-        binding.btnAction.setText(R.string.delete);
-        binding.btnAction.setBackgroundResource(R.color.flat_red_secondary);
-        binding.btnAction.setTextColor(getResources().getColor(R.color.white));
+//        binding.btnAction.setText(R.string.delete);
+        binding.btnAction.setBackgroundColor(getResources().getColor(R.color.flat_red_secondary));
+        binding.btnAction.setImageResource(R.drawable.ic_baseline_delete_outline_24);
 
         binding.btnAction.setOnClickListener(new View.OnClickListener() {
             @Override

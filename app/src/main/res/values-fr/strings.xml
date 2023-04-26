@@ -67,13 +67,13 @@
     <string name="ordered_on">Commandé le</string>
     <string name="total">Total</string>
     <string name="ordered_products">Produits commandés</string>
-    <string name="pay">pay</string>
+    <string name="pay">Imprimer &amp; Payer</string>
     <string name="title_activity_dashboard">Tableau de bord</string>
     <string name="action_settings">Paramètres</string>
 
     <string name="menu_home">Acceuil</string>
     <string name="title_activity_menu_item">Élément du menu</string>
-    <string name="currency_cfa">F CFA</string>
+    <string name="currency_cfa">FCFA</string>
     <string name="infos_de_base">Infos de base</string>
     <string name="product_description_text">Fournissez des informations détaillées à l\'utilisateur sur votre produit, en nommant, en évaluant.</string>
     <string name="product_name">Nom du produit</string>
@@ -124,11 +124,11 @@
     <string name="add_a_new_category">Ajouter une nouvelle catégorie</string>
     <string name="menu_item_price_input_error">Votre élément de menu doit avoir un prix.</string>
     <string name="menu_item_name_input_error">Votre élément de menu doit avoir un nom.</string>
-    <string name="send">Envoyer</string>
+    <string name="send">Enregistrer</string>
     <string name="direct_sale">Vente directe</string>
     <string name="actions">Actions</string>
-    <string name="by_course">Par round</string>
-    <string name="mode_by_course">Commander par round</string>
+    <string name="by_course">Par tournée</string>
+    <string name="mode_by_course">Commander par tournée</string>
     <string name="search_table">Recherchez une table</string>
     <string name="select_a_table">Sélectionnez une table</string>
     <string name="customer">Client</string>
@@ -151,10 +151,10 @@
     <string name="user_management">Gestion des utilisateurs</string>
     <string name="restaurant_management">Gestion du restaurant</string>
     <string name="tables_management">Gestion des tables</string>
-    <string name="add_course">Ajouter un round</string>
+    <string name="add_course">Ajouter une tournée</string>
     <string name="please_select_a_table">Veuillez sélectionner une table.</string>
-    <string name="please_select_add_a_course">Veuillez ajouter un round.</string>
-    <string name="course">Round</string>
+    <string name="please_select_add_a_course">Veuillez ajouter une tournée.</string>
+    <string name="course">Tournée</string>
     <string name="order_total">Total de la commande</string>
     <string name="create_a_menu">Créer un menu</string>
     <string name="create_a_men_cat">Créer une catégorie de menu</string>
@@ -308,4 +308,31 @@
     <string name="handlingmsg_err_voltage">Veuillez vérifier l\'état de la tension.\n</string>
     <string name="printer_warning">Avertissement de l\'imprimante</string>
     <string name="ok">OK</string>
+
+    <string name="motor_idling">Moteur au ralenti 10000 étapes</string>
+    <string name="print_commond_input">Imprimer l\'entrée commune</string>
+    <string name="printer_run_paper_lines">Papier d\'impression</string>
+    <string name="reset_motor_high_temp_status">État de la température de la hauteur du moteur au repos</string>
+    <string name="out_of_paper">L\'imprimante n\'a plus de papier</string>
+    <string name="exists_paper">Le papier de l\'imprimante est prêt</string>
+    <string name="printer_is_working">L\'imprimante fonctionne</string>
+    <string name="printer_high_temp_alarm">Alarme haute température de l\'imprimante</string>
+    <string name="motor_high_temp_alarm">Alarme haute température moteur</string>
+    <string name="printer_current_task_print_complete">Le tiquet d\'impression a été imprimée</string>
+    <string name="printer_exception">Exception avec limprimante</string>
+    <string name="unknown_error">Status non défini</string>
+    <string name="switch_mode">Changer de Mode</string>
+    <string name="exit">Exit</string>
+    <string name="employee">"Employée "</string>
+    <string name="order_printed_success">Billet imprimé avec succès !!</string>
+    <string name="please_add_an_order">Veuillez ajouter une commande.</string>
+    <string name="confirm_logout">Voulez-vous vraiment vous déconnecter?</string>
+    <string name="cashier">Caisse</string>
+    <string name="ipos_printer">Imprimante I POS</string>
+    <string name="epson_printer">Imprimante EPSON</string>
+    <string name="print_option_not_valid">L\'option d\'imprimante sélectionnée n\'est pas valide.</string>
+    <string name="select_printer_option">Sélectionnez l\'option de votre imprimante</string>
+    <string name="date">Date</string>
+    <string name="sales_settings">Sales Settings</string>
+    <string name="course_mode">course mode</string>
 </resources>

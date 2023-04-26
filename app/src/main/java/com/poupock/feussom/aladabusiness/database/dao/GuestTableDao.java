@@ -34,4 +34,6 @@ public interface GuestTableDao {
     @Query("SELECT * FROM guest_tables")
     List<GuestTable> getAllGuestTables();
 
+    @Query("DELETE FROM guest_tables")
+    void emptyTable();
 }

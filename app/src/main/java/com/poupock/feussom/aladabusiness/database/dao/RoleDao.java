@@ -31,4 +31,6 @@ public interface RoleDao {
     @Query("SELECT * FROM roles")
     List<Role> getAllRoles();
 
+    @Query("DELETE FROM roles")
+    void emptyTable();
 }

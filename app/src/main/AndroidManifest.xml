@@ -12,21 +12,16 @@
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
-
-
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
-        android:usesPermissionFlags="neverForLocation"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
-
-    <!-- Request legacy permissions on older devices. -->
-    <uses-permission android:name="android.permission.BLUETOOTH"
-        android:maxSdkVersion="30"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"
-        android:maxSdkVersion="30"/>
-<!--    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"-->
-<!--        android:maxSdkVersion="30"/>-->
-<!--    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"-->
-<!--        android:maxSdkVersion="28"/>-->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" /> <!-- Request legacy permissions on older devices. -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_ADMIN"
+        android:maxSdkVersion="30" />
 
     <application
         android:name=".core.CoreApp"
@@ -38,6 +33,14 @@
         android:theme="@style/ThemeSplash"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_settings">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".core.business.BusinessActivity"
             android:exported="false"
@@ -67,7 +70,6 @@
             android:configChanges="orientation"
             android:exported="false"
             android:label="@string/create_an_order"
-            android:screenOrientation="landscape"
             android:theme="@style/ThemeSplash.NoActionBar" />
         <activity
             android:name=".core.user.UsersActivity"
@@ -96,9 +98,10 @@
             android:screenOrientation="landscape" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".SettingActivity" />
+        <activity android:name=".core.setting.SettingsActivity" />
         <activity
             android:name=".OnBoardingActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
 
         <service
             android:name=".job.OrderSyncService"

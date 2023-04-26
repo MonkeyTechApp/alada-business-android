@@ -37,5 +37,6 @@
     <dimen name="card_height">180dp</dimen>
     <dimen name="dimen_padding_micro">2dp</dimen>
     <dimen name="progress_bar_size">24dp</dimen>
+    <dimen name="dimen_32">32dp</dimen>
 
 </resources>

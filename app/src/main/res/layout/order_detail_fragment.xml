@@ -20,11 +20,12 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
+                app:cardBackgroundColor="@color/transparent"
                 app:cardCornerRadius="@dimen/dimen_padding_small"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                android:elevation="0dp"
                 android:id="@+id/cardOrder">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -113,12 +114,19 @@
 
             </androidx.cardview.widget.CardView>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/white"
+                app:layout_constraintTop_toBottomOf="@id/cardOrder"
+                android:layout_marginVertical="@dimen/dimen_16"
+                android:id="@+id/line"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ordered_products"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cardOrder"
+                app:layout_constraintTop_toBottomOf="@id/line"
                 android:fontFamily="@font/poppins_semibold"
                 android:layout_marginTop="@dimen/dimen_padding"
                 android:id="@+id/txtElement"/>
@@ -131,14 +139,16 @@
                 app:layout_constraintBottom_toTopOf="@id/btnAction"
                 android:id="@+id/listDetails"/>
 
-            <Button
-                android:layout_width="match_parent"
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/listDetails"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:text="@string/print"
                 android:layout_marginVertical="@dimen/dimen_padding_small"
-                android:id="@+id/btnAction"/>
+                android:id="@+id/btnAction"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:src="@drawable/ic_baseline_print_24"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 

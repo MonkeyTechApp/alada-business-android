@@ -2,22 +2,13 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingHorizontal="@dimen/dimen_padding_small"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:text="1"
-        android:id="@+id/txtQuantity"/>
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@id/txtQuantity"
-        app:layout_constraintEnd_toStartOf="@id/txtPrice"
-        android:layout_marginHorizontal="@dimen/dimen_padding"
+        android:layout_marginHorizontal="@dimen/dimen_padding_micro"
         app:layout_constraintTop_toTopOf="parent"
         android:text="Item name"
         android:id="@+id/txtName"/>
@@ -25,10 +16,26 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dimen_padding"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginHorizontal="@dimen/dimen_padding_micro"
         app:layout_constraintTop_toTopOf="parent"
+        android:text="1"
+        android:id="@+id/txtQuantity"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dimen_padding_micro"
+        app:layout_constraintTop_toBottomOf="@id/txtName"
         app:layout_constraintEnd_toEndOf="parent"
         android:text="2500 F CFA"
         android:id="@+id/txtPrice"/>
+
+    <View
+        android:layout_width="@dimen/dimen_padding_big"
+        android:layout_height="1dp"
+        app:layout_constraintTop_toBottomOf="@id/txtPrice"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -26,6 +26,14 @@ public class User {
     private static final String tag = User.class.getSimpleName();
     public static final String LAST_SYNC_TIME = "LAST_SYNC";
     private static final String PRINTER_EPSON_MODEL_TARGET = "PRINTER_EPSON_MODEL_TARGET";
+    private static final String PRINTER_OPTION = "PRINTER_OPTION";
+    public static final String EPSON = "EPSON_PRINTER";
+    public static final String I_POS_PRINTER = "IPOS_PRINTER";
+    private static final String SALE_OPTION = "SALE_OPTION";
+
+    public static final String SALE_DIRECT_MODE = "DIRECT_SALE_MODE";
+    public static final String SALE_COURSE_MODE = "COURSE_SALE_MODE";
+
     @PrimaryKey(autoGenerate = true)
     int id;
     String role_id;
@@ -79,6 +87,13 @@ public class User {
     public static boolean storeLastSync(String time, Context context) {
         SharedPreferences.Editor editor = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE).edit();
         editor.putString(LAST_SYNC_TIME, time);
+        editor.apply();
+        return editor.commit();
+    }
+
+    public static boolean disconnectConnectedUser(Context context) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE).edit();
+        editor.putString(CONNECTED_USER,"");
         editor.apply();
         return editor.commit();
     }
@@ -184,6 +199,16 @@ public class User {
         }
 
         return user;
+    }
+
+    public static String  getPrinterOption(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE);
+        return preferences.getString(PRINTER_OPTION, null);
+    }
+
+    public static String  getSaleMode(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE);
+        return preferences.getString(SALE_OPTION, SALE_COURSE_MODE);
     }
 
     public int getId() {
@@ -321,6 +346,20 @@ public class User {
     public static boolean storePrinterModelTarget(String printerModelTarget, Context context) {
         SharedPreferences.Editor editor = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE).edit();
         editor.putString(PRINTER_EPSON_MODEL_TARGET, printerModelTarget);
+        editor.apply();
+        return editor.commit();
+    }
+
+    public static boolean storePrinterOption(String option, Context context) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE).edit();
+        editor.putString(PRINTER_OPTION, option);
+        editor.apply();
+        return editor.commit();
+    }
+
+    public static boolean storeSaleMode(String option, Context context) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE).edit();
+        editor.putString(SALE_OPTION, option);
         editor.apply();
         return editor.commit();
     }
