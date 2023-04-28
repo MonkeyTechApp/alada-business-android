@@ -203,8 +203,6 @@ public class CreateMenuFragment extends Fragment implements View.OnClickListener
                                         @Override
                                         public void onError(VolleyError error) {
                                             dialog.dismiss();
-                                            FirebaseCrashlytics.getInstance().recordException(
-                                                    new RuntimeException(new String(error.networkResponse.data, StandardCharsets.UTF_8)));
                                             Toast.makeText(requireContext(), getString(R.string.server_error),Toast.LENGTH_SHORT).show();
                                         }
 

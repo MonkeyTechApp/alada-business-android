@@ -234,7 +234,13 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
 
         binding.txtCode.setText(viewModel.getOrderMutableLiveData().getValue().getCode());
         binding.txtTable.setText(AppDataBase.getInstance(requireContext()).guestTableDao().getSpecificGuestTable(viewModel.getOrderMutableLiveData().getValue().getGuest_table_id()).getTitle());
-        binding.txtTime.setText(viewModel.getOrderMutableLiveData().getValue().getCreated_at());
+        try {
+            String d  = viewModel.getOrderMutableLiveData().getValue().getCreated_at().replaceAll("T", " ");
+            binding.txtTime.setText(d.substring(0, d.indexOf(".")));
+        }catch (StringIndexOutOfBoundsException e){
+            binding.txtTime.setText(viewModel.getOrderMutableLiveData().getValue().getCreated_at().replaceAll("T", " "));
+        }
+
         binding.txtTotal.setText(viewModel.getOrderMutableLiveData().getValue().getTotal()+" CFA");
 
         binding.listDetails.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -512,22 +518,33 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
             @Override
             public void run() {
 //                Bitmap mBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inSampleSize = 3;
-                Bitmap logoData = BitmapFactory.decodeFile(User.getPath(requireContext()), options);
+//                BitmapFactory.Options options = new BitmapFactory.Options();
+//                options.inSampleSize = 3;
+//                Bitmap logoData = BitmapFactory.decodeFile(User.getPath(requireContext()), options);
 
                 try {
+                    String date = "";
+                    try {
+                        date  = order.getCreated_at().replaceAll("T", " ");
+                        binding.txtTime.setText(date.substring(0, date.indexOf(".")));
+                    }catch (StringIndexOutOfBoundsException e){
+                        date = (order.getCreated_at().replaceAll("T", " "));
+                    }
+
+//                    mIPosPrinterService.printBitmap(1, 12, logoData, callback);
+                    mIPosPrinterService.printBlankLines(1, 16, callback);
                     mIPosPrinterService.printSpecifiedTypeText(business.getName().toUpperCase()+"  \n", "ST", 32, callback);
                     mIPosPrinterService.printBlankLines(1, 16, callback);
                     mIPosPrinterService.printSpecifiedTypeText(getString(R.string.phone)+" : "+business.getPhone()+"    \n", "ST", 24, callback);
                     mIPosPrinterService.printBlankLines(1, 8, callback);
                     mIPosPrinterService.printSpecifiedTypeText(getString(R.string.cashier)+" : "+ finalRole +" \n", "ST", 24, callback);
                     mIPosPrinterService.printBlankLines(1, 8, callback);
-                    mIPosPrinterService.printSpecifiedTypeText(getString(R.string.date)+" : "+ order.getCode()+"\n", "ST", 24, callback);
+                    mIPosPrinterService.printSpecifiedTypeText(getString(R.string.order)+" : "+ order.getCode()+"\n", "ST", 24, callback);
+                    mIPosPrinterService.printBlankLines(1, 8, callback);
+                    mIPosPrinterService.printSpecifiedTypeText(getString(R.string.date)+" : "+ date+"\n", "ST", 24, callback);
                     mIPosPrinterService.printBlankLines(1, 8, callback);
                     mIPosPrinterService.printBlankLines(1, 8, callback);
                     mIPosPrinterService.printBlankLines(1, 16, callback);
-                    mIPosPrinterService.printBitmap(1, 12, logoData, callback);
                     mIPosPrinterService.printSpecifiedTypeText("********************************", "ST", 24, callback);
                     float total = 0;
                     StringBuilder textData = new StringBuilder();
@@ -536,8 +553,7 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
                         textData.append(orderItems.get(i).getQuantity()).append(" ")
                                 .append(AppDataBase.getInstance(requireContext()).menuItemDao().
                                         getSpecificMenuItem(orderItems.get(i).getMenu_item_id()).getName())
-                                .append(" ").append((int) (orderItems.get(i).getQuantity() * orderItems.get(i).getPrice()))
-                                .append(getString(R.string.currency_cfa))
+                                .append(" : ").append((int) (orderItems.get(i).getQuantity() * orderItems.get(i).getPrice()))
                                 .append("\n");
                     }
 
@@ -566,7 +582,7 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
 //                    mIPosPrinterService.PrintSpecFormatText("打印测试完成\n", "ST", 32, 1, callback);
                     mIPosPrinterService.PrintSpecFormatText("*"+getString(R.string.thank_u_for_visit)+"*\n", "ST", 32, 1,
                             callback);
-                    bitmapRecycle(logoData);
+//                    bitmapRecycle(logoData);
                     mIPosPrinterService.printerPerformPrint(160,  callback);
                 }catch (RemoteException e){
                     e.printStackTrace();

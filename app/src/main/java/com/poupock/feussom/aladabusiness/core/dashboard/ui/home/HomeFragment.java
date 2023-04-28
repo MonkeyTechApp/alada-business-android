@@ -117,11 +117,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        try{
 //        new DownloadImage(requireContext(), "https://alada.poupock.com/img/dinner.png").execute();
-        Log.i(tag, "The path is :" + ServerUrl.BASE_URL+AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0).getPath());
-        if (!Methods.runtimeWritePermissions(requireActivity()) ){
-            new DownloadImage(requireContext(),
-                    ServerUrl.BASE_URL+AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0).getPath()).execute();
+            Log.i(tag, "The path is :" + ServerUrl.BASE_URL+AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0).getPath());
+            if (!Methods.runtimeWritePermissions(requireActivity()) ){
+                new DownloadImage(requireContext(),
+                        ServerUrl.BASE_URL+AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0).getPath()).execute();
+            }
+        }catch (IndexOutOfBoundsException e){
+
         }
 
     }
