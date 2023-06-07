@@ -29,6 +29,8 @@ public class Order {
     private int user_id;
     private int internal_point_id;
     private int status;
+    private int uploaded_at;
+    private int updated_at;
     @ColumnInfo(defaultValue =  "1")
     private int payment_method_id ;
     @SerializedName("table_id")
@@ -41,6 +43,21 @@ public class Order {
     @Ignore private List<Course> courses;
 
 
+    public Order(int id, String code, int user_id, int internal_point_id, int guest_table_id, int status, int payment_method_id,
+                 String created_at, int updated_at,  int uploaded_at) {
+        this.id = id;
+        this.payment_method_id = payment_method_id;
+        this.created_at = created_at;
+        this.code = code;
+        this.user_id = user_id;
+        this.status = status;
+        this.internal_point_id = internal_point_id;
+        this.guest_table_id = guest_table_id;
+        this.updated_at = updated_at;
+        this.uploaded_at = uploaded_at;
+    }
+
+    @Ignore
     public Order(int id, String code, int user_id, int internal_point_id, int guest_table_id, int status, int payment_method_id,
                  String created_at) {
         this.id = id;
@@ -56,7 +73,7 @@ public class Order {
     @Ignore
     public Order(int id, String code, int user_id, int internal_point_id, int guest_table_id, GuestTable guestTable,
                  int status, int payment_method_id,
-                 InternalPoint internalPoint, User creator, List<Course> courses, String created_at) {
+                 InternalPoint internalPoint, User creator, List<Course> courses, String created_at, int updated_at,  int uploaded_at) {
         this.id = id;
         this.created_at = created_at;
         this.payment_method_id = payment_method_id;
@@ -69,6 +86,8 @@ public class Order {
         this.status = status;
         this.creator = creator;
         this.courses = courses;
+        this.updated_at = updated_at;
+        this.uploaded_at = uploaded_at;
     }
 
     @Ignore
@@ -184,6 +203,30 @@ public class Order {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public int getUploaded_at() {
+        return uploaded_at;
+    }
+
+    public void setUploaded_at(int uploaded_at) {
+        this.uploaded_at = uploaded_at;
+    }
+
+    public int getUpdated_at() {
+        return updated_at;
+    }
+
+    public void setUpdated_at(int updated_at) {
+        this.updated_at = updated_at;
+    }
+
+    public List<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
     }
 
     public double getTotal() {

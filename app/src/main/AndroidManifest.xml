@@ -31,10 +31,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/ThemeSplash"
+        android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
         <activity
-            android:name=".SettingsActivity"
+            android:name=".core.setting.SettingsActivity"
             android:exported="false"
             android:label="@string/title_activity_settings">
             <meta-data
@@ -67,7 +68,6 @@
             android:theme="@style/ThemeSplash.NoActionBar" />
         <activity
             android:name=".core.order.OrderActivity"
-            android:configChanges="orientation"
             android:exported="false"
             android:label="@string/create_an_order"
             android:theme="@style/ThemeSplash.NoActionBar" />
@@ -98,7 +98,6 @@
             android:screenOrientation="landscape" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".SettingActivity" />
-        <activity android:name=".core.setting.SettingsActivity" />
         <activity
             android:name=".OnBoardingActivity"
             android:exported="true" />

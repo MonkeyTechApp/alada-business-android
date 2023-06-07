@@ -3,6 +3,7 @@ package com.poupock.feussom.aladabusiness.core.auth;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -118,7 +119,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                                                         for(int j=0; j<business.getUsers().size(); j++){
                                                             User user = business.getUsers().get(j);
                                                             user.setRole_id(business.getUsers().get(j).getPivot().getBusiness_role_id()+"");
-                                                            dataBase.userDao().insert(user);
+                                                            try {
+                                                                dataBase.userDao().insert(user);
+                                                            }catch (SQLiteConstraintException ex){}
+
                                                         }for(int j=0; j<business.getTables().size(); j++){
                                                             dataBase.guestTableDao().insert(business.getTables().get(j));
                                                         }

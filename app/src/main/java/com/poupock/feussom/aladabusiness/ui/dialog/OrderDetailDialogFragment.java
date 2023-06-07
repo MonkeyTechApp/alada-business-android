@@ -106,8 +106,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 
 public class OrderDetailDialogFragment extends DialogFragment implements ReceiveListener {
@@ -589,6 +591,9 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
                 }
             }
         });
+        Objects.requireNonNull(order).setStatus(Constant.STATUS_CLOSED);
+        order.setUpdated_at(Math.toIntExact(new Date().getTime()));
+        AppDataBase.getInstance(requireContext()).orderDao().update(order);
         Toast.makeText(requireContext(), R.string.order_printed_success, Toast.LENGTH_LONG).show();
 //        dismiss();
     }

@@ -39,7 +39,7 @@ import java.util.UUID;
 
 
 @Database(
-    version = 8,
+    version = 9,
     entities = {User.class, Role.class, InternalPoint.class, MenuItemCategory.class, MenuItem.class, GuestTable.class,
     Course.class, OrderItem.class, Order.class, Business.class, PaymentMethod.class}
 //    autoMigrations = {
@@ -75,6 +75,29 @@ public abstract class AppDataBase extends RoomDatabase {
         }
     };
 
+    static final Migration MIGRATION_8_9 = new Migration(8, 9) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            // Order table
+            database.execSQL("ALTER TABLE `orders` "
+                    + " ADD COLUMN `uploaded_at` INTEGER NOT NULL DEFAULT 0");
+            database.execSQL("ALTER TABLE `orders` "
+                    + " ADD COLUMN `updated_at` INTEGER NOT NULL DEFAULT 0");
+
+            // Course table
+            database.execSQL("ALTER TABLE `courses` "
+                    + " ADD COLUMN `uploaded_at` INTEGER NOT NULL DEFAULT 0");
+            database.execSQL("ALTER TABLE `courses` "
+                    + " ADD COLUMN `updated_at` INTEGER NOT NULL DEFAULT 0");
+
+            // Order item table
+            database.execSQL("ALTER TABLE `order_items` "
+                    + " ADD COLUMN `uploaded_at` INTEGER NOT NULL DEFAULT 0");
+            database.execSQL("ALTER TABLE `order_items` "
+                    + " ADD COLUMN `updated_at` INTEGER NOT NULL DEFAULT 0");
+        }
+    };
+
     public static synchronized AppDataBase getInstance(Context context)
     {
         if(instance==null)
@@ -84,7 +107,7 @@ public abstract class AppDataBase extends RoomDatabase {
                     .addCallback(roomCallback)
                     .allowMainThreadQueries()
                     .fallbackToDestructiveMigration()
-                    .addMigrations(MIGRATION_7_8)
+                    .addMigrations(MIGRATION_8_9)
                     .build();
         }
 

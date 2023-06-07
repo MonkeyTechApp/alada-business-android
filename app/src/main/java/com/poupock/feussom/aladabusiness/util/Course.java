@@ -25,6 +25,8 @@ public class Course {
     private int guest_table_id;
     private int order_id;
     private String code;
+    private int uploaded_at;
+    private int updated_at;
     @Ignore private GuestTable guestTable;
     @Ignore private User creator;
     @Ignore private Order order;
@@ -32,6 +34,21 @@ public class Course {
     @Ignore
     private List<OrderItem> items;
 
+    public Course(int id, String title, String created_at, int user_id, int guest_table_id, int order_id, int status, String code
+            , int uploaded_at , int updated_at) {
+        this.id = id;
+        this.title = title;
+        this.created_at = created_at;
+        this.user_id = user_id;
+        this.guest_table_id = guest_table_id;
+        this.order_id = order_id;
+        this.status = status;
+        this.code = code;
+        this.updated_at = updated_at;
+        this.uploaded_at = uploaded_at;
+    }
+
+    @Ignore
     public Course(int id, String title, String created_at, int user_id, int guest_table_id, int order_id, int status, String code) {
         this.id = id;
         this.title = title;
@@ -45,7 +62,7 @@ public class Course {
 
     @Ignore
     public Course(int id, String title, String created_at, int user_id, int guest_table_id, int order_id, int status, GuestTable guestTable, User creator, Order order,
-                  List<OrderItem> items, String code) {
+                  List<OrderItem> items, String code, int uploaded_at , int updated_at) {
         this.id = id;
         this.code = code;
         this.title = title;
@@ -58,6 +75,8 @@ public class Course {
         this.order = order;
         this.status = status;
         this.items = items;
+        this.updated_at = updated_at;
+        this.uploaded_at = uploaded_at;
     }
 
     @Ignore
@@ -196,6 +215,30 @@ public class Course {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public int getUploaded_at() {
+        return uploaded_at;
+    }
+
+    public void setUploaded_at(int uploaded_at) {
+        this.uploaded_at = uploaded_at;
+    }
+
+    public int getUpdated_at() {
+        return updated_at;
+    }
+
+    public void setUpdated_at(int updated_at) {
+        this.updated_at = updated_at;
+    }
+
+    public List<OrderItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<OrderItem> items) {
+        this.items = items;
     }
 
     public static List<Course> buildListFromObjects(List<Object> data) {
