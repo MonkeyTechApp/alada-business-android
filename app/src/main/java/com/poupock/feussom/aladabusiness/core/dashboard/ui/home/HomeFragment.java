@@ -74,6 +74,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 //        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
         binding.list.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        Log.i(tag, "the tables are : "+new Gson().toJson(AppDataBase.getInstance(requireContext()).guestTableDao().getAllGuestTables()));
         binding.list.setAdapter(new GuestTableOrdersAdapter(requireContext(), AppDataBase.getInstance(requireContext()).guestTableDao().getAllGuestTables(),
                 new ListItemClickCallback() {
                     @Override

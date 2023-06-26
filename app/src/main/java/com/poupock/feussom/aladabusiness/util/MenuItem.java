@@ -5,6 +5,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ public class MenuItem {
     private String name;
     private String description;
     private String pic_local_path;
+    @SerializedName("path")
     private String pic_server_path;
     private int menu_category_id;
     private int user_id;

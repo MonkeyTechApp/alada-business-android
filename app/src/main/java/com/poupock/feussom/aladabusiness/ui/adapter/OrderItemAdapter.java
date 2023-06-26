@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,8 @@ import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.DialogCallback;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.util.OrderItem;
+import com.poupock.feussom.aladabusiness.web.ServerUrl;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -61,6 +64,9 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
 
         holder.txtQuantity.setText(orderItem.getQuantity()+"");
         holder.txtPrice.setText((orderItem.getPrice() * orderItem.getQuantity())+" "+context.getString(R.string.currency_cfa));
+        if (orderItem.getMenuItem() != null)
+            Picasso.get().load(ServerUrl.BASE_URL+orderItem.getMenuItem().getPic_server_path()).into(holder.imgPath);
+
 
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -78,6 +84,7 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
 
     public static class OrderItemViewHolder extends RecyclerView.ViewHolder{
         TextView txtName;
+        ImageView imgPath;
         TextView txtPrice;
         TextView txtQuantity;
 
@@ -87,6 +94,7 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
             txtName = itemView.findViewById(R.id.txtName);
             txtPrice = itemView.findViewById(R.id.txtPrice);
             txtQuantity = itemView.findViewById(R.id.txtQuantity);
+            imgPath = itemView.findViewById(R.id.imgProduct);
         }
     }
 }

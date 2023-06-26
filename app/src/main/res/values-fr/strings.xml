@@ -335,4 +335,6 @@
     <string name="date">Date</string>
     <string name="sales_settings">Sales Settings</string>
     <string name="course_mode">course mode</string>
+    <string name="cashed_in">Encaissé</string>
+    <string name="cash_in">Encaisser</string>
 </resources>

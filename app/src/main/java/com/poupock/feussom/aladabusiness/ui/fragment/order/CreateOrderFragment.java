@@ -155,7 +155,7 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
 
         binding.listMenuCategory.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.courseList.setLayoutManager(new LinearLayoutManager(requireContext()));
-        binding.listMenuItems.setLayoutManager(new GridLayoutManager(requireContext(),2));
+        binding.listMenuItems.setLayoutManager(new GridLayoutManager(requireContext(),getResources().getInteger(R.integer.menu_grid_column_count)));
 
         binding.courseList.setAdapter(courseListAdapter);
 
@@ -197,7 +197,7 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                                                         orderItem.setQuantity(1);
                                                         orderItem.setCreated_at(Methods.getCurrentTimeStamp());
                                                         orderItem.setPrice(menuItem.getPrice());
-                                                        orderItem.setUpdated_at(Math.toIntExact(new Date().getTime()));
+                                                        orderItem.setUpdated_at((new Date().getTime()));
                                                         AppDataBase.getInstance(requireContext()).orderItemDao().insert(orderItem); // add the new added order item to the DB.
                                                         orderItem =
                                                                 AppDataBase.getInstance(requireContext()).orderItemDao().getOrderByCourseIdAndMenuItem(course.getId(),menuItem.getId());
@@ -206,7 +206,7 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                                                         orderItem = course.getOrderItems().get(menuItemIndex);
                                                         orderItem.setQuantity(orderItem.getQuantity() + 1);
                                                         Log.i(TAG,"Setting the quantity upper "+orderItem.getQuantity());
-                                                        orderItem.setUpdated_at(Math.toIntExact(new Date().getTime()));
+                                                        orderItem.setUpdated_at((new Date().getTime()));
                                                         AppDataBase.getInstance(requireContext()).orderItemDao().update(orderItem);
 
                                                     }
@@ -391,7 +391,7 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                 course.setGuest_table_id(guestTable.getId());
                 course.setCreated_at(Methods.getCurrentTimeStamp());
                 course.setStatus(Constant.STATUS_OPEN);
-                course.setUpdated_at(Math.toIntExact(new Date().getTime()));
+                course.setUpdated_at((new Date().getTime()));
 
                 if(order.getCourseList() != null) {
                     Log.i(TAG,"Course list not null");
@@ -428,7 +428,7 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                             sendOrder(order, new ProcessCallback() {
                                 @Override
                                 public void done() {
-                                    int timeValue = Math.toIntExact(new Date().getTime());
+                                    long timeValue = (new Date().getTime());
                                     order.setUpdated_at(timeValue);
                                     order.setUploaded_at(timeValue);
                                     for (int i=0; i<order.getCourses().size(); i++){
@@ -473,7 +473,7 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                             GuestTable guestTable = (orderViewModel.getGuestTableMutableLiveData().getValue());
                             if (guestTable != null){
                                 Order order = new Order( 0, Methods.generateCode(requireContext()), User.currentUser(requireContext()).getId(), 1,  guestTable.getId(), Constant.STATUS_OPEN,
-                                    1, Methods.getCurrentTimeStamp(), Math.toIntExact(new Date().getTime()),  0);
+                                    1, Methods.getCurrentTimeStamp(), (new Date().getTime()),  0);
 
                                 Log.i(TAG,"The order size is "+AppDataBase.getInstance(requireContext()).orderDao().getAllOrders().size());
                                 order = AppDataBase.getInstance(requireContext()).orderDao().getSpecificOrder(
@@ -491,7 +491,7 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                                     course.setGuest_table_id(guestTable.getId());
                                     course.setCreated_at(Methods.getCurrentTimeStamp());
                                     course.setStatus(Constant.STATUS_OPEN);
-                                    course.setUpdated_at(Math.toIntExact(new Date().getTime()));
+                                    course.setUpdated_at((new Date().getTime()));
 
                                     AppDataBase.getInstance(requireContext()).courseDao().insert(course);
                                     if (order.getCourseList() == null){
@@ -532,37 +532,41 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 
                 @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    switch (i){
+                public void onClick(DialogInterface dialogInterface, int position) {
+                    switch (position){
                         case DialogInterface.BUTTON_POSITIVE:
-                            sendOrder(orderViewModel.getOrderMutableLiveData().getValue(), new ProcessCallback() {
-                                @Override
-                                public void done() {
 
-                                    Order order = orderViewModel.getOrderMutableLiveData().getValue();
-                                    int timeValue = Math.toIntExact(new Date().getTime());
-                                    order.setUpdated_at(timeValue);
-                                    order.setUploaded_at(timeValue);
-                                    for (int i=0; i<order.getCourses().size(); i++){
-                                        order.getCourses().get(i).setUploaded_at(timeValue);
-                                        order.getCourses().get(i).setUploaded_at(timeValue);
-                                        for (int j=0; j<order.getCourses().get(i).getItems().size(); j++){
-                                            order.getCourses().get(i).getOrderItems().get(j).setUploaded_at(timeValue);
-                                            order.getCourses().get(i).getOrderItems().get(j).setUpdated_at(timeValue);
-                                            AppDataBase.getInstance(requireContext()).orderItemDao().update(order.getCourses().get(i).getOrderItems().get(j));
-                                        }
-                                        AppDataBase.getInstance(requireContext()).courseDao().update(order.getCourses().get(i));
-                                    }
-                                    AppDataBase.getInstance(requireContext()).orderDao().update(order);
-                                    requireActivity().onBackPressed();
-                                    Snackbar.make(requireView(), R.string.order_updated, Snackbar.LENGTH_LONG).show();
-                                }
+                            Order order = orderViewModel.getOrderMutableLiveData().getValue();
+                            Log.i(TAG, "The time is : "+new Date().getTime());
+                            Log.i(TAG, "The time is : "+(int)(new Date().getTime()));
 
-                                @Override
-                                public void failed() {
+                            long timeValue = (new Date().getTime());
+                            order.setUpdated_at(timeValue);
+//                            order.setUploaded_at(timeValue);
+                            for (int i=0; i<order.getCourses().size(); i++){
+                                order.getCourses().get(i).setUploaded_at(timeValue);
+                                order.getCourses().get(i).setUploaded_at(timeValue);
+                                for (int j=0; j<order.getCourses().get(i).getItems().size(); j++){
+//                                    order.getCourses().get(i).getOrderItems().get(j).setUploaded_at(timeValue);
+                                    order.getCourses().get(i).getOrderItems().get(j).setUpdated_at(timeValue);
+                                    AppDataBase.getInstance(requireContext()).orderItemDao().update(order.getCourses().get(i).getOrderItems().get(j));
                                 }
-                            });
-                            dialogInterface.dismiss();
+                                AppDataBase.getInstance(requireContext()).courseDao().update(order.getCourses().get(i));
+                            }
+                            AppDataBase.getInstance(requireContext()).orderDao().update(order);
+                            Snackbar.make(requireView(), R.string.order_updated, Snackbar.LENGTH_LONG).show();
+                            requireActivity().onBackPressed();
+//                            sendOrder(orderViewModel.getOrderMutableLiveData().getValue(), new ProcessCallback() {
+//                                @Override
+//                                public void done() {
+//
+//                                }
+//
+//                                @Override
+//                                public void failed() {
+//                                }
+//                            });
+//                            dialogInterface.dismiss();
                             break;
                         case DialogInterface.BUTTON_NEGATIVE:
                             dialogInterface.dismiss();

@@ -25,8 +25,8 @@ public class Course {
     private int guest_table_id;
     private int order_id;
     private String code;
-    private int uploaded_at;
-    private int updated_at;
+    private long uploaded_at;
+    private long updated_at;
     @Ignore private GuestTable guestTable;
     @Ignore private User creator;
     @Ignore private Order order;
@@ -35,7 +35,7 @@ public class Course {
     private List<OrderItem> items;
 
     public Course(int id, String title, String created_at, int user_id, int guest_table_id, int order_id, int status, String code
-            , int uploaded_at , int updated_at) {
+            , long uploaded_at , long updated_at) {
         this.id = id;
         this.title = title;
         this.created_at = created_at;
@@ -100,9 +100,12 @@ public class Course {
 
     public static JSONArray buildJsonArray(List<Course> courseList) {
         JSONArray array = new JSONArray();
-        for (int i = 0; i < courseList.size() ; i++){
-            array.put(courseList.get(i).getJSONObject());
+        if (courseList != null){
+            for (int i = 0; i < courseList.size() ; i++){
+                array.put(courseList.get(i).getJSONObject());
+            }
         }
+
 
         return array;
     }
@@ -217,19 +220,19 @@ public class Course {
         this.code = code;
     }
 
-    public int getUploaded_at() {
+    public long getUploaded_at() {
         return uploaded_at;
     }
 
-    public void setUploaded_at(int uploaded_at) {
+    public void setUploaded_at(long uploaded_at) {
         this.uploaded_at = uploaded_at;
     }
 
-    public int getUpdated_at() {
+    public long getUpdated_at() {
         return updated_at;
     }
 
-    public void setUpdated_at(int updated_at) {
+    public void setUpdated_at(long updated_at) {
         this.updated_at = updated_at;
     }
 

@@ -55,7 +55,6 @@ public class PostTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-
         JsonObjectRequest connectObjectRequest = new JsonObjectRequest(Request.Method.POST, url,
                 paramJsonObject, new Response.Listener<JSONObject>() {
             @Override

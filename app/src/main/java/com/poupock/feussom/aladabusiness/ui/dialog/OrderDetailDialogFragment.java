@@ -337,6 +337,7 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
                                     }
                                     else {
                                         if (!runPrintReceiptSequence()) {
+                                            dismiss();
                                             updateButtonState(true);
                                         }else{
                                             Log.i(TAG, "Printing sequence FALSE");
@@ -373,6 +374,7 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
                         }
                         else {
                             if (!runPrintReceiptSequence()) {
+                                dismiss();
                                 updateButtonState(true);
                             }else{
                                 Log.i(TAG, "Printing sequence FALSE");
@@ -595,7 +597,7 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
         order.setUpdated_at(Math.toIntExact(new Date().getTime()));
         AppDataBase.getInstance(requireContext()).orderDao().update(order);
         Toast.makeText(requireContext(), R.string.order_printed_success, Toast.LENGTH_LONG).show();
-//        dismiss();
+        dismiss();
     }
 
     public static String Baidu = "本店留存\n************************\n      百度外卖\n      [货到付款]\n" +
@@ -875,6 +877,10 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
             return false;
         }
 
+        Order order = viewModel.getOrderMutableLiveData().getValue();
+        Objects.requireNonNull(order).setStatus(Constant.STATUS_CLOSED);
+        order.setUpdated_at(Math.toIntExact(new Date().getTime()));
+        AppDataBase.getInstance(requireContext()).orderDao().update(order);
         return true;
     }
 

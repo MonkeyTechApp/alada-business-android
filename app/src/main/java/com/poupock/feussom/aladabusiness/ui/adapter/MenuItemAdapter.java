@@ -2,18 +2,23 @@ package com.poupock.feussom.aladabusiness.ui.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
 import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.ListItemClickCallback;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.util.MenuItem;
+import com.poupock.feussom.aladabusiness.web.ServerUrl;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -23,6 +28,7 @@ public class MenuItemAdapter extends RecyclerView.Adapter<MenuItemAdapter.MenuIt
     Context context;
     List<MenuItem> menuItems;
     ListItemClickCallback callback;
+    private String tag = MenuItemAdapter.class.getSimpleName();
 
     public MenuItemAdapter(Context context, List<MenuItem> menuItemList, ListItemClickCallback callback){
         this.isGrid = false;
@@ -64,6 +70,7 @@ public class MenuItemAdapter extends RecyclerView.Adapter<MenuItemAdapter.MenuIt
     public void onBindViewHolder(@NonNull MenuItemViewHolder holder, int position) {
 
         MenuItem menuItem = this.menuItems.get(position);
+        Log.i(tag,  "The menu is : "+new Gson().toJson(menuItem));
 
         holder.txtPrice.setText(menuItem.getPrice()+" "+context.getString(R.string.currency_cfa));
         holder.txtName.setText(menuItem.getName());
@@ -73,7 +80,10 @@ public class MenuItemAdapter extends RecyclerView.Adapter<MenuItemAdapter.MenuIt
                 holder.txtCategory.setText(menuItem.getMenuItemCategory().getName());
             else holder.txtCategory.setText(AppDataBase.getInstance(context).menuItemCategoryDao().getSpecificMenuItemCategory(
                 menuItem.getMenu_category_id()).getName()+"");
+        }else{
+            Picasso.get().load(ServerUrl.BASE_URL+menuItem.getPic_server_path()).into(holder.imgPath);
         }
+
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,12 +113,14 @@ public class MenuItemAdapter extends RecyclerView.Adapter<MenuItemAdapter.MenuIt
         TextView txtName;
         TextView txtPrice;
         TextView txtCategory;
+        ImageView imgPath;
 
         public MenuItemViewHolder(@NonNull View itemView) {
             super(itemView);
 
             txtName = itemView.findViewById(R.id.txtName);
             txtPrice = itemView.findViewById(R.id.txtPrice);
+            imgPath = itemView.findViewById(R.id.imgProduct);
             txtCategory = itemView.findViewById(R.id.txtCategory);
         }
     }

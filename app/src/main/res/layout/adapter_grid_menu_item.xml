@@ -1,41 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/colorBlackBack"
     android:layout_marginHorizontal="@dimen/dimen_padding_micro"
     android:layout_marginVertical="@dimen/dimen_padding_micro"
+    app:cardCornerRadius="@dimen/dimen_padding"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <TextView
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/dimen_padding_small"
-        android:layout_width="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:gravity="center"
-        android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        style="@style/fontBold"
-        android:id="@+id/txtName"/>
-
-    <TextView
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtName"
-        android:layout_width="0dp"
-        android:gravity="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-        android:paddingBottom="@dimen/dimen_padding_small"
-        style="@style/fontRegular"
-        android:text="2500 F CFA"
-        android:id="@+id/txtPrice"/>
-
-    <View
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dimen_padding_tiny"
-        android:background="@color/flat_red_secondary"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:background="@color/white"
+            android:scaleType="centerInside"
+            android:padding="@dimen/dimen_padding_small"
+            android:src="@mipmap/menu"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/imgProduct"/>
+        <TextView
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imgProduct"
+            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/dimen_padding_small"
+            android:layout_width="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            style="@style/fontBold"
+            android:id="@+id/txtName"/>
+
+        <TextView
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtName"
+            android:layout_width="0dp"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+            android:paddingBottom="@dimen/dimen_padding_small"
+            style="@style/fontRegular"
+            android:text="2500 F CFA"
+            android:id="@+id/txtPrice"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

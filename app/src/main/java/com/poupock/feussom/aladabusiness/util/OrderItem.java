@@ -1,5 +1,6 @@
 package com.poupock.feussom.aladabusiness.util;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -24,15 +25,15 @@ public class OrderItem {
     private String created_at;
     private int quantity;
     private int course_id;
-    private int uploaded_at;
-    private int updated_at;
+    private long uploaded_at;
+    private long updated_at;
     @Ignore
     private Course course;
     @Ignore
     private MenuItem menuItem;
 
     public OrderItem(int id, int menu_item_id, double price, String created_at, int quantity, int course_id
-        , int uploaded_at , int updated_at) {
+        , long uploaded_at , long updated_at) {
         this.id = id;
         this.menu_item_id = menu_item_id;
         this.price = price;
@@ -164,19 +165,19 @@ public class OrderItem {
         this.menuItem = menuItem;
     }
 
-    public int getUploaded_at() {
+    public long getUploaded_at() {
         return uploaded_at;
     }
 
-    public void setUploaded_at(int uploaded_at) {
+    public void setUploaded_at(long uploaded_at) {
         this.uploaded_at = uploaded_at;
     }
 
-    public int getUpdated_at() {
+    public long getUpdated_at() {
         return updated_at;
     }
 
-    public void setUpdated_at(int updated_at) {
+    public void setUpdated_at(long updated_at) {
         this.updated_at = updated_at;
     }
 
@@ -193,5 +194,11 @@ public class OrderItem {
     public static OrderItem getObjectFromObject(Object data) {
         Gson gson = new Gson();
         return gson.fromJson(gson.toJson(data), OrderItem.class);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
     }
 }

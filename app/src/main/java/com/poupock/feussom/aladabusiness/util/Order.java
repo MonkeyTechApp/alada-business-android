@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,8 +30,8 @@ public class Order {
     private int user_id;
     private int internal_point_id;
     private int status;
-    private int uploaded_at;
-    private int updated_at;
+    private long uploaded_at;
+    private long updated_at;
     @ColumnInfo(defaultValue =  "1")
     private int payment_method_id ;
     @SerializedName("table_id")
@@ -44,7 +45,7 @@ public class Order {
 
 
     public Order(int id, String code, int user_id, int internal_point_id, int guest_table_id, int status, int payment_method_id,
-                 String created_at, int updated_at,  int uploaded_at) {
+                 String created_at, long updated_at,  long uploaded_at) {
         this.id = id;
         this.payment_method_id = payment_method_id;
         this.created_at = created_at;
@@ -73,7 +74,7 @@ public class Order {
     @Ignore
     public Order(int id, String code, int user_id, int internal_point_id, int guest_table_id, GuestTable guestTable,
                  int status, int payment_method_id,
-                 InternalPoint internalPoint, User creator, List<Course> courses, String created_at, int updated_at,  int uploaded_at) {
+                 InternalPoint internalPoint, User creator, List<Course> courses, String created_at, long updated_at,  long uploaded_at) {
         this.id = id;
         this.created_at = created_at;
         this.payment_method_id = payment_method_id;
@@ -205,19 +206,19 @@ public class Order {
         this.status = status;
     }
 
-    public int getUploaded_at() {
+    public long getUploaded_at() {
         return uploaded_at;
     }
 
-    public void setUploaded_at(int uploaded_at) {
+    public void setUploaded_at(long uploaded_at) {
         this.uploaded_at = uploaded_at;
     }
 
-    public int getUpdated_at() {
+    public long getUpdated_at() {
         return updated_at;
     }
 
-    public void setUpdated_at(int updated_at) {
+    public void setUpdated_at(long updated_at) {
         this.updated_at = updated_at;
     }
 
@@ -271,6 +272,22 @@ public class Order {
             params.put("course", Course.buildJsonArray(this.getCourseList()));
         }catch (JSONException ex){
 
+        }
+        return params;
+    }
+    public static JSONObject buildArrayParams(List<Order> orders, int business_id) {
+
+        JSONObject params = new JSONObject();
+
+        JSONArray array = new JSONArray();
+        for (int i = 0 ; i < orders.size(); i++){
+            array.put(orders.get(i).buildParams(business_id));
+        }
+
+        try {
+            params.put("data", array);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         return params;
     }

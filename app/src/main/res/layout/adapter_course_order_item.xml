@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingVertical="@dimen/dimen_padding_small"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
@@ -34,6 +35,7 @@
     <View
         android:layout_width="@dimen/dimen_padding_big"
         android:layout_height="1dp"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/txtPrice"
         android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"/>

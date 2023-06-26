@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity(tableName = "guest_tables")
-public class GuestTable {
+public class    GuestTable {
     @PrimaryKey(autoGenerate = true)
     private int id;
     @SerializedName("name")

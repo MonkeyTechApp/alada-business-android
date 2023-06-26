@@ -419,7 +419,7 @@
                 android:backgroundTint="@color/green"
                 android:textColor="@color/white"
                 android:layout_marginEnd="@dimen/dimen_padding_small"
-                android:text="@string/pay"
+                android:text="@string/cash_in"
                 android:id="@+id/btnPay"/>
         </LinearLayout>
 

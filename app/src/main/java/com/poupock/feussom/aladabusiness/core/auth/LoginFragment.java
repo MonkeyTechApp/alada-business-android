@@ -104,8 +104,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                                             User.storeToken(connection.access_token, requireContext());
                                             if (connection.data.getBusinesses() != null){
                                                 AppDataBase dataBase = AppDataBase.getInstance(requireContext());
-                                                for (int i = 0 ; i < connection.data.getBusinesses().size(); i++){
-                                                    Business business = connection.data.getBusinesses().get(i);
+                                                Log.i(TAG, "the Business size :  "+connection.data.getBusinesses().size());
+                                                if (connection.data.getBusinesses().size() > 0){
+                                                    Business business = connection.data.getBusinesses().get(0);
                                                     List<String> strings = gson.fromJson(business.getPhone_numbers(),
                                                             new TypeToken<List<String>>(){}.getType());
                                                     if (strings != null){
@@ -114,16 +115,18 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                                                             Log.i(TAG, "The phone is : "+business.getPhone());
                                                         }
                                                     }
-                                                    dataBase.businessDao().insert(connection.data.getBusinesses().get(i));
-                                                    if (connection.data.getBusinesses().get(i).getTables().size()>0){
+                                                    dataBase.businessDao().insert(connection.data.getBusinesses().get(0));
+                                                    if (connection.data.getBusinesses().get(0).getTables().size()>0){
                                                         for(int j=0; j<business.getUsers().size(); j++){
                                                             User user = business.getUsers().get(j);
                                                             user.setRole_id(business.getUsers().get(j).getPivot().getBusiness_role_id()+"");
+
                                                             try {
                                                                 dataBase.userDao().insert(user);
                                                             }catch (SQLiteConstraintException ex){}
 
-                                                        }for(int j=0; j<business.getTables().size(); j++){
+                                                        }
+                                                        for(int j=0; j<business.getTables().size(); j++){
                                                             dataBase.guestTableDao().insert(business.getTables().get(j));
                                                         }
                                                         for(int j=0; j<business.getMenuItemCategories().size(); j++){
@@ -149,6 +152,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                                                         Log.i(TAG, gson.toJson(dataBase.guestTableDao().getAllGuestTables()));
                                                     }
                                                 }
+//                                                for (int i = 0 ; i < connection.data.getBusinesses().size(); i++){
+//
+//                                                }
                                             }
 
                                             Toast.makeText(requireContext(), R.string.connection_successful, Toast.LENGTH_SHORT).show();

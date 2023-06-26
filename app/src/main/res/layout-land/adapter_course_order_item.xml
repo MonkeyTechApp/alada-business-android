@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingHorizontal="@dimen/dimen_padding_small"
+    android:paddingVertical="@dimen/dimen_padding_small"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView

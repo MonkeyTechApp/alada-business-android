@@ -54,6 +54,9 @@ public interface OrderDao {
     @Query("SELECT * FROM orders WHERE guest_table_id = :table_id AND status = :status")
     List<Order> getTableOrders(int table_id, int status);
 
+    @Query("SELECT * FROM orders WHERE updated_at > uploaded_at")
+    List<Order> getToBeUploadedOrders();
+
     @Query("DELETE FROM orders")
     void emptyTable();
 }

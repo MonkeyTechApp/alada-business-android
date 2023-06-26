@@ -12,6 +12,8 @@ public class ServerUrl {
     public static final String COURSE_DEL = BASE_URL + "api/delete/course";
     public static final String ORDER_ITEM_UPD = BASE_URL + "api/order_item/update";
     public static final String ORDER_POST = BASE_URL + "api/order-post";
+    public static final String ORDER_LIST_POST = BASE_URL + "api/order-list-post";
+
     public static final String ORDER_SYNC = BASE_URL + "api/order-sync";
     public static String CONNECTION_URL = BASE_URL+"api/login";
     public static String REGISTRATION_URL = BASE_URL+"api/register";
