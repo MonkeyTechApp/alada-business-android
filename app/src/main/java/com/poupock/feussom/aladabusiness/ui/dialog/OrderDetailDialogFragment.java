@@ -125,10 +125,6 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
     private String mParam2;
     private Bitmap bitmap;
     private boolean boolean_save;
-    private PdfPCell cell;
-    private Image imgReportLogo;
-
-    BaseColor tableHeadColor = WebColors.getRGBColor("#000000");
     private Printer printer = null;
     private static final int DISCONNECT_INTERVAL = 500;
 
@@ -423,7 +419,6 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
         });
     }
 
-
     public int getPrinterStatus(){
 
         Log.i(TAG,"***** printerStatus"+printerStatus);
@@ -565,69 +560,41 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
                     mIPosPrinterService.printBlankLines(1, 16, callback);
                     mIPosPrinterService.PrintSpecFormatText(getString(R.string.total)+" : "+total+"F CFA \n", "ST", 32, 1, callback);
                     mIPosPrinterService.printSpecifiedTypeText("********************************", "ST", 24, callback);
-//                    mIPosPrinterService.printSpecifiedTypeText("这是一行16号字体\n", "ST", 16, callback);
-//                    mIPosPrinterService.printSpecifiedTypeText("这是一行24号字体\n", "ST", 24, callback);
-//                    mIPosPrinterService.PrintSpecFormatText("这是一行24号字体\n", "ST", 24, 2, callback);
-//                    mIPosPrinterService.printSpecifiedTypeText("这是一行32号字体\n", "ST", 32, callback);
-//                    mIPosPrinterService.PrintSpecFormatText("这是一行32号字体\n", "ST", 32, 2, callback);
-//                    mIPosPrinterService.printSpecifiedTypeText("这是一行48号字体\n", "ST", 48, callback);
-//                    mIPosPrinterService.printSpecifiedTypeText("ABCDEFGHIJKLMNOPQRSTUVWXYZ01234\n", "ST", 16, callback);
-//                    mIPosPrinterService.printSpecifiedTypeText("abcdefghijklmnopqrstuvwxyz56789\n", "ST", 24, callback);
-//                    mIPosPrinterService.printSpecifiedTypeText("κρχκμνκλρκνκνμρτυφ\n", "ST", 24, callback);
                     mIPosPrinterService.setPrinterPrintAlignment(0,callback);
-//                    mIPosPrinterService.printQRCode(order.getCode()+"", 10, 1, callback);
                     mIPosPrinterService.printBarCode(order.getCode(), 8, 2, 5, 0, callback);
                     mIPosPrinterService.printBlankLines(1, 16, callback);
                     mIPosPrinterService.printBlankLines(1, 16, callback);
-//                    for (int i = 0; i < 12; i++)
-//                    {
-//                        mIPosPrinterService.printRawData(BytesUtil.initLine1(384, i),callback);
-//                    }
-//                    mIPosPrinterService.PrintSpecFormatText("打印测试完成\n", "ST", 32, 1, callback);
+
                     mIPosPrinterService.PrintSpecFormatText("*"+getString(R.string.thank_u_for_visit)+"*\n", "ST", 32, 1,
                             callback);
 //                    bitmapRecycle(logoData);
                     mIPosPrinterService.printerPerformPrint(160,  callback);
+
+
+
                 }catch (RemoteException e){
                     e.printStackTrace();
                 }
             }
         });
         Objects.requireNonNull(order).setStatus(Constant.STATUS_CLOSED);
-        order.setUpdated_at(Math.toIntExact(new Date().getTime()));
+        long timeValue = (new Date().getTime());
+        order.setUpdated_at(timeValue);
+        for (int i=0; i<order.getCourses().size(); i++){
+            order.getCourses().get(i).setUploaded_at(timeValue);
+            order.getCourses().get(i).setUploaded_at(timeValue);
+            for (int j=0; j<order.getCourses().get(i).getItems().size(); j++){
+                order.getCourses().get(i).getOrderItems().get(j).setUpdated_at(timeValue);
+                AppDataBase.getInstance(requireContext()).orderItemDao().update(order.getCourses().get(i).getOrderItems().get(j));
+            }
+            AppDataBase.getInstance(requireContext()).courseDao().update(order.getCourses().get(i));
+        }
         AppDataBase.getInstance(requireContext()).orderDao().update(order);
+        requireActivity().onBackPressed();
         Toast.makeText(requireContext(), R.string.order_printed_success, Toast.LENGTH_LONG).show();
         dismiss();
     }
 
-    public static String Baidu = "本店留存\n************************\n      百度外卖\n      [货到付款]\n" +
-            "************************\n期望送达时间：立即配送\n" +
-            "订单备注:送到西门,不要辣\n发票信息:百度外卖\n************************\n下单编号: 14187186911689\n下单时间: " +
-            "2014-12-16 16:31************************\n" +
-            "菜品名称     数量  金额\n------------------------\n" +
-            "香辣面套餐     1   40.00\n素食天线汉堡   1   38.00\n香辣面套餐     1   40.00\n" +
-            "素食天线汉堡   1   38.00\n香辣面         1   43.00\n" +
-            "素食天线       1   34.00\n" +
-            "------------------------\n" +
-            "************************\n姓名:百度测试\n" +
-            "地址:泰然工贸园\n电话:18665248965\n" +
-            "************************\n百度测试商户\n" +
-            "18665248965\n#15 百度外卖 11月09号 \n\n\n";
-
-    public void printBaiduBill()
-    {
-        ThreadPoolManager.getInstance().executeTask(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    mIPosPrinterService.printSpecifiedTypeText(Baidu, "ST", 32, callback);
-                    mIPosPrinterService.printerPerformPrint(160,  callback);
-                }catch (RemoteException e){
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
 
     private BroadcastReceiver IPosPrinterStatusListener = new BroadcastReceiver(){
         @Override
@@ -694,38 +661,8 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
         return true;
     }
 
-    private String createPrintingText(Order order, List<OrderItem> orderItems){
-        Business business = AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0);
-        List<User> users = AppDataBase.getInstance(requireContext()).userDao().getAllUsers();
-        String role = User.currentUser(requireContext()).getName();
-        for(int i=0; i<users.size(); i++){
-            if (users.get(i).getEmail().equals(User.currentUser(requireContext()).getEmail())){
-//                binding.txtRole.setText();
-                role = User.currentUser(requireContext()).getEmail()+" - "+
-                        requireContext().getResources().getStringArray(R.array.role_array)[Integer.parseInt(users.get(i).getRole_id())];
-                break;
-            }
-        }
-
-        String data = business.getName().toUpperCase()+"\n************************\n      百度外卖\n      [货到付款]\n" +
-                "************************\n期望送达时间：立即配送\n" +
-                "订单备注:送到西门,不要辣\n发票信息:百度外卖\n************************\n下单编号: 14187186911689\n下单时间: " +
-                "2014-12-16 16:31************************\n" +
-                "菜品名称     数量  金额\n------------------------\n" +
-                "香辣面套餐     1   40.00\n素食天线汉堡   1   38.00\n香辣面套餐     1   40.00\n" +
-                "素食天线汉堡   1   38.00\n香辣面         1   43.00\n" +
-                "素食天线       1   34.00\n" +
-                "------------------------\n" +
-                "************************\n姓名:百度测试\n" +
-                "地址:泰然工贸园\n电话:18665248965\n" +
-                "************************\n百度测试商户\n" +
-                "18665248965\n#15 百度外卖 11月09号 \n\n\n";
-        return data;
-    }
-
     private boolean createReceiptData(Order order, List<OrderItem> orderItems) {
         String method = "";
-//        Bitmap logoData = BitmapFactory.decodeResource(getResources(), R.drawable.store);
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 3;
         Bitmap logoData = BitmapFactory.decodeFile(User.getPath(requireContext()), options);
@@ -738,13 +675,6 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
         }
 
         try {
-
-//            if(mDrawer.isChecked()) {
-//                method = "addPulse";
-//                printer.addPulse(Printer.PARAM_DEFAULT,
-//                        Printer.PARAM_DEFAULT);
-//            }
-
             method = "addTextAlign";
             printer.addTextAlign(Printer.ALIGN_CENTER);
 
@@ -765,7 +695,6 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
             String role = User.currentUser(requireContext()).getName();
             for(int i=0; i<users.size(); i++){
                 if (users.get(i).getEmail().equals(User.currentUser(requireContext()).getEmail())){
-//                binding.txtRole.setText();
                     role = User.currentUser(requireContext()).getEmail()+" - "+
                             requireContext().getResources().getStringArray(R.array.role_array)[Integer.parseInt(users.get(i).getRole_id())];
                     break;
@@ -799,8 +728,6 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
             printer.addText(textData.toString());
             textData.delete(0, textData.length());
 
-//            textData.append("TOTAL  ").append(total).append(getString(R.string.currency_cfa)).append("\n");
-//            textData.append("TAX                      14.43\n");
             method = "addText";
             printer.addText(textData.toString());
             textData.delete(0, textData.length());
@@ -814,16 +741,12 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
             method = "addFeedLine";
             printer.addFeedLine(1);
 
-//            textData.append("CASH                    200.00\n");
-//            textData.append("CHANGE                   25.19\n");
             textData.append("------------------------------\n");
             method = "addText";
             printer.addText(textData.toString());
             textData.delete(0, textData.length());
 
-//            textData.append("Purchased item total number\n");
             textData.append(getString(R.string.thank_u_for_visit)).append("!\n");
-//            textData.append("With Preferred Saving Card\n");
             method = "addText";
             printer.addText(textData.toString());
             textData.delete(0, textData.length());
@@ -879,8 +802,20 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
 
         Order order = viewModel.getOrderMutableLiveData().getValue();
         Objects.requireNonNull(order).setStatus(Constant.STATUS_CLOSED);
-        order.setUpdated_at(Math.toIntExact(new Date().getTime()));
+        long timeValue = (new Date().getTime());
+        order.setUpdated_at(timeValue);
+        for (int i=0; i<order.getCourses().size(); i++){
+            order.getCourses().get(i).setUploaded_at(timeValue);
+            order.getCourses().get(i).setUploaded_at(timeValue);
+            for (int j=0; j<order.getCourses().get(i).getItems().size(); j++){
+                order.getCourses().get(i).getOrderItems().get(j).setUpdated_at(timeValue);
+                AppDataBase.getInstance(requireContext()).orderItemDao().update(order.getCourses().get(i).getOrderItems().get(j));
+            }
+            AppDataBase.getInstance(requireContext()).courseDao().update(order.getCourses().get(i));
+        }
         AppDataBase.getInstance(requireContext()).orderDao().update(order);
+        Toast.makeText(requireContext(), R.string.order_printed_success, Toast.LENGTH_LONG).show();
+
         return true;
     }
 
@@ -978,243 +913,6 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
         drawable.draw(canvas);
 
         return bitmap;
-    }
-
-    private void doPrint(File file){
-        PrintManager printManager=(PrintManager) requireActivity().getSystemService(Context.PRINT_SERVICE);
-        try {
-            PrintAdapter printAdapter = new PrintAdapter(requireActivity(), file.getAbsolutePath());
-            printManager.print("Document", printAdapter, new PrintAttributes.Builder().build());
-
-        } catch (Exception e){
-            Log.e(TAG, "The error is : "+e.toString());
-        }
-    }
-
-    public static Bitmap loadBitmapFromView(View v, int width, int height) {
-        Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(b);
-        v.draw(c);
-
-        return b;
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    public void createPDF(List<OrderItem> orderItems, Order order) throws FileNotFoundException, DocumentException {
-
-        //Create document file
-        float PADDING = 1;
-        boolean b = false;
-//        Document document = new Document(new RectangleReadOnly(114, 213));
-        Document document = new Document(new RectangleReadOnly(114, 213));
-        try {
-//            SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss a");
-            SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyyyy_HHmm");
-            String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() +
-                    "/alada-business/Tickets/";
-            File dir = new File(path);
-            if (!dir.exists())
-                b = dir.mkdirs();
-
-            File file = new File(dir, "ALD_"+ dateFormat.format(Calendar.getInstance().getTime()) +".pdf");
-            FileOutputStream outputStream = new FileOutputStream(file);
-
-            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-
-            //Open the document
-            document.open();
-            document.addCreationDate();
-            document.addAuthor(getString(R.string.app_name));
-            document.addCreator(getString(R.string.app_name));
-
-            BaseFont poppins = BaseFont.createFont("res/font/poppins_regular.ttf", "UTF-8", BaseFont.EMBEDDED);
-            Font poppinsFont = new Font(poppins, 2.0f, Font.NORMAL, BaseColor.BLACK);
-            Font poppinsWhFont = new Font(poppins, 2.0f, Font.NORMAL, BaseColor.WHITE);
-            Font poppinsBFont = new Font(poppins, 2.0f, Font.BOLD, BaseColor.BLACK);
-
-
-            try {
-
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inSampleSize = 3;
-                Bitmap bitmap = BitmapFactory.decodeFile(User.getPath(requireContext()), options);
-
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                byte[] bitmapLogo = stream.toByteArray();
-
-                imgReportLogo = Image.getInstance(bitmapLogo);
-                PdfPTable headTable = new PdfPTable(2);
-                cell = new PdfPCell();
-                cell.setColspan(2);
-                cell.addElement(imgReportLogo);
-                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cell.setBorder(Rectangle.NO_BORDER);
-                cell.setPadding(PADDING);
-                headTable.addCell(cell);
-
-                cell = new PdfPCell();
-                cell.setColspan(2);
-                cell.addElement(buildCellElt(AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0).getName(),
-                        poppinsBFont, Element.ALIGN_CENTER));
-                cell.setBorder(Rectangle.NO_BORDER);
-                cell.setPadding(PADDING);
-                headTable.addCell(cell);
-
-                cell = new PdfPCell();
-                cell.addElement(buildCellElt(getString(R.string.ordered_on),
-                        poppinsFont, Element.ALIGN_LEFT));
-                cell.setBorder(Rectangle.NO_BORDER);
-                cell.setPadding(PADDING);
-                headTable.addCell(cell);
-
-                cell = new PdfPCell();
-                cell.addElement(buildCellElt(order.getCreated_at(),
-                        poppinsFont, Element.ALIGN_RIGHT));
-                cell.setBorder(Rectangle.NO_BORDER);
-                cell.setPadding(PADDING);
-                headTable.addCell(cell);
-
-                cell = new PdfPCell();
-                cell.setColspan(2);
-                cell.addElement(buildCellElt(order.getCode(),
-                        poppinsFont, Element.ALIGN_CENTER));
-                cell.setBorder(Rectangle.NO_BORDER);
-                cell.setPadding(PADDING);
-                headTable.addCell(cell);
-
-                document.add(headTable);
-
-                PdfPTable table = new PdfPTable(3);
-                float[] columnWidth = new float[]{60, 20, 30};
-                table.setWidthPercentage(100f);
-                table.setWidths(columnWidth);
-
-                cell = new PdfPCell();
-                cell.addElement(buildCellElt(getString(R.string.items)
-                        , poppinsWhFont, Element.ALIGN_LEFT));
-                cell.setBackgroundColor(tableHeadColor);
-                cell.setBorder(Rectangle.NO_BORDER);
-                cell.setPadding(PADDING);
-                table.addCell(cell);
-
-                cell = new PdfPCell();
-                cell.addElement(buildCellElt(getString(R.string.qty)
-                        , poppinsWhFont, Element.ALIGN_LEFT));
-                cell.setBackgroundColor(tableHeadColor);
-                cell.setBorder(Rectangle.NO_BORDER);
-                cell.setPadding(PADDING);
-                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                table.addCell(cell);
-
-
-                cell = new PdfPCell();
-                cell.addElement(buildCellElt(getString(R.string.price)
-                        , poppinsWhFont, Element.ALIGN_LEFT));
-                cell.setBackgroundColor(tableHeadColor);
-                cell.setBorder(Rectangle.NO_BORDER);;
-                cell.setPadding(PADDING);
-                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                table.addCell(cell);
-
-                cell = new PdfPCell();
-                cell.setColspan(3);
-
-                for (int i = 0; i < orderItems.size(); i++) {
-                    cell = new PdfPCell();
-                    cell.addElement(buildCellElt(
-                            AppDataBase.getInstance(requireContext()).menuItemDao().
-                                    getSpecificMenuItem(orderItems.get(i).getMenu_item_id()).getName()
-                            , poppinsFont, Element.ALIGN_LEFT));
-                    cell.setBorder(Rectangle.NO_BORDER);
-                    cell.setPadding(PADDING);
-                    table.addCell(cell);
-
-                    cell = new PdfPCell();
-                    cell.addElement(buildCellElt(orderItems.get(i).getQuantity() +"", poppinsFont, Element.ALIGN_RIGHT));
-                    cell.setBorder(Rectangle.NO_BORDER);
-                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                    cell.setPadding(PADDING);
-                    table.addCell(cell);
-
-                    cell = new PdfPCell();
-                    cell.addElement(buildCellElt((orderItems.get(i).getQuantity() * orderItems.get(i).getPrice())+"", poppinsFont, Element.ALIGN_RIGHT));
-                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                    cell.setBorder(Rectangle.NO_BORDER);
-                    cell.setPadding(PADDING);
-                    table.addCell(cell);
-                }
-
-                cell = new PdfPCell();
-                cell.addElement(buildCellElt(getString(R.string.total), poppinsFont, Element.ALIGN_LEFT));
-                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                cell.setBorder(Rectangle.NO_BORDER);
-                cell.setPadding(PADDING);
-                table.addCell(cell);
-
-                cell = new PdfPCell();
-                cell.setColspan(2);
-                float total = 0;
-                for (int i=0; i <orderItems.size(); i++){
-                    total = (float) (total + (orderItems.get(i).getPrice() * orderItems.get(i).getQuantity()));
-                }
-                cell.addElement(buildCellElt(total+" "+getString(R.string.currency_cfa), poppinsBFont, Element.ALIGN_RIGHT));
-                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                cell.setBorder(Rectangle.NO_BORDER);
-                cell.setPadding(PADDING);
-                table.addCell(cell);
-
-                document.add(table);
-                addLineSeperator(document);
-                addNewItem(document, getString(R.string.thank_u_for_visit), Element.ALIGN_CENTER, poppinsBFont);
-                addLineSeperator(document);
-                Toast.makeText(requireActivity(), getString(R.string.ticket_generated) +" "+ dateFormat.format(Calendar.getInstance().getTime()) , Toast.LENGTH_LONG).show();
-                doPrint(file);
-            } catch (DocumentException de) {
-                Log.e("PDFCreator", "DocumentException:" + de);
-            } catch (IOException e) {
-                Log.e("PDFCreator", "ioException:" + e);
-            } finally {
-                document.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private Element buildCellElt(String s, Font f, int align){
-        Chunk chunk = new Chunk(s, f);
-        Paragraph paragraph =  new Paragraph(chunk);
-        paragraph.setAlignment(align);
-        return paragraph;
-    }
-
-    private void addNewItem(Document document, String text, int alignment, Font font) throws DocumentException {
-        Chunk chunk = new Chunk(text, font);
-        Paragraph paragraph =  new Paragraph(chunk);
-        paragraph.setAlignment(alignment);
-        document.add(paragraph);
-    }
-
-    private void addLineSeperator(Document document) throws DocumentException{
-        LineSeparator lineSeparator = new LineSeparator();
-        addLineSpace(document);
-        lineSeparator.setLineColor(new BaseColor(0,0,0, 70));
-        document.add(new Chunk(lineSeparator));
-        addLineSpace(document);
-    }
-
-    private void addLineSpace(Document document) throws DocumentException {
-        document.add(new Paragraph(""));
-    }
-
-    private void addNewItemLeftAndRight(Document document, String leftText, String rightText, Font leftFont, Font rightFont) throws DocumentException{
-        Chunk leftChunk = new Chunk(leftText, leftFont);
-        Chunk rightChunk = new Chunk(rightText, rightFont);
-        Paragraph paragraph = new Paragraph(leftChunk);
-        paragraph.add(new VerticalPositionMark());
-        paragraph.add(rightChunk);
-        document.add(paragraph);
     }
 
     @Override

@@ -417,53 +417,6 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                 Snackbar.make(requireView(), R.string.select_a_table, Snackbar.LENGTH_LONG).show();
             }
         }
-        else if(binding.btnPay==view){
-            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    switch (which){
-                        case DialogInterface.BUTTON_POSITIVE:
-                            Order order =  orderViewModel.getOrderMutableLiveData().getValue();
-                            Objects.requireNonNull(order).setStatus(Constant.STATUS_CLOSED);
-                            sendOrder(order, new ProcessCallback() {
-                                @Override
-                                public void done() {
-                                    long timeValue = (new Date().getTime());
-                                    order.setUpdated_at(timeValue);
-                                    order.setUploaded_at(timeValue);
-                                    for (int i=0; i<order.getCourses().size(); i++){
-                                        order.getCourses().get(i).setUploaded_at(timeValue);
-                                        order.getCourses().get(i).setUploaded_at(timeValue);
-                                        for (int j=0; j<order.getCourses().get(i).getItems().size(); j++){
-                                            order.getCourses().get(i).getOrderItems().get(j).setUploaded_at(timeValue);
-                                            order.getCourses().get(i).getOrderItems().get(j).setUpdated_at(timeValue);
-                                            AppDataBase.getInstance(requireContext()).orderItemDao().update(order.getCourses().get(i).getOrderItems().get(j));
-                                        }
-                                        AppDataBase.getInstance(requireContext()).courseDao().update(order.getCourses().get(i));
-                                    }
-                                    AppDataBase.getInstance(requireContext()).orderDao().update(order);
-                                    requireActivity().onBackPressed();
-                                    Snackbar.make(requireView(), R.string.order_updated, Snackbar.LENGTH_LONG).show();
-                                }
-
-                                @Override
-                                public void failed() { }
-                            });
-
-                           break;
-                        case DialogInterface.BUTTON_NEGATIVE:
-                            dialog.dismiss();
-                            DialogFragment detailDialogFragment = OrderDetailDialogFragment.newInstance("", "");
-                            detailDialogFragment.show(getChildFragmentManager(), OrderDetailDialogFragment.class.getSimpleName());
-                            break;
-                    }
-                }
-            };
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-            builder.setMessage(getString(R.string.confirm_payment_received)).setPositiveButton(getString(R.string.yes), dialogClickListener)
-                    .setNegativeButton(getString(R.string.print), dialogClickListener).show();
-        }
         else if(binding.btnAddOrder == view){
             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                 @Override
@@ -579,6 +532,53 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                     .setNegativeButton(getString(R.string.no), dialogClickListener).show();
 
         }
+        else if(binding.btnPay==view){
+            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which){
+                        case DialogInterface.BUTTON_POSITIVE:
+                            // update the orders
+                            Order order =  orderViewModel.getOrderMutableLiveData().getValue();
+                            Objects.requireNonNull(order).setStatus(Constant.STATUS_CLOSED);
+                            long timeValue = (new Date().getTime());
+                            order.setUpdated_at(timeValue);
+                            for (int i=0; i<order.getCourses().size(); i++){
+                                order.getCourses().get(i).setUploaded_at(timeValue);
+                                order.getCourses().get(i).setUploaded_at(timeValue);
+                                for (int j=0; j<order.getCourses().get(i).getItems().size(); j++){
+                                    order.getCourses().get(i).getOrderItems().get(j).setUpdated_at(timeValue);
+                                    AppDataBase.getInstance(requireContext()).orderItemDao().update(order.getCourses().get(i).getOrderItems().get(j));
+                                }
+                                AppDataBase.getInstance(requireContext()).courseDao().update(order.getCourses().get(i));
+                            }
+                            AppDataBase.getInstance(requireContext()).orderDao().update(order);
+                            requireActivity().onBackPressed();
+                            Snackbar.make(requireView(), R.string.order_updated, Snackbar.LENGTH_LONG).show();
+//                            sendOrder(order, new ProcessCallback() {
+//                                @Override
+//                                public void done() {
+//
+//                                }
+//
+//                                @Override
+//                                public void failed() { }
+//                            });
+
+                            break;
+                        case DialogInterface.BUTTON_NEGATIVE:
+                            dialog.dismiss();
+                            DialogFragment detailDialogFragment = OrderDetailDialogFragment.newInstance("", "");
+                            detailDialogFragment.show(getChildFragmentManager(), OrderDetailDialogFragment.class.getSimpleName());
+                            break;
+                    }
+                }
+            };
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            builder.setMessage(getString(R.string.confirm_payment_received)).setPositiveButton(getString(R.string.yes), dialogClickListener)
+                    .setNegativeButton(getString(R.string.print), dialogClickListener).show();
+        }
     }
 
     CourseAdapter buildCourseAdapter(){
@@ -691,7 +691,8 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
         ProgressDialog dialog = new ProgressDialog(requireContext());
         dialog.setMessage(getString(R.string.sending_order_3_dots));
         Log.i(TAG, "The order is "+ order.buildParams(AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0).getId()).toString());
-        new PostTask(requireContext(), ServerUrl.ORDER_POST, order.buildParams(AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0).getId()),
+        new PostTask(requireContext(), ServerUrl.ORDER_POST,
+                order.buildParams(AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0).getId()),
                 new VolleyRequestCallback() {
                     @Override
                     public void onStart() {

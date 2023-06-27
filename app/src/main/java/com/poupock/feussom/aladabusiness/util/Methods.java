@@ -9,10 +9,14 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.print.PrintAttributes;
+import android.print.PrintManager;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -26,6 +30,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -35,13 +40,32 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.RectangleReadOnly;
+import com.itextpdf.text.html.WebColors;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.draw.LineSeparator;
+import com.itextpdf.text.pdf.draw.VerticalPositionMark;
 import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
+import com.poupock.feussom.aladabusiness.ui.adapter.PrintAdapter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -183,7 +207,6 @@ public class Methods {
         return Uri.parse(path);
     }
 
-
     public static boolean runtimeWritePermissions(Activity activity) {
         if (ContextCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
             != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(activity.getApplicationContext(),
@@ -195,7 +218,6 @@ public class Methods {
             return true;
         } else return false;
     }
-
 
     public static boolean runtimeLocationPermissions(Activity activity) {
         if (ContextCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)
@@ -337,8 +359,6 @@ public class Methods {
         }else return verifyPhone(emailStr);
     }
 
-
-
     public static boolean verifyPhone(String trim) {
         return trim.matches("^[+]?[0-9]{10,13}$");
     }
@@ -376,4 +396,243 @@ public class Methods {
                 });
     }
 
+    public static Bitmap loadBitmapFromView(View v, int width, int height) {
+        Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        v.draw(c);
+
+        return b;
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public void createPDF(List<OrderItem> orderItems, Order order, Context context) throws FileNotFoundException, DocumentException {
+
+        PdfPCell cell;
+        Image imgReportLogo;
+        BaseColor tableHeadColor = WebColors.getRGBColor("#000000");
+        //Create document file
+        float PADDING = 1;
+        boolean b = false;
+//        Document document = new Document(new RectangleReadOnly(114, 213));
+        Document document = new Document(new RectangleReadOnly(114, 213));
+        try {
+//            SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss a");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyyyy_HHmm");
+            String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() +
+                    "/alada-business/Tickets/";
+            File dir = new File(path);
+            if (!dir.exists())
+                b = dir.mkdirs();
+
+            File file = new File(dir, "ALD_"+ dateFormat.format(Calendar.getInstance().getTime()) +".pdf");
+            FileOutputStream outputStream = new FileOutputStream(file);
+
+            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+
+            //Open the document
+            document.open();
+            document.addCreationDate();
+            document.addAuthor(context.getString(R.string.app_name));
+            document.addCreator(context.getString(R.string.app_name));
+
+            BaseFont poppins = BaseFont.createFont("res/font/poppins_regular.ttf", "UTF-8", BaseFont.EMBEDDED);
+            Font poppinsFont = new Font(poppins, 2.0f, Font.NORMAL, BaseColor.BLACK);
+            Font poppinsWhFont = new Font(poppins, 2.0f, Font.NORMAL, BaseColor.WHITE);
+            Font poppinsBFont = new Font(poppins, 2.0f, Font.BOLD, BaseColor.BLACK);
+
+
+            try {
+
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = 3;
+                Bitmap bitmap = BitmapFactory.decodeFile(User.getPath(context), options);
+
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] bitmapLogo = stream.toByteArray();
+
+                imgReportLogo = Image.getInstance(bitmapLogo);
+                PdfPTable headTable = new PdfPTable(2);
+                cell = new PdfPCell();
+                cell.setColspan(2);
+                cell.addElement(imgReportLogo);
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setPadding(PADDING);
+                headTable.addCell(cell);
+
+                cell = new PdfPCell();
+                cell.setColspan(2);
+                cell.addElement(buildCellElt(AppDataBase.getInstance(context).businessDao().getAllBusinesses().get(0).getName(),
+                        poppinsBFont, Element.ALIGN_CENTER));
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setPadding(PADDING);
+                headTable.addCell(cell);
+
+                cell = new PdfPCell();
+                cell.addElement(buildCellElt(context.getString(R.string.ordered_on),
+                        poppinsFont, Element.ALIGN_LEFT));
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setPadding(PADDING);
+                headTable.addCell(cell);
+
+                cell = new PdfPCell();
+                cell.addElement(buildCellElt(order.getCreated_at(),
+                        poppinsFont, Element.ALIGN_RIGHT));
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setPadding(PADDING);
+                headTable.addCell(cell);
+
+                cell = new PdfPCell();
+                cell.setColspan(2);
+                cell.addElement(buildCellElt(order.getCode(),
+                        poppinsFont, Element.ALIGN_CENTER));
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setPadding(PADDING);
+                headTable.addCell(cell);
+
+                document.add(headTable);
+
+                PdfPTable table = new PdfPTable(3);
+                float[] columnWidth = new float[]{60, 20, 30};
+                table.setWidthPercentage(100f);
+                table.setWidths(columnWidth);
+
+                cell = new PdfPCell();
+                cell.addElement(buildCellElt(context.getString(R.string.items)
+                        , poppinsWhFont, Element.ALIGN_LEFT));
+                cell.setBackgroundColor(tableHeadColor);
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setPadding(PADDING);
+                table.addCell(cell);
+
+                cell = new PdfPCell();
+                cell.addElement(buildCellElt(context.getString(R.string.qty)
+                        , poppinsWhFont, Element.ALIGN_LEFT));
+                cell.setBackgroundColor(tableHeadColor);
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setPadding(PADDING);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                table.addCell(cell);
+
+
+                cell = new PdfPCell();
+                cell.addElement(buildCellElt(context.getString(R.string.price)
+                        , poppinsWhFont, Element.ALIGN_LEFT));
+                cell.setBackgroundColor(tableHeadColor);
+                cell.setBorder(Rectangle.NO_BORDER);;
+                cell.setPadding(PADDING);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                table.addCell(cell);
+
+                cell = new PdfPCell();
+                cell.setColspan(3);
+
+                for (int i = 0; i < orderItems.size(); i++) {
+                    cell = new PdfPCell();
+                    cell.addElement(buildCellElt(
+                            AppDataBase.getInstance(context).menuItemDao().
+                                    getSpecificMenuItem(orderItems.get(i).getMenu_item_id()).getName()
+                            , poppinsFont, Element.ALIGN_LEFT));
+                    cell.setBorder(Rectangle.NO_BORDER);
+                    cell.setPadding(PADDING);
+                    table.addCell(cell);
+
+                    cell = new PdfPCell();
+                    cell.addElement(buildCellElt(orderItems.get(i).getQuantity() +"", poppinsFont, Element.ALIGN_RIGHT));
+                    cell.setBorder(Rectangle.NO_BORDER);
+                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    cell.setPadding(PADDING);
+                    table.addCell(cell);
+
+                    cell = new PdfPCell();
+                    cell.addElement(buildCellElt((orderItems.get(i).getQuantity() * orderItems.get(i).getPrice())+"", poppinsFont, Element.ALIGN_RIGHT));
+                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    cell.setBorder(Rectangle.NO_BORDER);
+                    cell.setPadding(PADDING);
+                    table.addCell(cell);
+                }
+
+                cell = new PdfPCell();
+                cell.addElement(buildCellElt(context.getString(R.string.total), poppinsFont, Element.ALIGN_LEFT));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setPadding(PADDING);
+                table.addCell(cell);
+
+                cell = new PdfPCell();
+                cell.setColspan(2);
+                float total = 0;
+                for (int i=0; i <orderItems.size(); i++){
+                    total = (float) (total + (orderItems.get(i).getPrice() * orderItems.get(i).getQuantity()));
+                }
+                cell.addElement(buildCellElt(total+" "+context.getString(R.string.currency_cfa), poppinsBFont, Element.ALIGN_RIGHT));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setPadding(PADDING);
+                table.addCell(cell);
+
+                document.add(table);
+                addLineSeperator(document);
+                addNewItem(document, context.getString(R.string.thank_u_for_visit), Element.ALIGN_CENTER, poppinsBFont);
+                addLineSeperator(document);
+                Toast.makeText(context, context.getString(R.string.ticket_generated) +" "+ dateFormat.format(Calendar.getInstance().getTime()) , Toast.LENGTH_LONG).show();
+                doPrint(file, context);
+            } catch (DocumentException de) {
+                Log.e("PDFCreator", "DocumentException:" + de);
+            } catch (IOException e) {
+                Log.e("PDFCreator", "ioException:" + e);
+            } finally {
+                document.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Element buildCellElt(String s, Font f, int align){
+        Chunk chunk = new Chunk(s, f);
+        Paragraph paragraph =  new Paragraph(chunk);
+        paragraph.setAlignment(align);
+        return paragraph;
+    }
+
+    private void addNewItem(Document document, String text, int alignment, Font font) throws DocumentException {
+        Chunk chunk = new Chunk(text, font);
+        Paragraph paragraph =  new Paragraph(chunk);
+        paragraph.setAlignment(alignment);
+        document.add(paragraph);
+    }
+
+    private void addLineSeperator(Document document) throws DocumentException{
+        LineSeparator lineSeparator = new LineSeparator();
+        addLineSpace(document);
+        lineSeparator.setLineColor(new BaseColor(0,0,0, 70));
+        document.add(new Chunk(lineSeparator));
+        addLineSpace(document);
+    }
+
+    private void addLineSpace(Document document) throws DocumentException {
+        document.add(new Paragraph(""));
+    }
+
+    private void addNewItemLeftAndRight(Document document, String leftText, String rightText, Font leftFont, Font rightFont) throws DocumentException{
+        Chunk leftChunk = new Chunk(leftText, leftFont);
+        Chunk rightChunk = new Chunk(rightText, rightFont);
+        Paragraph paragraph = new Paragraph(leftChunk);
+        paragraph.add(new VerticalPositionMark());
+        paragraph.add(rightChunk);
+        document.add(paragraph);
+    }
+    private void doPrint(File file, Context context){
+        PrintManager printManager=(PrintManager) context.getSystemService(Context.PRINT_SERVICE);
+        try {
+            PrintAdapter printAdapter = new PrintAdapter(context, file.getAbsolutePath());
+            printManager.print("Document", printAdapter, new PrintAttributes.Builder().build());
+
+        } catch (Exception e){
+            Log.e(TAG, "The error is : "+e.toString());
+        }
+    }
 }
+
