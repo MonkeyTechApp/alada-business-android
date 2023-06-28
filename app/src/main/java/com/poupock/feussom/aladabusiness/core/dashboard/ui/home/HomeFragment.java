@@ -73,7 +73,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 //        final TextView textView = binding.txtLegend;
 //        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
-        binding.list.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        binding.list.setLayoutManager(new GridLayoutManager(requireContext(), getResources().getInteger(R.integer.menu_grid_column_count)));
         Log.i(tag, "the tables are : "+new Gson().toJson(AppDataBase.getInstance(requireContext()).guestTableDao().getAllGuestTables()));
         binding.list.setAdapter(new GuestTableOrdersAdapter(requireContext(), AppDataBase.getInstance(requireContext()).guestTableDao().getAllGuestTables(),
                 new ListItemClickCallback() {
@@ -85,27 +85,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                         Gson gson = new Gson();
                         GuestTable guestTable = GuestTable.getFromObject(o);
                         Log.i(tag, "The guest table is : "+guestTable.getId());
-//                        if (guestTable.getOrders()!=null){
-//                            if (guestTable.getOrders().size() > 1){
-//                                // Show list of orders for selection.
-//                                DialogFragment listDialogFragment = ListDialogFragment.newInstance(Order.class.getSimpleName(), guestTable.getId()+"",
-//                                        new ListItemClickCallback() {
-//                                            @Override
-//                                            public void onItemClickListener(Object o, boolean isLong) {
-//                                                Order order = Order.getObjectFromObject(o);
-//                                                intent.putExtra(Constant.ACTIVE_TABLE_KEY, gson.toJson(
-//                                                        AppDataBase.getInstance(requireContext()).guestTableDao().
-//                                                                getSpecificGuestTable(order.getGuest_table_id())));
-//                                                startActivity(intent);
-//                                            }
-//                                        });
-//                                listDialogFragment.show(getChildFragmentManager(), ListDialogFragment.class.getSimpleName());
-//                            }
-//                            else {
-//                                Log.i(tag,"The table is active ");
-//
-//                            }
-//                        }
                         intent.putExtra(Constant.ACTIVE_TABLE_KEY, gson.toJson(guestTable));
                         startActivity(intent);
                     }
@@ -134,7 +113,24 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-
+        try {
+            binding.list.setLayoutManager(new GridLayoutManager(requireContext(), getResources().getInteger(R.integer.menu_grid_column_count)));
+            Log.i(tag, "the tables are : "+new Gson().toJson(AppDataBase.getInstance(requireContext()).guestTableDao().getAllGuestTables()));
+            binding.list.setAdapter(new GuestTableOrdersAdapter(requireContext(), AppDataBase.getInstance(requireContext()).guestTableDao().getAllGuestTables(),
+                    new ListItemClickCallback() {
+                        @Override
+                        public void onItemClickListener(Object o, boolean isLong) {
+                            Log.i(tag, "The item clicked");
+                            Intent intent = new Intent(requireContext(), OrderActivity.class);
+                            intent.putExtra(Constant.ACTIVE_BUSINESS_KEY, new Gson().toJson(appDataBase.businessDao().getAllBusinesses().get(0)));
+                            Gson gson = new Gson();
+                            GuestTable guestTable = GuestTable.getFromObject(o);
+                            Log.i(tag, "The guest table is : "+guestTable.getId());
+                            intent.putExtra(Constant.ACTIVE_TABLE_KEY, gson.toJson(guestTable));
+                            startActivity(intent);
+                        }
+                    }));
+        }catch (Exception e){}
     }
 
     @Override

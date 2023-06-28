@@ -389,15 +389,6 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
                 }
 
 
-//                try {
-//                    createPDF(viewModel.getOrderMutableLiveData().getValue().extractAllOrderedItems() ,
-//                            viewModel.getOrderMutableLiveData().getValue());
-////                    generatePDF(viewModel.getOrderMutableLiveData().getValue());
-//                } catch (FileNotFoundException | DocumentException e) {
-//                    Log.e(TAG, "The execption : "+e.toString());
-//                }
-
-
 
             }
         });
