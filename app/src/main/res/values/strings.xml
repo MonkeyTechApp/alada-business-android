@@ -384,4 +384,27 @@
     <string name="course_mode">course mode</string>
     <string name="cashed_in">Cashed In</string>
     <string name="cash_in">Cash In</string>
+
+
+    <string name="str_show">demo：</string>
+    <string name="str_image">Print picture effect display：</string>
+    <string name="str_text">Print text effect display：</string>
+    <string name="str_text_left">Demo of text left effect abc123：</string>
+    <string name="str_text_right">Demo of text right effect abc123：</string>
+    <string name="str_text_center">Demo of text centering effect abc123：</string>
+    <string name="str_text_strong">Text bold effect demo abc123：</string>
+    <string name="str_text_underline">Text underline effect demo abc123：</string>
+    <string name="str_text_height">High-efficiency demonstrations with different peers：：</string>
+    <string name="times">times</string>
+    <string name="bigger">enlarge</string>
+    <string name="bigger1">double effect demo abc123</string>
+    <string name="device_list">Device list</string>
+    <string name="yesconn">Yes connected\n</string>
+    <string name="conn_failed">Connection failed</string>
+    <string name="conn_closed">Connection closed</string>
+    <string name="conn_no">No connected devices</string>
+    <string name="mobile_printer">Mobile printer</string>
+    <string name="located_at">Located at</string>
+    <string name="item">Item</string>
+    <string name="dont_hesitate_to_contact_us">Don\'t hesitate to contact us.</string>
 </resources>

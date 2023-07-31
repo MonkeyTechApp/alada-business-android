@@ -23,6 +23,8 @@
         android:name="android.permission.BLUETOOTH_ADMIN"
         android:maxSdkVersion="30" />
 
+    <uses-feature android:name="android.hardware.bluetooth" android:required="true"/>
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
     <application
         android:name=".core.CoreApp"
         android:allowBackup="true"

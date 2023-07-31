@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="@dimen/dimen_padding_small"
+    android:paddingHorizontal="@dimen/dimen_padding"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/txtLetter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/green"
+        android:text="L"
+        android:fontFamily="@font/poppins_bold"
+        android:paddingHorizontal="@dimen/dimen_padding"
+        android:paddingVertical="@dimen/dimen_padding_mid"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        app:layout_constraintStart_toEndOf="@id/txtLetter"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingHorizontal="@dimen/dimen_padding"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name"
+        android:fontFamily="@font/poppins_regular"
+        android:id="@+id/txtName" />
+    <TextView
+        app:layout_constraintStart_toEndOf="@id/txtLetter"
+        app:layout_constraintTop_toBottomOf="@id/txtName"
+        android:paddingHorizontal="@dimen/dimen_padding"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        android:fontFamily="@font/poppins_regular"
+        android:id="@+id/txtAddress" />
+</androidx.constraintlayout.widget.ConstraintLayout>

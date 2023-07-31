@@ -1,7 +1,10 @@
 package com.poupock.feussom.aladabusiness.ui.dialog;
 
-import android.annotation.SuppressLint;
+import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -9,18 +12,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
-import android.print.PrintAttributes;
-import android.print.PrintManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,86 +34,50 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
-import com.poupock.feussom.aladabusiness.core.auth.AuthActivity;
-import com.poupock.feussom.aladabusiness.core.profile.ProfileActivity;
-import com.poupock.feussom.aladabusiness.posq2.MemInfo.*;
-
+import com.android.print.sdk.PrinterConstants;
+import com.android.print.sdk.PrinterInstance;
+import com.android.print.sdk.Table;
+import com.android.print.sdk.bluetooth.BluetoothPort;
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.discovery.DeviceInfo;
 import com.epson.epos2.printer.Printer;
 import com.epson.epos2.printer.PrinterStatusInfo;
 import com.epson.epos2.printer.ReceiveListener;
-import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
 import com.iposprinter.iposprinterservice.IPosPrinterCallback;
 import com.iposprinter.iposprinterservice.IPosPrinterService;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.RectangleReadOnly;
-import com.itextpdf.text.html.WebColors;
-import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.pdf.draw.LineSeparator;
-import com.itextpdf.text.pdf.draw.VerticalPositionMark;
 import com.poupock.feussom.aladabusiness.R;
+import com.poupock.feussom.aladabusiness.bluetooth.BluetoothOperation;
+import com.poupock.feussom.aladabusiness.callback.BLDeviceClickCallback;
 import com.poupock.feussom.aladabusiness.callback.DialogCallback;
-import com.poupock.feussom.aladabusiness.callback.ListItemClickCallback;
 import com.poupock.feussom.aladabusiness.callback.PrinterSelectedCallback;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
-import com.poupock.feussom.aladabusiness.databinding.DialogListBinding;
 import com.poupock.feussom.aladabusiness.databinding.OrderDetailFragmentBinding;
 import com.poupock.feussom.aladabusiness.posq2.ThreadPoolManager;
 import com.poupock.feussom.aladabusiness.posq2.Utils.ButtonDelayUtils;
-import com.poupock.feussom.aladabusiness.posq2.Utils.BytesUtil;
 import com.poupock.feussom.aladabusiness.posq2.Utils.HandlerUtils;
-import com.poupock.feussom.aladabusiness.ui.adapter.GuestTableAdapter;
-import com.poupock.feussom.aladabusiness.ui.adapter.OrderAdapter;
 import com.poupock.feussom.aladabusiness.ui.adapter.OrderItemAdapter;
-import com.poupock.feussom.aladabusiness.ui.adapter.PrintAdapter;
 import com.poupock.feussom.aladabusiness.ui.fragment.order.OrderViewModel;
 import com.poupock.feussom.aladabusiness.util.Business;
 import com.poupock.feussom.aladabusiness.util.Constant;
-import com.poupock.feussom.aladabusiness.util.GuestTable;
 import com.poupock.feussom.aladabusiness.util.Order;
 import com.poupock.feussom.aladabusiness.util.OrderItem;
 import com.poupock.feussom.aladabusiness.util.ShowMsg;
-import com.poupock.feussom.aladabusiness.util.SpnModelsItem;
 import com.poupock.feussom.aladabusiness.util.User;
-import com.squareup.picasso.Picasso;
 
-import org.intellij.lang.annotations.JdkConstants;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
-import java.util.UUID;
+import java.util.Set;
 
 public class OrderDetailDialogFragment extends DialogFragment implements ReceiveListener {
 
@@ -125,7 +92,7 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
     private String mParam2;
     private Bitmap bitmap;
     private boolean boolean_save;
-    private Printer printer = null;
+    private Printer epsonPrinter = null;
     private static final int DISCONNECT_INTERVAL = 500;
 
     private IPosPrinterService mIPosPrinterService;
@@ -164,6 +131,8 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
     private final int MSG_MOTOR_HIGH_TEMP_INIT_PRINTER       = 9;
     private final int MSG_CURRENT_TASK_PRINT_COMPLETE     = 10;
 
+    private static final int REQUEST_BL_PERMISSION_CODE = 0x50;
+
     /*循环打印类型*/
     private final int  MULTI_THREAD_LOOP_PRINT  = 1;
     private final int  INPUT_CONTENT_LOOP_PRINT = 2;
@@ -191,6 +160,101 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
 
     OrderDetailFragmentBinding binding;
     OrderViewModel viewModel;
+
+    private boolean isMobilePrinterConnected;
+
+    private PrinterInstance mobilePrinter;
+
+    private MyTask myTask;
+
+    /**
+     * wifi机器需要定时读取打印机数据, 如下代码
+     * 当连接断开时, 读取数据 read() 会触发断开连接的消息
+     *
+     * USB 蓝牙 可忽略
+     */
+    private class MyTask extends java.util.TimerTask{
+        @Override
+        public void run() {
+            if(isMobilePrinterConnected && mobilePrinter != null) {
+                byte[] by = mobilePrinter.read();
+                if (by != null) {
+                    System.out.println(mobilePrinter.isConnected() + " read byte " + Arrays.toString(by));
+                }
+            }
+        }
+    }
+
+    private class ExitTask extends java.util.TimerTask{
+        @Override
+        public void run() {
+            Log.i("SDK TEST", "Exiting");
+            try {
+                Objects.requireNonNull(viewModel.getOrderMutableLiveData().getValue()).setStatus(Constant.STATUS_CLOSED);
+                long timeValue = (new Date().getTime());
+                viewModel.getOrderMutableLiveData().getValue().setUpdated_at(timeValue);
+                for (int i=0; i<viewModel.getOrderMutableLiveData().getValue().getCourses().size(); i++){
+                    viewModel.getOrderMutableLiveData().getValue().getCourses().get(i).setUpdated_at(timeValue);
+                    for (int j=0; j<viewModel.getOrderMutableLiveData().getValue().getCourses().get(i).getItems().size(); j++){
+                        viewModel.getOrderMutableLiveData().getValue().getCourses().get(i).getOrderItems().get(j).setUpdated_at(timeValue);
+                        AppDataBase.getInstance(requireContext()).orderItemDao().update(viewModel.getOrderMutableLiveData().getValue().getCourses().get(i).getOrderItems().get(j));
+                    }
+                    AppDataBase.getInstance(requireContext()).courseDao().update(viewModel.getOrderMutableLiveData().getValue().getCourses().get(i));
+                }
+                AppDataBase.getInstance(requireContext()).orderDao().update(viewModel.getOrderMutableLiveData().getValue());
+                OrderDetailDialogFragment.this.dismiss();
+                if (mobilePrinter.isConnected())
+                    mobilePrinter.closeConnection();
+            }catch (IllegalStateException ex){
+            }
+
+        }
+    }
+    private BluetoothOperation bluetoothOperation;
+    private Handler mobilePrinterHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case PrinterConstants.Connect.SUCCESS:
+                    isMobilePrinterConnected = true;
+//                    mobilePrinter = bluetoothOperation.getPrinter();
+                    if (mobilePrinter == null){
+                        Log.i("SDK TEST", "Printer set back to null");
+                    }else Log.i("SDK TEST", "Printer not set back to null");
+                    java.util.Timer timer = new java.util.Timer();
+                    myTask = new MyTask();
+                    timer.schedule(myTask, 0, 2000);
+                    Log.i("SDK TEST", "BT connected");
+//                    Toast.makeText(requireContext(), R.string.yesconn, Toast.LENGTH_SHORT).show();
+                    break;
+                case PrinterConstants.Connect.FAILED:
+                    if(myTask != null){
+                        myTask.cancel();
+                    }
+                    isMobilePrinterConnected = false;
+                    Log.i("SDK TEST", "BT failed");
+//                    Toast.makeText(requireContext(), R.string.conn_failed, Toast.LENGTH_SHORT).show();
+                    break;
+                case PrinterConstants.Connect.CLOSED:
+                    if(myTask != null){
+                        myTask.cancel();
+                    }
+                    isMobilePrinterConnected = false;
+                    Log.i("SDK TEST", "BT closed");
+//                    Toast.makeText(requireContext(), R.string.conn_closed, Toast.LENGTH_SHORT).show();
+
+                    break;
+                case PrinterConstants.Connect.NODEVICE:
+                    isMobilePrinterConnected = false;
+                    Log.i("SDK TEST", "BT no device");
+//                    Toast.makeText(requireContext(), R.string.conn_no, Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -223,12 +287,28 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
         return dialog;
     }
 
+    public static boolean runtimeBLConnectPermissions(Activity activity) {
+        if (ContextCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.BLUETOOTH_CONNECT)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                activity.requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT}, REQUEST_BL_PERMISSION_CODE);
+                Log.i("SDK TEST","Requesting perm");
+            }else {
+                Log.i("SDK TEST","Perm not requested.");
+            }
+
+            return true;
+        } else return false;
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
         super.onViewCreated(view, savedInstanceState);
 
         viewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
         Log.i(TAG,"The view created");
+
+        runtimeBLConnectPermissions(requireActivity());
 
         binding.txtCode.setText(viewModel.getOrderMutableLiveData().getValue().getCode());
         binding.txtTable.setText(AppDataBase.getInstance(requireContext()).guestTableDao().getSpecificGuestTable(viewModel.getOrderMutableLiveData().getValue().getGuest_table_id()).getTitle());
@@ -259,15 +339,27 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
             public void onServiceConnected(ComponentName name, IBinder service) {
                 mIPosPrinterService = IPosPrinterService.Stub.asInterface(service);
                 binding.btnAction.setEnabled(true);
+                Toast.makeText(requireContext(),"Service connected!!", Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onServiceDisconnected(ComponentName name) {
                 FirebaseCrashlytics.getInstance().recordException(new Exception("Service set to null"));
-                Toast.makeText(requireContext(),"Service disconnected!!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(),"Service disconnected!!", Toast.LENGTH_LONG).show();
                 mIPosPrinterService = null;
             }
+
+            @Override
+            public void onNullBinding(ComponentName name) {
+                ServiceConnection.super.onNullBinding(name);
+            }
+
+            @Override
+            public void onBindingDied(ComponentName name) {
+                ServiceConnection.super.onBindingDied(name);
+            }
         };
+        printerInit();
 
         handler = new HandlerUtils.MyHandler(iHandlerIntent);
 
@@ -288,7 +380,8 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
         Intent intent=new Intent();
         intent.setPackage("com.iposprinter.iposprinterservice");
         intent.setAction("com.iposprinter.iposprinterservice.IPosPrintService");
-        //startService(intent);
+        requireActivity().startService(intent);
+
         requireActivity().bindService(intent, connectService, Context.BIND_AUTO_CREATE);
 
         //注册打印机状态接收器
@@ -346,6 +439,43 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
                                         printText(viewModel.getOrderMutableLiveData().getValue(),
                                                 viewModel.getOrderMutableLiveData().getValue().extractAllOrderedItems());
                                     }
+//                                    dialog.dismiss();
+                                case DialogInterface.BUTTON_NEUTRAL:
+                                    User.storePrinterOption(User.MOBILE_PRINTER, requireContext());
+                                    BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                                    if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                                        // TODO: Consider calling
+                                        //    ActivityCompat#requestPermissions
+                                        // here to request the missing permissions, and then overriding
+                                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                        //                                          int[] grantResults)
+                                        // to handle the case where the user grants the permission. See the documentation
+                                        // for ActivityCompat#requestPermissions for more details.
+                                        Log.i("SDK TEST", "Permission connect to be called");
+//            return;
+                                    }
+                                    Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+                                    List<BluetoothDevice> devices = new ArrayList<BluetoothDevice>();
+                                    for(BluetoothDevice bt : pairedDevices){
+                                        devices.add(bt);
+                                        Log.i("SDK TEST", "ADD : "+ bt.getAddress()+" the name is : "+bt.getName()+" the ... : ");
+                                    }
+
+                                    DialogFragment btDeviceDialogFragment = BTDeviceDialogFragment.newInstance(devices, "",
+                                            new BLDeviceClickCallback() {
+                                                @Override
+                                                public void onItemClickListener(BluetoothDevice o, boolean isLong) {
+                                                    BluetoothDevice bluetoothDevice = new Gson().fromJson(o.toString(), BluetoothDevice.class);
+                                                    BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+                                                    mobilePrinter = new BluetoothPort().btConnnect(requireContext(), bluetoothDevice.getAddress(), adapter, mobilePrinterHandler);
+                                                    User.storeMobilePrinterAddress(bluetoothDevice.getAddress(), requireContext());
+                                                    mobilePrinterPrint();
+
+                                                }
+                                            });
+                                    btDeviceDialogFragment.show(getParentFragmentManager(), BTDeviceDialogFragment.class.getSimpleName());
+
+
                                     dialog.dismiss();
                             }
                         }
@@ -353,6 +483,7 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
                     builder.setMessage(getString(R.string.select_printer_option)).setPositiveButton(getString(R.string.epson_printer), dialogClickListener)
+                            .setNeutralButton(getString(R.string.mobile_printer), dialogClickListener)
                             .setNegativeButton(getString(R.string.ipos_printer), dialogClickListener).show();
                 }
                 else {
@@ -383,13 +514,58 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
                                     viewModel.getOrderMutableLiveData().getValue().extractAllOrderedItems());
                         }
                     }
+                    else if(printOption.equalsIgnoreCase(User.MOBILE_PRINTER)){
+                        bluetoothOperation = new BluetoothOperation(requireContext(), mobilePrinterHandler);
+//                        bluetoothOperation.btAutoConn(requireContext(),  mobilePrinterHandler);
+
+                        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            Log.i("SDK TEST", "Permission connect to be called");
+                        }
+
+
+                        if (User.getPrinterBtAddress(requireContext()) == null){
+                            Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+                            List<BluetoothDevice> devices = new ArrayList<BluetoothDevice>();
+                            for(BluetoothDevice bt : pairedDevices){
+                                devices.add(bt);
+                                Log.i("SDK TEST", "ADD : "+ bt.getAddress()+" the name is : "+bt.getName()+" the ... : ");
+                            }
+                            DialogFragment btDeviceDialogFragment = BTDeviceDialogFragment.newInstance(devices, "",
+                                    new BLDeviceClickCallback() {
+                                        @Override
+                                        public void onItemClickListener(BluetoothDevice device, boolean isLong) {
+                                            BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+                                            mobilePrinter = new BluetoothPort().btConnnect(requireContext(), device.getAddress(), adapter, mobilePrinterHandler);
+                                            mobilePrinterPrint();
+                                        }
+                                    });
+                            btDeviceDialogFragment.show(getParentFragmentManager(), BTDeviceDialogFragment.class.getSimpleName());
+                        }
+                        else {
+                            BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+                            if (mobilePrinter == null){
+                                Log.i("SDK TEST", "Printer is null");
+                                mobilePrinter = new BluetoothPort().btConnnect(requireContext(), User.getPrinterBtAddress(requireContext()), adapter, mobilePrinterHandler);
+
+                            }else if (!mobilePrinter.isConnected()) {
+                                mobilePrinter.openConnection();
+                                Log.i("SDK TEST", "Printer not null");
+                            }
+                            mobilePrinterPrint();
+                        }
+                    }
                     else {
                         Toast.makeText(requireContext(), R.string.print_option_not_valid, Toast.LENGTH_LONG).show();
                     }
                 }
-
-
-
             }
         });
     }
@@ -402,7 +578,15 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
             @Override
             public void run() {
                 try{
-                    mIPosPrinterService.printerInit(callback);
+                    requireActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(requireContext(), "Printer init", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    if (mIPosPrinterService != null){
+                        mIPosPrinterService.printerInit(callback);
+                    }
                 }catch (RemoteException e){
                     e.printStackTrace();
                 }
@@ -410,11 +594,96 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
         });
     }
 
+    private void mobilePrinterPrint(){
+        if(!isMobilePrinterConnected && mobilePrinter == null) {
+            Log.i("SDK TEST", "Printer is null");
+            return;
+        }
+        new Thread(){
+            @Override
+            public void run() {
+               mobilePrinterPrint(mobilePrinter, viewModel.getOrderMutableLiveData().getValue(),
+                       viewModel.getOrderMutableLiveData().getValue().extractAllOrderedItems());
+
+            }
+        }.start();
+    }
+
+    public void mobilePrinterPrint(PrinterInstance mPrinter, Order order, List<OrderItem> orderItems) {
+
+        Log.i("SDK TEST", "Printing");
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 3;
+        Bitmap logoData = BitmapFactory.decodeFile(User.getPath(requireContext()), options);
+
+        mPrinter.init();
+
+        Business business = AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0);
+        List<User> users = AppDataBase.getInstance(requireContext()).userDao().getAllUsers();
+        String role = User.currentUser(requireContext()).getName();
+        for(int i=0; i<users.size(); i++){
+            if (users.get(i).getEmail().equals(User.currentUser(requireContext()).getEmail())){
+                role =(users.get(i).getName());
+                break;
+            }
+        }
+        String finalRole = role;
+        String date = "";
+        try {
+            date  = order.getCreated_at().replaceAll("T", " ");
+            binding.txtTime.setText(date.substring(0, date.indexOf(".")));
+        }catch (StringIndexOutOfBoundsException e){
+            date = (order.getCreated_at().replaceAll("T", " "));
+        }
+        mPrinter.setPrinter(PrinterConstants.Command.ALIGN, 1);
+        if (logoData != null)
+            mPrinter.printImage(logoData);
+        mPrinter.setFont(0, 0, 1, 0);
+        mPrinter.printText(business.getName()+"\n");
+        mPrinter.setFont(0, 0, 0, 0);
+        mPrinter.setPrinter(PrinterConstants.Command.ALIGN, 1);
+        mPrinter.printText(business.getPhone());
+        mPrinter.setPrinter(PrinterConstants.Command.PRINT_AND_WAKE_PAPER_BY_LINE, 1);
+        mPrinter.printText(business.getLocation()+"\n");
+        mPrinter.printText(getString(R.string.cashier)+" : "+ finalRole +" \n");
+        mPrinter.printText(getString(R.string.welcome)+" \n");
+        mPrinter.printText("---------------------\n");
+        mPrinter.setFont(0, 0, 0, 0);
+        Table table = new Table(getString(R.string.item)+" : "+ getString(R.string.qty).replaceAll("é", "e")+" : "+getString(R.string.price), ":", new int[]{17,3,11});
+        float total = 0;
+        for (int i=0; i  < orderItems.size(); i++){
+            total = (float) (total + (orderItems.get(i).getPrice() * orderItems.get(i).getQuantity()));
+            table.addRow(AppDataBase.getInstance(requireContext()).menuItemDao().
+                    getSpecificMenuItem(orderItems.get(i).getMenu_item_id()).getName()+" : "+
+                    orderItems.get(i).getQuantity()+" : "+
+                    (int) (orderItems.get(i).getQuantity() * orderItems.get(i).getPrice()));
+        }
+        table.addRow(getString(R.string.total)+": :"+(int)total+"XAF");
+        table.setColumnAlignRight(true);
+        mPrinter.printTable(table);
+        mPrinter.setPrinter(PrinterConstants.Command.ALIGN, 1);
+        mPrinter.printText("---------------------\n");
+        mPrinter.setFont(0, 0, 1, 0);
+        mPrinter.setFont(0, 0, 0, 0);
+        mPrinter.printText("Code : "+ order.getCode()+"\n");
+        mPrinter.printText( date+"\n");
+        mPrinter.printText(getString(R.string.thank_u_for_visit)+"\n");
+        mPrinter.printText("-----------------------\n\n\n");
+        mPrinter.setFont(0, 0, 0, 0);
+        mPrinter.setPrinter(PrinterConstants.Command.ALIGN, 0);
+        mPrinter.setPrinter(PrinterConstants.Command.PRINT_AND_WAKE_PAPER_BY_LINE, 3);
+
+        java.util.Timer timer = new java.util.Timer();
+        timer.schedule(new ExitTask(), 5000);
+
+    }
+
+
     public int getPrinterStatus(){
 
         Log.i(TAG,"***** printerStatus"+printerStatus);
         try{
-            printerStatus = mIPosPrinterService.getPrinterStatus();
+           printerStatus = mIPosPrinterService.getPrinterStatus();
         }catch (RemoteException e){
             e.printStackTrace();
         }
@@ -519,6 +788,7 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
                         binding.txtTime.setText(date.substring(0, date.indexOf(".")));
                     }catch (StringIndexOutOfBoundsException e){
                         date = (order.getCreated_at().replaceAll("T", " "));
+
                     }
 
 //                    mIPosPrinterService.printBitmap(1, 12, logoData, callback);
@@ -556,7 +826,7 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
                     mIPosPrinterService.printBlankLines(1, 16, callback);
                     mIPosPrinterService.printBlankLines(1, 16, callback);
 
-                    mIPosPrinterService.PrintSpecFormatText("*"+getString(R.string.thank_u_for_visit)+"*\n", "ST", 32, 1,
+                    mIPosPrinterService.PrintSpecFormatText("*"+getString(R.string.thank_u_for_visit)+"*\n"+getString(R.string.dont_hesitate_to_contact_us)+"", "ST", 32, 1,
                             callback);
 //                    bitmapRecycle(logoData);
                     mIPosPrinterService.printerPerformPrint(160,  callback);
@@ -581,9 +851,11 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
             AppDataBase.getInstance(requireContext()).courseDao().update(order.getCourses().get(i));
         }
         AppDataBase.getInstance(requireContext()).orderDao().update(order);
-        requireActivity().onBackPressed();
+//        requireActivity().onBackPressed();
         Toast.makeText(requireContext(), R.string.order_printed_success, Toast.LENGTH_LONG).show();
-        dismiss();
+
+//        java.util.Timer timer = new java.util.Timer();
+//        timer.schedule(new ExitTask(), 5000);
     }
 
 
@@ -661,16 +933,16 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
         final int barcodeWidth = 2;
         final int barcodeHeight = 100;
 
-        if (printer == null) {
+        if (epsonPrinter == null) {
             return false;
         }
 
         try {
             method = "addTextAlign";
-            printer.addTextAlign(Printer.ALIGN_CENTER);
+            epsonPrinter.addTextAlign(Printer.ALIGN_CENTER);
 
             method = "addImage";
-            printer.addImage(logoData, 0, 0,
+            epsonPrinter.addImage(logoData, 0, 0,
                     logoData.getWidth(),
                     logoData.getHeight(),
                     Printer.COLOR_1,
@@ -680,7 +952,7 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
                     Printer.COMPRESS_AUTO);
 
             method = "addFeedLine";
-            printer.addFeedLine(1);
+            epsonPrinter.addFeedLine(1);
             Business business = AppDataBase.getInstance(requireContext()).businessDao().getAllBusinesses().get(0);
             List<User> users = AppDataBase.getInstance(requireContext()).userDao().getAllUsers();
             String role = User.currentUser(requireContext()).getName();
@@ -698,7 +970,7 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
             textData.append(order.getCode()).append("\n");
             textData.append("------------------------------\n");
             method = "addText";
-            printer.addText(textData.toString());
+            epsonPrinter.addText(textData.toString());
             textData.delete(0, textData.length());
 
             float total = 0;
@@ -716,36 +988,36 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
 
             textData.append("------------------------------\n");
             method = "addText";
-            printer.addText(textData.toString());
+            epsonPrinter.addText(textData.toString());
             textData.delete(0, textData.length());
 
             method = "addText";
-            printer.addText(textData.toString());
+            epsonPrinter.addText(textData.toString());
             textData.delete(0, textData.length());
 
             method = "addTextSize";
-            printer.addTextSize(2, 2);
+            epsonPrinter.addTextSize(2, 2);
             method = "addText";
-            printer.addText("TOTAL "+total+" "+ getString(R.string.currency_cfa)+"\n");
+            epsonPrinter.addText("TOTAL "+total+" "+ getString(R.string.currency_cfa)+"\n");
             method = "addTextSize";
-            printer.addTextSize(1, 1);
+            epsonPrinter.addTextSize(1, 1);
             method = "addFeedLine";
-            printer.addFeedLine(1);
+            epsonPrinter.addFeedLine(1);
 
             textData.append("------------------------------\n");
             method = "addText";
-            printer.addText(textData.toString());
+            epsonPrinter.addText(textData.toString());
             textData.delete(0, textData.length());
 
             textData.append(getString(R.string.thank_u_for_visit)).append("!\n");
             method = "addText";
-            printer.addText(textData.toString());
+            epsonPrinter.addText(textData.toString());
             textData.delete(0, textData.length());
             method = "addFeedLine";
-            printer.addFeedLine(2);
+            epsonPrinter.addFeedLine(2);
 
             method = "addBarcode";
-            printer.addBarcode(order.getId()+"",
+            epsonPrinter.addBarcode(order.getId()+"",
                     Printer.BARCODE_CODE39,
                     Printer.HRI_BELOW,
                     Printer.FONT_A,
@@ -753,10 +1025,10 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
                     barcodeHeight);
 
             method = "addCut";
-            printer.addCut(Printer.CUT_FEED);
+            epsonPrinter.addCut(Printer.CUT_FEED);
         }
         catch (Exception e) {
-            printer.clearCommandBuffer();
+            epsonPrinter.clearCommandBuffer();
             ShowMsg.showException(e, method, requireContext());
             return false;
         }
@@ -767,23 +1039,23 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
     }
 
     private boolean printData() {
-        if (printer == null) {
+        if (epsonPrinter == null) {
             return false;
         }
 
         if (!connectPrinter()) {
-            printer.clearCommandBuffer();
+            epsonPrinter.clearCommandBuffer();
             return false;
         }
 
         try {
-            printer.sendData(Printer.PARAM_DEFAULT);
+            epsonPrinter.sendData(Printer.PARAM_DEFAULT);
         }
         catch (Exception e) {
-            printer.clearCommandBuffer();
+            epsonPrinter.clearCommandBuffer();
             ShowMsg.showException(e, "sendData", requireContext());
             try {
-                printer.disconnect();
+                epsonPrinter.disconnect();
             }
             catch (Exception ex) {
                 // Do nothing
@@ -813,7 +1085,7 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
     private boolean initializeObject() {
         try {
 
-            printer = new Printer(Printer.TM_M30,
+            epsonPrinter = new Printer(Printer.TM_M30,
                     Printer.MODEL_ANK,
                     requireContext());
         }
@@ -822,28 +1094,28 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
             return false;
         }
 
-        printer.setReceiveEventListener(this);
+        epsonPrinter.setReceiveEventListener(this);
 
         return true;
     }
 
     private void finalizeObject() {
-        if (printer == null) {
+        if (epsonPrinter == null) {
             return;
         }
 
-        printer.setReceiveEventListener(null);
+        epsonPrinter.setReceiveEventListener(null);
 
-        printer = null;
+        epsonPrinter = null;
     }
 
     private boolean connectPrinter() {
-        if (printer == null) {
+        if (epsonPrinter == null) {
             return false;
         }
 
         try {
-            printer.connect(User.getPrinterModelTarget(requireContext()), Printer.PARAM_DEFAULT);
+            epsonPrinter.connect(User.getPrinterModelTarget(requireContext()), Printer.PARAM_DEFAULT);
         }
         catch (Exception e) {
             ShowMsg.showException(e, "connect", requireContext());
@@ -854,17 +1126,17 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
     }
 
     private void disconnectPrinter() {
-        if (printer == null) {
+        if (epsonPrinter == null) {
             return;
         }
 
         while (true) {
             try {
-                printer.disconnect();
+                epsonPrinter.disconnect();
                 break;
             } catch (final Exception e) {
                 if (e instanceof Epos2Exception) {
-                    //Note: If printer is processing such as printing and so on, the disconnect API returns ERR_PROCESSING.
+                    //Note: If epsonPrinter is processing such as printing and so on, the disconnect API returns ERR_PROCESSING.
                     if (((Epos2Exception) e).getErrorStatus() == Epos2Exception.ERR_PROCESSING) {
                         try {
                             Thread.sleep(DISCONNECT_INTERVAL);
@@ -889,7 +1161,7 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
             }
         }
 
-        printer.clearCommandBuffer();
+        epsonPrinter.clearCommandBuffer();
     }
 
     public static Bitmap drawableToBitmap (Drawable drawable) {
@@ -907,7 +1179,7 @@ public class OrderDetailDialogFragment extends DialogFragment implements Receive
     }
 
     @Override
-    public void onPtrReceive(Printer printer, final int code, final PrinterStatusInfo status, final String printJobId) {
+    public void onPtrReceive(Printer epsonPrinter, final int code, final PrinterStatusInfo status, final String printJobId) {
         requireActivity().runOnUiThread(new Runnable() {
             @Override
             public synchronized void run() {

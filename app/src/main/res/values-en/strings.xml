@@ -336,4 +336,13 @@
     <string name="course_mode">course mode</string>
     <string name="cashed_in">Cashed In</string>
     <string name="cash_in">Cash In</string>
+    <string name="device_list">Device list</string>
+    <string name="yesconn">Yes connected\n</string>
+    <string name="conn_failed">Connection failed</string>
+    <string name="conn_closed">Connection closed</string>
+    <string name="conn_no">No connected devices</string>
+    <string name="mobile_printer">Mobile printer</string>
+    <string name="located_at">Located at</string>
+    <string name="item">Item</string>
+    <string name="dont_hesitate_to_contact_us">Don\'t hesitate to contact us.</string>
 </resources>

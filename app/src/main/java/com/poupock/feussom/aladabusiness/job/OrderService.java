@@ -1,14 +1,12 @@
 package com.poupock.feussom.aladabusiness.job;
 
 import android.app.Notification;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -31,8 +29,6 @@ import com.poupock.feussom.aladabusiness.web.PostTask;
 import com.poupock.feussom.aladabusiness.web.ServerUrl;
 import com.poupock.feussom.aladabusiness.web.response.DataResponse;
 import com.poupock.feussom.aladabusiness.web.response.DatumResponse;
-
-import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -110,7 +106,7 @@ public class OrderService extends Service {
 
                         @Override
                         public void onSuccess(String response) {
-                            Log.i(tag, "RESPONSE : "+response);
+//                            Log.i(tag, "RESPONSE : "+response);
                             Gson gson = new Gson();
                             DataResponse dataResponse = gson.fromJson(response, DataResponse.class);
                             if (dataResponse.success){
@@ -132,7 +128,7 @@ public class OrderService extends Service {
                                     }
                                 }
                             }
-                            Log.i(tag, "The DB Time : "+Methods.getDBCurrentTimeStamp());
+//                            Log.i(tag, "The DB Time : "+Methods.getDBCurrentTimeStamp());
                             User.storeLastSync(Methods.getDBCurrentTimeStamp(), getApplicationContext());
                         }
 
@@ -149,7 +145,7 @@ public class OrderService extends Service {
     }
 
     void post(CountDownTimer timer){
-        Log.i(tag,  "Restarting the JOB");
+//        Log.i(tag,  "Restarting the JOB");
         List<Order> orders = AppDataBase.getInstance(this).orderDao().getToBeUploadedOrders();
         for (int i = 0;  i<orders.size();  i ++){
             orders.get(i).setCourses(AppDataBase.getInstance(this).courseDao().getOrderCourses(orders.get(i).getId()));
@@ -162,8 +158,8 @@ public class OrderService extends Service {
         }
         int business_id = AppDataBase.getInstance(this).businessDao().getAllBusinesses().get(0).getId();
    ;
-        Log.i(tag,  "the url is  : "+ ServerUrl.ORDER_LIST_POST);
-        Log.i(tag,  "the params are : "+ Order.buildArrayParams(orders,  business_id));
+//        Log.i(tag,  "the url is  : "+ ServerUrl.ORDER_LIST_POST);
+//        Log.i(tag,  "the params are : "+ Order.buildArrayParams(orders,  business_id));
         new PostTask(this, ServerUrl.ORDER_LIST_POST,  Order.buildArrayParams(orders,  business_id),
                 new VolleyRequestCallback() {
                     @Override
@@ -212,17 +208,19 @@ public class OrderService extends Service {
                     OrderItem orderItem = course.getOrderItems().get(k);
                     OrderItem dbOrderItem = dataBase.orderItemDao()
                             .getSpecificOrderItem(orderItem.getMenu_item_id(), dbCourse.getId());
-                    dbOrderItem.setQuantity(orderItem.getQuantity());
-                    dbOrderItem.setPrice(orderItem.getPrice());
-                    dbOrderItem.setCreated_at(orderItem.getCreated_at());
-                    dbOrderItem.setUpdated_at(orderItem.getUpdated_at());
-                    dbOrderItem.setUploaded_at(orderItem.getUpdated_at());
+
                     if (dbOrderItem != null){
-                        Log.i(tag, "Updating orderItem : "+ dbOrderItem.toString() +" with "+orderItem.toString());
+//                        Log.i(tag, "Updating orderItem : "+ dbOrderItem.toString() +" with "+orderItem.toString());
+
+                        dbOrderItem.setQuantity(orderItem.getQuantity());
+                        dbOrderItem.setPrice(orderItem.getPrice());
+                        dbOrderItem.setCreated_at(orderItem.getCreated_at());
+                        dbOrderItem.setUpdated_at(orderItem.getUpdated_at());
+                        dbOrderItem.setUploaded_at(orderItem.getUpdated_at());
                         long up = dataBase.orderItemDao().update(dbOrderItem);
-                        if (up > 0) Log.i(tag, "Updated");
+//                        if (up > 0) Log.i(tag, "Updated");
                     }else {
-                        Log.i(tag, "Inserting");
+//                        Log.i(tag, "Inserting");
                         try {
                             dataBase.orderItemDao().insert(orderItem);
                         }catch (SQLiteConstraintException exception){

@@ -12,8 +12,8 @@ android {
         applicationId "com.poupock.feussom.aladabusiness"
         minSdkVersion 22
         targetSdkVersion 33
-        versionCode 10
-        versionName "0.2"
+        versionCode 14
+        versionName "0.38"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
@@ -36,16 +36,21 @@ android {
     buildFeatures {
         viewBinding true
     }
+    sourceSets.main {
+        jniLibs.srcDir 'libs'
+    }
 }
 
 dependencies {
 
     implementation 'androidx.preference:preference:1.1.1'
+    implementation files('libs/androidprintsdk.jar')
     def lifecycle_version = "2.4.0-alpha03"
     def room_version = "2.4.3"
 
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation fileTree(include: ['*.jar'], dir: 'aidl')
+//    implementation fileTree(dir: 'libs', include: '*.jar')
+    implementation files('libs/ePOS2.jar')
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'

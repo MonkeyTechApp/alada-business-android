@@ -2,7 +2,6 @@ package com.poupock.feussom.aladabusiness.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.util.Log;
 
 import androidx.room.Entity;
@@ -11,17 +10,16 @@ import androidx.room.PrimaryKey;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.annotations.SerializedName;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 @Entity(tableName = "users")
 public class User {
 
+    public static final String MOBILE_PRINTER = "MOBILE_PRINTER";
     @Ignore
     private static final String tag = User.class.getSimpleName();
     public static final String LAST_SYNC_TIME = "LAST_SYNC";
@@ -33,6 +31,7 @@ public class User {
 
     public static final String SALE_DIRECT_MODE = "DIRECT_SALE_MODE";
     public static final String SALE_COURSE_MODE = "COURSE_SALE_MODE";
+    private static final String PRINTER_BT_ADDRESS = "PRINTER_BLUETOOTH";
 
     @PrimaryKey(autoGenerate = true)
     int id;
@@ -206,6 +205,11 @@ public class User {
         return preferences.getString(PRINTER_OPTION, null);
     }
 
+    public static String  getPrinterBtAddress(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE);
+        return preferences.getString(PRINTER_BT_ADDRESS, null);
+    }
+
     public static String  getSaleMode(Context context) {
         SharedPreferences preferences = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE);
         return preferences.getString(SALE_OPTION, SALE_COURSE_MODE);
@@ -346,6 +350,13 @@ public class User {
     public static boolean storePrinterModelTarget(String printerModelTarget, Context context) {
         SharedPreferences.Editor editor = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE).edit();
         editor.putString(PRINTER_EPSON_MODEL_TARGET, printerModelTarget);
+        editor.apply();
+        return editor.commit();
+    }
+
+    public static boolean storeMobilePrinterAddress(String printerBTAddress, Context context) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(Constant._Preference_name, Context.MODE_PRIVATE).edit();
+        editor.putString(PRINTER_BT_ADDRESS, printerBTAddress);
         editor.apply();
         return editor.commit();
     }
