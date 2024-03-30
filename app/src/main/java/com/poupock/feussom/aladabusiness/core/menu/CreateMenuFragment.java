@@ -127,7 +127,7 @@ public class CreateMenuFragment extends Fragment implements View.OnClickListener
                                                 MenuItem serverMenuItem = MenuItem.getFromObject(datumResponse.data);
                                                 MenuItem menuItem = new MenuItem(serverMenuItem.getId(), name,price, "", "",
                                                         viewModel.getMenuItemCategoryLiveData().getValue().getId(), User.currentUser(requireContext()).getId(),
-                                                        serverMenuItem.getPrice(),serverMenuItem.getCreated_at());
+                                                        serverMenuItem.getPrice(),serverMenuItem.getCreated_at(),"");
 
                                                 Objects.requireNonNull(viewModel.getMenuItemLiveData().getValue()).setName(name);
                                                 viewModel.getMenuItemLiveData().getValue().setPrice(Double.parseDouble(price));
@@ -181,7 +181,7 @@ public class CreateMenuFragment extends Fragment implements View.OnClickListener
                                                 MenuItem serverMenuItem = MenuItem.getFromObject(datumResponse.data);
                                                 MenuItem menuItem = new MenuItem(serverMenuItem.getId(), name,price, "", "",
                                                         viewModel.getMenuItemCategoryLiveData().getValue().getId(), User.currentUser(requireContext()).getId(),
-                                                        serverMenuItem.getPrice(),serverMenuItem.getCreated_at());
+                                                        serverMenuItem.getPrice(),serverMenuItem.getCreated_at(),"");
 
                                                 Objects.requireNonNull(viewModel.getMenuItemLiveData().getValue()).setName(name);
                                                 viewModel.getMenuItemLiveData().getValue().setPrice(Double.parseDouble(price));

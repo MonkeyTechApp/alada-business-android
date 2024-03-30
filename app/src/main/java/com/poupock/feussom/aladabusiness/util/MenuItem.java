@@ -23,12 +23,16 @@ public class MenuItem {
     private int user_id;
     private double price;
     private String created_at;
+    String product_ids;
+    @Ignore
+    List<Product> product_list;
     @Ignore User creator;
     @Ignore private MenuItemCategory menuItemCategory;
 
     public MenuItem(int id, String name, String description, String pic_local_path, String pic_server_path,
-                    int menu_category_id, int user_id, double price, String created_at) {
+                    int menu_category_id, int user_id, double price, String created_at, String product_ids) {
         this.id = id;
+        this.product_ids = product_ids;
         this.name = name;
         this.description = description;
         this.pic_local_path = pic_local_path;
@@ -42,8 +46,9 @@ public class MenuItem {
     @Ignore
     public MenuItem(int id, String name, String description, String pic_local_path, String pic_server_path,
                     int menu_category_id, int user_id, double price, User creator, MenuItemCategory menuItemCategory,
-                    String created_at) {
+                    String created_at, List<Product> product_list, String product_ids) {
         this.id = id;
+        this.product_ids = product_ids;
         this.name = name;
         this.description = description;
         this.pic_local_path = pic_local_path;
@@ -54,6 +59,7 @@ public class MenuItem {
         this.created_at = created_at;
         this.creator = creator;
         this.menuItemCategory = menuItemCategory;
+        this.product_list = product_list;
     }
 
     @Ignore
@@ -65,14 +71,19 @@ public class MenuItem {
     public MenuItem() {
     }
 
-    public static int getMenuIndexInList(List<OrderItem> orderItems, MenuItem menuItem) {
+    public static int getMenuIndexInList(List<OrderItem> orderItems, MenuItem menuItem, Variation variation) {
         int index = -1;
         if(orderItems == null)
             return -1;
 
         for (int i =0; i <orderItems.size(); i++){
-            if(orderItems.get(i).getMenu_item_id() == menuItem.getId()){
-                index = i;
+            if(orderItems.get(i).getMenu_item_id() == menuItem.getId() ){
+                if (variation != null){
+                    if(orderItems.get(i).getVariation_id().trim().equalsIgnoreCase(variation.getId()+"")){
+                        index = i;
+                    }
+                }
+                else index = i;
             }
         }
         return index;
@@ -171,6 +182,22 @@ public class MenuItem {
         return gson.fromJson(gson.toJson(data), MenuItem.class);
     }
 
+    public String getProduct_ids() {
+        return product_ids;
+    }
+
+    public void setProduct_ids(String product_ids) {
+        this.product_ids = product_ids;
+    }
+
+    public List<Product> getProductList() {
+        return product_list;
+    }
+
+    public void setProductList(List<Product> products) {
+        this.product_list = products;
+    }
+
     public static List<MenuItem> buildListFromObjects(List<Object> data) {
         List<MenuItem> values = new ArrayList<>();
         if (data != null){
@@ -179,5 +206,16 @@ public class MenuItem {
             }
         }
         return values;
+    }
+
+    public List<Variation> getVariations() {
+        for (Product p : product_list){
+            if (p.getVariations().size() > 0) {
+                for (Variation v : p.getVariations()) v.setItemPrice(this.price+v.getPrice_adjustment());
+
+                return p.getVariations();
+            }
+        }
+        return new ArrayList<>();
     }
 }

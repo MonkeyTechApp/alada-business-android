@@ -407,4 +407,6 @@
     <string name="located_at">Located at</string>
     <string name="item">Item</string>
     <string name="dont_hesitate_to_contact_us">Don\'t hesitate to contact us.</string>
+    <string name="please_select_option">Please select an option</string>
+    <string name="size">"Size "</string>
 </resources>

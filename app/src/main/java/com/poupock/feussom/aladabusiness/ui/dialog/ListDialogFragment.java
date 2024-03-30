@@ -12,23 +12,26 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.ListItemClickCallback;
-import com.poupock.feussom.aladabusiness.core.menu.ListFragment;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.databinding.DialogListBinding;
 import com.poupock.feussom.aladabusiness.ui.adapter.GuestTableAdapter;
 import com.poupock.feussom.aladabusiness.ui.adapter.OrderAdapter;
+import com.poupock.feussom.aladabusiness.ui.adapter.VariationAdapter;
 import com.poupock.feussom.aladabusiness.ui.fragment.order.OrderViewModel;
 import com.poupock.feussom.aladabusiness.util.Constant;
 import com.poupock.feussom.aladabusiness.util.GuestTable;
 import com.poupock.feussom.aladabusiness.util.Order;
+import com.poupock.feussom.aladabusiness.util.Variation;
+
+import java.util.List;
 
 public class ListDialogFragment extends DialogFragment {
 
@@ -135,6 +138,20 @@ public class ListDialogFragment extends DialogFragment {
                 dismiss();
             }
 
+        }
+        else if(mParam1.equalsIgnoreCase(Variation.class.getSimpleName())){
+            List<Variation> variations = new Gson().fromJson(mParam2,
+                    new TypeToken<List<Variation>>(){}.getType());
+            binding.list.setLayoutManager(new LinearLayoutManager(requireContext()));
+            binding.text.setText(R.string.please_select_option);
+            binding.list.setAdapter(new VariationAdapter(requireContext(), variations,
+                    new ListItemClickCallback() {
+                        @Override
+                        public void onItemClickListener(Object o, boolean isLong) {
+                            mCallback.onItemClickListener(o, isLong);
+                            dismiss();
+                        }
+                    }));
         }
     }
 }

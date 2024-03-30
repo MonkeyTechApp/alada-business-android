@@ -3,24 +3,15 @@ package com.poupock.feussom.aladabusiness.ui.fragment.order;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -32,7 +23,6 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -44,7 +34,6 @@ import com.poupock.feussom.aladabusiness.callback.DialogCallback;
 import com.poupock.feussom.aladabusiness.callback.ListItemClickCallback;
 import com.poupock.feussom.aladabusiness.callback.ProcessCallback;
 import com.poupock.feussom.aladabusiness.callback.VolleyRequestCallback;
-import com.poupock.feussom.aladabusiness.core.menu.ListMenuFragment;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.databinding.FragmentCreateOrderBinding;
 import com.poupock.feussom.aladabusiness.ui.adapter.CourseAdapter;
@@ -62,15 +51,13 @@ import com.poupock.feussom.aladabusiness.util.Methods;
 import com.poupock.feussom.aladabusiness.util.Order;
 import com.poupock.feussom.aladabusiness.util.OrderItem;
 import com.poupock.feussom.aladabusiness.util.User;
+import com.poupock.feussom.aladabusiness.util.Variation;
 import com.poupock.feussom.aladabusiness.util.relation.CourseWithItemListRelation;
 import com.poupock.feussom.aladabusiness.util.relation.OrderCourseListRelation;
 import com.poupock.feussom.aladabusiness.web.PostTask;
 import com.poupock.feussom.aladabusiness.web.ServerUrl;
 import com.poupock.feussom.aladabusiness.web.response.DatumResponse;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -175,6 +162,7 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                                 {
                                     if(!isLong)
                                     {
+
                                         Order order = orderViewModel.getOrderMutableLiveData().getValue();
                                         if(order != null){
                                             if(order.getCourseList() != null){
@@ -184,49 +172,24 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
                                                     Course course = order.getCourseList().get(courseIndex);
                                                     Log.i(TAG,"The course index is "+course.getTitle()+" and the status is "+course.getStatus());
                                                     MenuItem menuItem = gson.fromJson(gson.toJson(o), MenuItem.class);
-                                                    int menuItemIndex = MenuItem.getMenuIndexInList(course.getOrderItems(),menuItem);
-                                                    Log.i(TAG,"The menu item in the list is index : "+menuItemIndex);
-                                                    OrderItem orderItem;
-                                                    if(menuItemIndex < 0){
-                                                        Log.i(TAG,"The menu item is new and item is "+ menuItem.getName()+ " and the id : "+menuItem.getId());
-                                                        orderItem = new OrderItem();
-                                                        orderItem.setCourse_id(course.getId());
-                                                        orderItem.setCourse(course);
-                                                        orderItem.setMenuItem(menuItem);
-                                                        orderItem.setMenu_item_id(menuItem.getId());
-                                                        orderItem.setQuantity(1);
-                                                        orderItem.setCreated_at(Methods.getCurrentTimeStamp());
-                                                        orderItem.setPrice(menuItem.getPrice());
-                                                        orderItem.setUpdated_at((new Date().getTime()));
-                                                        AppDataBase.getInstance(requireContext()).orderItemDao().insert(orderItem); // add the new added order item to the DB.
-                                                        orderItem =
-                                                                AppDataBase.getInstance(requireContext()).orderItemDao().getOrderByCourseIdAndMenuItem(course.getId(),menuItem.getId());
-                                                    }
-                                                    else {
-                                                        orderItem = course.getOrderItems().get(menuItemIndex);
-                                                        orderItem.setQuantity(orderItem.getQuantity() + 1);
-                                                        Log.i(TAG,"Setting the quantity upper "+orderItem.getQuantity());
-                                                        orderItem.setUpdated_at((new Date().getTime()));
-                                                        AppDataBase.getInstance(requireContext()).orderItemDao().update(orderItem);
+                                                    final Variation[] variation = {null};
+                                                    if (menuItem.getVariations().size()>0){
+                                                        ListDialogFragment fragment = ListDialogFragment.newInstance(Variation.class.getSimpleName(),
+                                                                new Gson().toJson(menuItem.getVariations()),
+                                                                new ListItemClickCallback() {
+                                                                    @Override
+                                                                    public void onItemClickListener(Object o, boolean isLong) {
+                                                                        //TODO
+                                                                        variation[0] = gson.fromJson(gson.toJson(o), Variation.class);
+                                                                        handleActualise(course, menuItem, variation[0], order, courseIndex);
+                                                                    }
+                                                                });
+                                                        fragment.show(requireActivity().getSupportFragmentManager(), ListDialogFragment.class.getSimpleName());
 
                                                     }
-                                                    if(course.getOrderItems() != null){
-                                                        Log.i(TAG, "The course has a list of items");
-                                                        if(menuItemIndex < 0) course.getOrderItems().add(orderItem);
-                                                        else course.getOrderItems().set(menuItemIndex, orderItem);
-                                                    }
                                                     else {
-                                                        Log.i(TAG, "The course has no items");
-                                                        List<OrderItem> orderItems = new ArrayList<>();
-                                                        orderItems.add(orderItem);
-                                                        course.setOrderItems(orderItems);
+                                                        handleActualise(course, menuItem, null, order, courseIndex);
                                                     }
-                                                    order.getCourseList().set(courseIndex, course); // set the course to its new value
-                                                    Log.i(TAG,"The order course has been updated");
-                                                    orderViewModel.setOrderMutableLiveData(order);
-                                                    actualiseOrderView(orderViewModel.getOrderMutableLiveData().getValue());
-//                                                if(orderViewModel.getGuestTableMutableLiveData().getValue()!=null)
-//                                                    actualiseOrderView((orderViewModel.getGuestTableMutableLiveData().getValue()));
                                                 }
                                                 else {
                                                     Toast.makeText(requireContext(), R.string.please_select_add_a_course, Toast.LENGTH_LONG).show();
@@ -761,6 +724,55 @@ public class CreateOrderFragment extends Fragment implements View.OnClickListene
 
             }
         }
+    }
+
+    void handleActualise(Course course, MenuItem menuItem, Variation variation, Order order, int courseIndex){
+
+        int menuItemIndex = MenuItem.getMenuIndexInList(course.getOrderItems(),menuItem, variation);
+        Log.i(TAG,"The menu item in the list is index : "+menuItemIndex);
+        OrderItem orderItem;
+        if(menuItemIndex < 0){
+            Log.i(TAG,"The menu item is new and item is "+ menuItem.getName()+ " and the id : "+menuItem.getId());
+            orderItem = new OrderItem();
+            orderItem.setCourse_id(course.getId());
+            orderItem.setCourse(course);
+            orderItem.setMenuItem(menuItem);
+            orderItem.setMenu_item_id(menuItem.getId());
+            if(variation != null) orderItem.setVariation_id(variation.getId()+"");
+            orderItem.setQuantity(1);
+            orderItem.setCreated_at(Methods.getCurrentTimeStamp());
+            double  price = (variation == null) ? (menuItem.getPrice()) : (variation.getPrice_adjustment()+menuItem.getPrice());
+            orderItem.setPrice(price);
+            orderItem.setUpdated_at((new Date().getTime()));
+            AppDataBase.getInstance(requireContext()).orderItemDao().insert(orderItem); // add the new added order item to the DB.
+            orderItem =
+                    AppDataBase.getInstance(requireContext()).orderItemDao().getOrderByCourseIdAndMenuItem(course.getId(),menuItem.getId());
+        }
+        else {
+            orderItem = course.getOrderItems().get(menuItemIndex);
+            orderItem.setQuantity(orderItem.getQuantity() + 1);
+            Log.i(TAG,"Setting the quantity upper "+orderItem.getQuantity());
+            orderItem.setUpdated_at((new Date().getTime()));
+            AppDataBase.getInstance(requireContext()).orderItemDao()    .update(orderItem);
+
+        }
+        if(course.getOrderItems() != null){
+            Log.i(TAG, "The course has a list of items");
+            if(menuItemIndex < 0) course.getOrderItems().add(orderItem);
+            else course.getOrderItems().set(menuItemIndex, orderItem);
+        }
+        else {
+            Log.i(TAG, "The course has no items");
+            List<OrderItem> orderItems = new ArrayList<>();
+            orderItems.add(orderItem);
+            course.setOrderItems(orderItems);
+        }
+        order.getCourseList().set(courseIndex, course); // set the course to its new value
+        Log.i(TAG,"The order course has been updated");
+        orderViewModel.setOrderMutableLiveData(order);
+        actualiseOrderView(orderViewModel.getOrderMutableLiveData().getValue());
+//                                                if(orderViewModel.getGuestTableMutableLiveData().getValue()!=null)
+//                                                    actualiseOrderView((orderViewModel.getGuestTableMutableLiveData().getValue()));
     }
 
 }

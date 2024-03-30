@@ -17,9 +17,12 @@ import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.ListItemClickCallback;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.util.MenuItem;
+import com.poupock.feussom.aladabusiness.util.Product;
+import com.poupock.feussom.aladabusiness.util.Variation;
 import com.poupock.feussom.aladabusiness.web.ServerUrl;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MenuItemAdapter extends RecyclerView.Adapter<MenuItemAdapter.MenuItemViewHolder> {
@@ -72,6 +75,22 @@ public class MenuItemAdapter extends RecyclerView.Adapter<MenuItemAdapter.MenuIt
         MenuItem menuItem = this.menuItems.get(position);
         Log.i(tag,  "The menu is : "+new Gson().toJson(menuItem));
 
+        if (menuItem.getProduct_ids() != null){
+            String[] strings = menuItem.getProduct_ids().split(",");
+            List<Product> products = new ArrayList<>();
+            for (String s  : strings){
+                Log.i(tag,  s);
+                try {
+                    Product product = AppDataBase.getInstance(context).productDao().getSpecificProduct(Integer.parseInt(s));
+                    Log.i(tag, "The product is : "+product.getName());
+                    List<Variation> variations = AppDataBase.getInstance(context).variationDao().getSpecificProductItems(Integer.parseInt(s));
+                    Log.i(tag, "The variation size : "+variations.size());
+                    product.setVariations(variations);
+                    products.add(product);
+                }catch (NumberFormatException ex){}
+            }
+            menuItem.setProductList(products);
+        }
         holder.txtPrice.setText(menuItem.getPrice()+" "+context.getString(R.string.currency_cfa));
         holder.txtName.setText(menuItem.getName());
         if(!isGrid)

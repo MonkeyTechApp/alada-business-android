@@ -2,20 +2,18 @@ package com.poupock.feussom.aladabusiness.core.auth;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.android.volley.VolleyError;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
@@ -24,21 +22,21 @@ import com.google.gson.reflect.TypeToken;
 import com.poupock.feussom.aladabusiness.R;
 import com.poupock.feussom.aladabusiness.callback.VolleyRequestCallback;
 import com.poupock.feussom.aladabusiness.core.dashboard.DashboardActivity;
-import com.poupock.feussom.aladabusiness.core.menu.CreateMenuFragment;
 import com.poupock.feussom.aladabusiness.database.AppDataBase;
 import com.poupock.feussom.aladabusiness.databinding.FragmentLoginBinding;
 import com.poupock.feussom.aladabusiness.util.Business;
+import com.poupock.feussom.aladabusiness.util.MenuItem;
 import com.poupock.feussom.aladabusiness.util.Methods;
+import com.poupock.feussom.aladabusiness.util.Product;
 import com.poupock.feussom.aladabusiness.util.User;
+import com.poupock.feussom.aladabusiness.util.Variation;
 import com.poupock.feussom.aladabusiness.web.PostTask;
 import com.poupock.feussom.aladabusiness.web.ServerUrl;
 import com.poupock.feussom.aladabusiness.web.response.Connection;
 
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 public class LoginFragment extends Fragment implements View.OnClickListener {
@@ -132,7 +130,29 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                                                         for(int j=0; j<business.getMenuItemCategories().size(); j++){
                                                             dataBase.menuItemCategoryDao().insert(business.getMenuItemCategories().get(j));
                                                             for(int k=0;k<business.getMenuItemCategories().get(j).getMenus().size(); k++){
-                                                                dataBase.menuItemDao().insert(business.getMenu_categories().get(j).getMenus().get(k));
+                                                                MenuItem menuItem = business.getMenuItemCategories().get(j).getMenus().get(k);
+                                                                StringBuilder list = new StringBuilder();
+                                                                Log.i(TAG, "the menu : "+gson.toJson(menuItem));
+                                                                try{
+                                                                    for (Product p : menuItem.getProductList()){
+                                                                        list.append(p.getId()).append(",");
+                                                                        long l = (dataBase.productDao().getSpecificProduct(p.getId()) == null) ?
+                                                                                dataBase.productDao().insert(p) : dataBase.productDao().update(p);
+                                                                        if(p.getVariations() != null){
+                                                                            for (Variation v : p.getVariations()){
+                                                                                Log.i(TAG, "The variation added : "+v.getSize());
+                                                                                long l1 = (dataBase.variationDao().getSpecificVariation(v.getId()) == null) ?
+                                                                                        dataBase.variationDao().insert(v) : dataBase.variationDao().update(v);
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }catch (NullPointerException ex){
+                                                                    Log.i(TAG, "The error is : "+ex.toString());
+                                                                }
+
+                                                                menuItem.setProduct_ids(list.toString());
+                                                                dataBase.menuItemDao().insert(menuItem);
+                                                                // TODO Add variations
                                                             }
                                                         }
 

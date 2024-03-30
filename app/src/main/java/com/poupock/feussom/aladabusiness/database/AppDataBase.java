@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.room.AutoMigration;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -20,8 +19,10 @@ import com.poupock.feussom.aladabusiness.database.dao.MenuItemCategoryDao;
 import com.poupock.feussom.aladabusiness.database.dao.MenuItemDao;
 import com.poupock.feussom.aladabusiness.database.dao.OrderDao;
 import com.poupock.feussom.aladabusiness.database.dao.OrderItemDao;
+import com.poupock.feussom.aladabusiness.database.dao.ProductDao;
 import com.poupock.feussom.aladabusiness.database.dao.RoleDao;
 import com.poupock.feussom.aladabusiness.database.dao.UserDao;
+import com.poupock.feussom.aladabusiness.database.dao.VariationDao;
 import com.poupock.feussom.aladabusiness.util.Business;
 import com.poupock.feussom.aladabusiness.util.Constant;
 import com.poupock.feussom.aladabusiness.util.Course;
@@ -32,16 +33,18 @@ import com.poupock.feussom.aladabusiness.util.MenuItemCategory;
 import com.poupock.feussom.aladabusiness.util.Order;
 import com.poupock.feussom.aladabusiness.util.OrderItem;
 import com.poupock.feussom.aladabusiness.util.PaymentMethod;
+import com.poupock.feussom.aladabusiness.util.Product;
 import com.poupock.feussom.aladabusiness.util.Role;
 import com.poupock.feussom.aladabusiness.util.User;
+import com.poupock.feussom.aladabusiness.util.Variation;
 
 import java.util.UUID;
 
 
 @Database(
-    version = 9,
+    version = 10,
     entities = {User.class, Role.class, InternalPoint.class, MenuItemCategory.class, MenuItem.class, GuestTable.class,
-    Course.class, OrderItem.class, Order.class, Business.class, PaymentMethod.class}
+    Course.class, OrderItem.class, Order.class, Business.class, PaymentMethod.class, Variation.class, Product.class}
 //    autoMigrations = {
 //        @AutoMigration(
 //            from = 6,
@@ -64,6 +67,8 @@ public abstract class AppDataBase extends RoomDatabase {
     public abstract InternalPointDao internalPointDao();
     public abstract GuestTableDao guestTableDao();
     public abstract CourseDao courseDao();
+    public abstract ProductDao productDao();
+    public abstract VariationDao variationDao();
 
     static final Migration MIGRATION_7_8 = new Migration(6, 7) {
         @Override
@@ -98,6 +103,16 @@ public abstract class AppDataBase extends RoomDatabase {
         }
     };
 
+    static final Migration MIGRATION_9_10 = new Migration(9, 10) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE `order_items` "
+                    + " ADD COLUMN `variation_id` INTEGER NOT NULL DEFAULT 0");
+            database.execSQL("ALTER TABLE `menu_items` "
+                    + " ADD COLUMN `product_ids` TEXT NOT NULL DEFAULT ' ' ");
+        }
+    };
+
     public static synchronized AppDataBase getInstance(Context context)
     {
         if(instance==null)
@@ -107,7 +122,7 @@ public abstract class AppDataBase extends RoomDatabase {
                     .addCallback(roomCallback)
                     .allowMainThreadQueries()
                     .fallbackToDestructiveMigration()
-                    .addMigrations(MIGRATION_8_9)
+                    .addMigrations(MIGRATION_9_10)
                     .build();
         }
 

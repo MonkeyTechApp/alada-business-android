@@ -27,13 +27,28 @@ public class OrderItem {
     private int course_id;
     private long uploaded_at;
     private long updated_at;
+    private String variation_id;
     @Ignore
     private Course course;
     @Ignore
     private MenuItem menuItem;
 
     public OrderItem(int id, int menu_item_id, double price, String created_at, int quantity, int course_id
-        , long uploaded_at , long updated_at) {
+        , long uploaded_at , long updated_at, String variation_id) {
+        this.id = id;
+        this.variation_id = variation_id;
+        this.menu_item_id = menu_item_id;
+        this.price = price;
+        this.created_at = created_at;
+        this.quantity = quantity;
+        this.course_id = course_id;
+        this.updated_at = updated_at;
+        this.uploaded_at = uploaded_at;
+    }
+
+    @Ignore
+    public OrderItem(int id, int menu_item_id, double price, String created_at, int quantity, int course_id
+            , long uploaded_at , long updated_at) {
         this.id = id;
         this.menu_item_id = menu_item_id;
         this.price = price;
@@ -194,6 +209,14 @@ public class OrderItem {
     public static OrderItem getObjectFromObject(Object data) {
         Gson gson = new Gson();
         return gson.fromJson(gson.toJson(data), OrderItem.class);
+    }
+
+    public String getVariation_id() {
+        return variation_id;
+    }
+
+    public void setVariation_id(String variation_id) {
+        this.variation_id = variation_id;
     }
 
     @NonNull

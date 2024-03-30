@@ -7,11 +7,8 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.poupock.feussom.aladabusiness.util.MenuItem;
-import com.poupock.feussom.aladabusiness.util.MenuItemCategory;
-import com.poupock.feussom.aladabusiness.util.relation.MenuItemCategoryRelation;
 
 import java.util.List;
-import java.util.Map;
 
 @Dao
 public interface MenuItemDao {
